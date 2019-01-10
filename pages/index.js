@@ -1,6 +1,6 @@
 import Strapi from 'strapi-sdk-javascript'
 
-const apiUrl = process.env.API_URL || 'https://llqh2f648zveweo2.v1.p.beameio.net'
+import { apiUrl } from '../opt'
 
 const strapi = new Strapi(apiUrl)
 
