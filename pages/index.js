@@ -1,8 +1,6 @@
 import Strapi from 'strapi-sdk-javascript'
 
-//import apiUrl from '../opt'
-
-const apiUrl = 'http://localhost:1337'
+const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
 const strapi = new Strapi(apiUrl)
 

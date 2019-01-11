@@ -3,8 +3,8 @@ export const state = () => ({
 })
 
 export const mutations = {
-    add({ list }, restaurant) {
-        list[list.length] = restaurant
+    add({ list }, menu) {
+        list[list.length] = menu
     },
     emptyList({ list }) {
         list.length = 0
