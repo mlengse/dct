@@ -12,18 +12,18 @@ export default {
     }),
     computed: {
         filteredList() {
-            return this.menus.filter( menu => menu.name.toLowerCase().includes(this.query.toLowerCase()))
+            return this.restaurants.filter( restaurant => restaurant.name.toLowerCase().includes(this.query.toLowerCase()))
         },
-        menus() {
-            return this.$store.getters['menus/list']
+        restaurants() {
+            return this.$store.getters['restaurants/list']
         }
     },
     fetch: async ({store}) => {
-        store.commit('menus/emptyList')
-        const { data : { menus }} = await strapi.request('post', '/graphql', {
+        store.commit('restaurants/emptyList')
+        const { data : { restaurants }} = await strapi.request('post', '/graphql', {
             data: {
                 query: `query {
-                    menus {
+                    restaurants {
                         _id
                         name
                         description
@@ -35,11 +35,11 @@ export default {
             }
         })
 
-        menus.forEach( menu => {
-            menu.image ? menu.image.url = `${apiUrl}${menu.image.url}` : ''
-            store.commit('menus/add', {
-                id: menu.id || menu._id,
-                ...menu
+        restaurants.forEach( restaurant => {
+            restaurant.image.url = `${apiUrl}${restaurant.image.url}`
+            store.commit('restaurants/add', {
+                id: restaurant.id || restaurant._id,
+                ...restaurant
             })
         })
     }

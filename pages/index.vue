@@ -7,12 +7,12 @@
     .row
       .col-md-12
         ul.card-columns.list-unstyled
-          li.card(v-for='restaurant in filteredList' :key='restaurant.id')
-            img.card-img-top(v-if='restaurant.image' :src='restaurant.image.url')
+          li.card(v-for='menu in filteredList' :key='menu.id')
+            img.card-img-top(v-if='menu.image' :src='menu.image.url')
             .card-body
-              h5.card-title {{ restaurant.name }}
-              p.card-text {{ restaurant.description || 'No description' }}
-              router-link.btn.btn-primary(:to="{ name: 'restaurants-id' , params: { id: restaurant.id }}" tag='a') See dishes
+              h5.card-title {{ menu.name }}
+              p.card-text {{ menu.description || 'No description' }}
+              router-link.btn.btn-primary(:to="{ name: 'menus-id' , params: { id: menu.id }}" tag='a') Lihat menu
           p(v-if='!filteredList.length') No results :(
 </template>
 
