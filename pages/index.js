@@ -25,6 +25,7 @@ export default {
                         _id
                         name
                         description
+                        url
                         image {
                             url
                         }

@@ -1,5 +1,5 @@
 <template lang="pug">
-  section.container
+  section.container 
     .row
       .col-md-12
         .form-group.mt-3
@@ -12,7 +12,8 @@
             .card-body
               h5.card-title {{ menu.name }}
               p.card-text {{ menu.description || 'No description' }}
-              router-link.btn.btn-primary(:to="{ name: 'menus-id' , params: { id: menu.id }}" tag='a') Lihat menu
+              a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
+              router-link.btn.btn-primary(v-else :to="{ name: 'menus-id' , params: { id: menu.id }}" tag='a') Lihat menu
           p(v-if='!filteredList.length') No results :(
 </template>
 
