@@ -8,10 +8,10 @@
       .col-md-12
         ul.card-columns.list-unstyled
           li.card(v-for='menu in filteredList' :key='menu.id')
-            img.card-img-top(v-if='menu.image' :src='menu.image.url')
+            img.card-img-top(v-if='menu.cover' :src='menu.cover.url')
             .card-body
-              h5.card-title {{ menu.name }}
-              p.card-text {{ menu.description || 'No description' }}
+              h5.card-title {{ menu.nama }}
+              p.card-text {{ menu.deskripsi || '' }}
               a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
               router-link.btn.btn-primary(v-else :to="{ name: 'menus-id' , params: { id: menu.id }}" tag='a') Lihat menu
           p(v-if='!filteredList.length') No results :(

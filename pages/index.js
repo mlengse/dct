@@ -10,7 +10,7 @@ export default {
     }),
     computed: {
         filteredList() {
-            return this.menus.filter( menu => menu.name.toLowerCase().includes(this.query.toLowerCase()))
+            return this.menus.filter( menu => menu.nama.toLowerCase().includes(this.query.toLowerCase()))
         },
         menus() {
             return this.$store.getters['menus/list']
@@ -23,10 +23,10 @@ export default {
                 query: `query {
                     menus {
                         _id
-                        name
-                        description
+                        nama
+                        deskripsi
                         url
-                        image {
+                        cover {
                             url
                         }
                     }
@@ -35,7 +35,7 @@ export default {
         })
 
         menus.forEach( menu => {
-            menu.image ? menu.image.url = `${apiUrl}${menu.image.url}` : ''
+//            menu.cover? menu.cover.url ? '' : menu.cover.url = `${apiUrl}${menu.cover.url}` : ''
             store.commit('menus/add', {
                 id: menu.id || menu._id,
                 ...menu
