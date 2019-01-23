@@ -1,5 +1,5 @@
 import Strapi from 'strapi-sdk-javascript'
-
+import query from './query.graphql'
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
 const strapi = new Strapi(apiUrl)
@@ -28,37 +28,13 @@ export default {
         }
     },
     fetch: async ({ store }) => {
+       // console.log(query)
         store.commit("mutus/emptyList");
         const {
             data: { states }
         } = await strapi.request("post", "/graphql", {
             data: {
-                query: `query {
-                        states ( where: {
-                        name: "mutu"
-                    }) {
-                        name
-                        indicators{
-                        name
-                        counternames {
-                            name
-                            countertype {
-                                name
-                            }
-                        }
-                        operator {
-                            name
-                        }
-                        target
-                        satuan {
-                            name
-                        }
-                        bagian {
-                            nama
-                        }
-                        }
-                    }
-                }`
+                query
             }
             });
 

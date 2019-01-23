@@ -1,0 +1,26 @@
+query {
+        states ( where: {
+        name: "mutu"
+    }) {
+        name
+        indicators{
+            name
+            counternames {
+                name
+                countertype {
+                    name
+                }
+            }
+            operator {
+                name
+            }
+            target
+            satuan {
+                name
+            }
+            bagian {
+                nama
+            }
+        }
+    }
+}

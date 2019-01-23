@@ -1,0 +1,11 @@
+query {
+    menus {
+        _id
+        nama
+        deskripsi
+        url
+        cover {
+            url
+        }
+    }
+}

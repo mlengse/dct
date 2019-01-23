@@ -1,5 +1,5 @@
 import Strapi from 'strapi-sdk-javascript'
-
+import query from './query.graphql'
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
 const strapi = new Strapi(apiUrl)
@@ -20,17 +20,7 @@ export default {
         store.commit('menus/emptyList')
         const { data : { menus }} = await strapi.request('post', '/graphql', {
             data: {
-                query: `query {
-                    menus {
-                        _id
-                        nama
-                        deskripsi
-                        url
-                        cover {
-                            url
-                        }
-                    }
-                }`
+                query
             }
         })
 
