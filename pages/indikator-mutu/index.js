@@ -11,7 +11,7 @@ export default {
         query: ""
     }),
     methods: {
-        rowHover: (item, index, event) => console.log(JSON.stringify(item))
+        rowHover: (item, index, event) => /*console.log(JSON.stringify(item))*/''
     },
     computed: {
         filteredMutu() {
@@ -28,7 +28,7 @@ export default {
         }
     },
     fetch: async ({ store }) => {
-       // console.log(query)
+        console.log(apiUrl)
         store.commit("mutus/emptyList");
         const {
             data: { states }

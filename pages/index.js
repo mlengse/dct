@@ -17,6 +17,7 @@ export default {
         }
     },
     fetch: async ({store}) => {
+        console.log(apiUrl)
         store.commit('menus/emptyList')
         const { data : { menus }} = await strapi.request('post', '/graphql', {
             data: {
