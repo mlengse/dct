@@ -17,7 +17,6 @@ export default {
         }
     },
     fetch: async ({store}) => {
-        console.log(apiUrl)
         store.commit('menus/emptyList')
         const { data : { menus }} = await strapi.request('post', '/graphql', {
             data: {
@@ -26,7 +25,6 @@ export default {
         })
 
         menus.forEach( menu => {
-//            menu.cover? menu.cover.url ? '' : menu.cover.url = `${apiUrl}${menu.cover.url}` : ''
             store.commit('menus/add', {
                 id: menu.id || menu._id,
                 ...menu

@@ -1,26 +1,31 @@
-query {
-        states ( where: {
-        name: "mutu"
-    }) {
+{
+  states(where: { name: "mutu" }) {
+    indicators(where: { active: true }) {
+      _id
+      bagian {
+        nama
+      }
+      name
+      counternames {
         name
-        indicators{
-            name
-            counternames {
-                name
-                countertype {
-                    name
-                }
-            }
-            operator {
-                name
-            }
-            target
-            satuan {
-                name
-            }
-            bagian {
-                nama
-            }
+        countertype {
+          name
         }
+      }
+      operator {
+        name
+      }
+      target
+      satuan {
+        name
+      }
+      rekaps {
+        periode
+        rekaptype {
+          periode
+        }
+        jumlah
+      }
     }
+  }
 }
