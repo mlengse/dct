@@ -3,6 +3,15 @@
     .row
       .col-md-12
         h3 Indikator Mutu
+    .row
+      .col-md-12
+        b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
+          b-button-group.mx-1
+            b-btn(variant='primary' size='lg') &lsaquo;
+          b-button-group.mx-1
+            b-btn(variant='outline-primary' size='lg') Januari 2019
+          b-button-group.mx-1
+            b-btn(variant='primary' size='lg') &rsaquo;
 
     .row
       .col-md-12
@@ -10,14 +19,16 @@
           input.form-control(v-model='query' type='text' placeholder='Search...')
 
     .row
-      b-table(striped hover responsive :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" @row-hovered="rowHover")
-        template(slot="action" slot-scope="data")
-          b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"') detail
-          b-modal(:id='data.item.id' :key='data.item.id+"-modal"')
-            b-list-group
-              b-list-group-item(v-for='(value, key) in data.item' :key='data.item.id+key') {{key}}: {{value}}
+      .col-md-12
+        b-table(striped hover responsive :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" @row-hovered="rowHover")
+          template(slot="action" slot-scope="data")
+            b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"' variant='primary' size='sm') detail
+            b-modal(:id='data.item.id' :key='data.item.id+"-modal"')
+              b-list-group
+                b-list-group-item(v-for='(value, key) in data.item' :key='data.item.id+key') {{key}}: {{value}}
     .row
-      b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
+      .col-md-12
+        b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 </template>
 
 <script src='./index.js'>
