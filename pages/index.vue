@@ -13,7 +13,7 @@
               h5.card-title {{ menu.nama }}
               p.card-text {{ menu.deskripsi || '' }}
               a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
-              a.btn.btn-primary(v-else :href=`menu.nama.toLowerCase().split(' ').join('-')`) Lihat menu
+              nuxt-link.btn.btn-primary(v-else :to=`menu.nama.toLowerCase().split(' ').join('-')` tag='a') Lihat menu
           p(v-if='!filteredList.length') No results :(
 </template>
 

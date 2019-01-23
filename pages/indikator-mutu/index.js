@@ -34,7 +34,7 @@ export default {
             data: { states }
         } = await strapi.request("post", "/graphql", {
             data: {
-                query
+                query 
             }
             });
 
