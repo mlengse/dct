@@ -12,8 +12,8 @@
     .row
       b-table(striped hover responsive :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" @row-hovered="rowHover")
         template(slot="action" slot-scope="data")
-          b-btn(v-b-modal='data.item.id') detail
-          b-modal(:id='data.item.id')
+          b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"') detail
+          b-modal(:id='data.item.id' :key='data.item.id+"-modal"')
             b-list-group
               b-list-group-item(v-for='(value, key) in data.item' :key='data.item.id+key') {{key}}: {{value}}
     .row
