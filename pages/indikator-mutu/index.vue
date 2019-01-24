@@ -10,12 +10,14 @@
       .col-md-12
         .form-group.mt-3
           input.form-control(v-model='query' type='text' placeholder='Search...')
-
     .row
       .col-md-12
         b-table(striped hover responsive :busy.sync='loaded' :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" )
           template(slot="action" slot-scope="data")
-            b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"' variant='primary' size='sm') detail
+            b-button-group.mx-1
+              b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"' variant='outline-primary' size='sm') Detail
+              b-btn(v-if='data.item.capaian === "Belum diinput"' variant='outline-warning' size='sm') Input
+              b-btn(v-if='data.item.capaian === "Belum tercapai"' variant='outline-danger' size='sm') Evaluasi
             b-modal(:id='data.item.id' :key='data.item.id+"-modal"')
               b-list-group
                 b-list-group-item(v-for='(value, key) in data.item' :key='data.item.id+key') {{key}}: {{value}}

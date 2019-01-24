@@ -26,7 +26,12 @@ export default {
     },
     computed: {
         filteredMutu() {
-            return this.mutus.filter(mutu => JSON.stringify(mutu).toLowerCase().includes(this.query.toLowerCase()))
+            return this.mutus.filter(mutu => JSON.stringify(mutu).toLowerCase().includes(this.query.toLowerCase())).map(mutu=> Object.assign( mutu, {
+                _cellVariants: {
+                    capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning'
+                },
+                capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'                
+            }))
         },
         fields() {
             return ['bagian', 'indikator', 'capaian', 'action'].map(e => ({ 
@@ -41,5 +46,5 @@ export default {
             return this.$store.getters['mutus/list']
         }
     },
-    fetch: async ({ store }) => await fetch(store)
+    //fetch: async ({ store }) => await fetch(store)
 };

@@ -1,9 +1,8 @@
 {
   "name": "dct",
   "version": "1.0.0",
-  "description": "Nuxt.js project",
+  "description": "aplikasi bantu puskesmas (ABAP)",
   "author": "mlengse <anjangkn@gmail.com>",
-  "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",

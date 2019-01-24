@@ -42,7 +42,7 @@ export default async (store, month) => {
             numtarget: indicator.target,
             satuan: indicator.satuan.name,
             target: `${indicator.operator.name === '<=' ? `<= ` : ``}${indicator.target} ${indicator.satuan.name === 'persen' ? '%' : indicator.satuan.name}`,
-            capaian: JSON.stringify(indicator.rekaps[0])
+            rekap: indicator.rekaps[0]
         }));
     }
 }
