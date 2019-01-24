@@ -5,14 +5,7 @@
         h3 Indikator Mutu
     .row
       .col-md-12
-        b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
-          b-button-group.mx-1
-            b-btn(variant='primary' size='lg') &lsaquo;
-          b-button-group.mx-1
-            b-btn(variant='outline-primary' size='lg') Januari 2019
-          b-button-group.mx-1
-            b-btn(variant='primary' size='lg') &rsaquo;
-
+        MonthPicker
     .row
       .col-md-12
         .form-group.mt-3

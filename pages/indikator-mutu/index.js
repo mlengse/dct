@@ -1,10 +1,15 @@
 import Strapi from 'strapi-sdk-javascript'
 import query from './query.graphql'
+import MonthPicker from '~/components/MonthPicker/index.vue'
+
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
 const strapi = new Strapi(apiUrl)
 
 export default {
+    components: {
+        MonthPicker
+    },
     data: () => ({
         sortBy: 'bagian',
         sortDesc: false,
