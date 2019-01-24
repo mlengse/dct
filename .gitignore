@@ -12,3 +12,4 @@ dist
 
 #else
 .env
+ecosystem.config.js

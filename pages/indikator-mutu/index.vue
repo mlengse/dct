@@ -5,7 +5,7 @@
         h3 Indikator Mutu
     .row
       .col-md-12
-        MonthPicker
+        MonthPicker(@updateMonth='updateMonth' :loading='loaded')
     .row
       .col-md-12
         .form-group.mt-3
@@ -13,7 +13,7 @@
 
     .row
       .col-md-12
-        b-table(striped hover responsive :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" @row-hovered="rowHover")
+        b-table(striped hover responsive :busy.sync='loaded' :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :fields="fields" :items="filteredMutu" )
           template(slot="action" slot-scope="data")
             b-btn(v-b-modal='data.item.id' :key='data.item.id+"-modal-button"' variant='primary' size='sm') detail
             b-modal(:id='data.item.id' :key='data.item.id+"-modal"')

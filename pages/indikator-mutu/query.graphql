@@ -1,5 +1,5 @@
-{
-  states(where: { name: "mutu" }) {
+query States($name: String!, $month: String!){
+  states(where: { name: $name }) {
     indicators(where: { active: true }) {
       _id
       bagian {
@@ -19,7 +19,7 @@
       satuan {
         name
       }
-      rekaps {
+      rekaps(where: { periode: $month}) {
         periode
         rekaptype {
           periode

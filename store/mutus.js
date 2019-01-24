@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   add({ list }, indicator) {
-    list[list.length] = indicator;
+    list.push(indicator);
   },
   emptyList({ list }) {
     list.length = 0;
