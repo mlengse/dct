@@ -43,7 +43,11 @@ module.exports = {
   },
   modules: [
     'bootstrap-vue/nuxt',
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    ['@nuxtjs/moment', {
+      locales: ['id'],
+      defaultLocale: 'id'
+    }]
   ]
 }
 

@@ -15,31 +15,29 @@ export default {
         loaded: false
     }),
     methods: {
-        updateMonth: async function(val) {
+        async updateMonth(val) {
             if(this.month !== val) {
                 this.month = val
                 this.loaded = true
+                this.$nuxt.$loading.start()
                 await fetch(this.$store, val)
+                this.$nuxt.$loading.finish()
                 this.loaded = false
             }
-        }
+        },
     },
     computed: {
         filteredMutu() {
             return this.mutus.filter(mutu => JSON.stringify(mutu).toLowerCase().includes(this.query.toLowerCase())).map(mutu=> Object.assign( mutu, {
-                _cellVariants: {
-                    capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning'
-                },
-                capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'                
+                capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
+                varian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
             }))
         },
-        fields() {
-            return ['bagian', 'indikator', 'capaian', 'action'].map(e => ({ 
-                key: e,
-                sortable: true
-            }))
-        },
-        totalRows: function() {
+        fields: () => ['bagian', 'indikator', 'capaian', 'action'].map(e => ({ 
+            key: e,
+            sortable: true
+        })),
+        totalRows() {
             return this.filteredMutu.length
         },
         mutus() {
