@@ -42,8 +42,8 @@ export default {
         }
     },
     watch: {
-        mutus() {
-            this.totalRows = this.mutus.length
+        mutus(val) {
+            this.totalRows = val.length
         }
     },
     computed: {
@@ -51,6 +51,9 @@ export default {
             key: e,
             sortable: true
         })),
+        items() {
+            return JSON.parse(JSON.stringify(this.mutus));
+        },
         mutus() {
             return this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
                 capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
