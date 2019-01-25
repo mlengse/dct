@@ -13,42 +13,42 @@ b-container(fluid)
 	.row
 		.col-md-12
 			b-table(
-        show-empty
-        stacked='sm'
-        striped 
-        hover 
-        responsive 
-        :items="mutus"
-        :fields="fields" 
-        :current-page="currentPage" 
-        :per-page="perPage" 
-        :busy.sync='loaded' 
-        :sort-by.sync="sortBy" 
-        :sort-desc.sync="sortDesc" 
-        :filter='query'
-        @filtered='onFiltered'
-      )
+				show-empty
+				stacked='sm'
+				striped 
+				hover 
+				responsive 
+				:items="mutus"
+				:fields="fields" 
+				:current-page="currentPage" 
+				:per-page="perPage" 
+				:busy.sync='loaded' 
+				:sort-by.sync="sortBy" 
+				:sort-desc.sync="sortDesc" 
+				:filter='query'
+				@filtered='onFiltered'
+			)
 				template(slot='capaian' slot-scope='data') 
 					b-alert(:variant='data.item.varian' show) {{data.item.capaian}}                
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1
 						b-btn(
-              size="sm" 
-              variant='outline-primary' 
-              @click.stop="info(row.item, row.index, $event.target)"
-            ) Info
+							size="sm" 
+							variant='outline-primary' 
+							@click.stop="info(row.item, row.index, $event.target)"
+						) Info
 						b-btn(
-              v-if='row.item.capaian === "Belum diinput"' 
-              variant='warning' 
-              size='sm'
-              @click.stop="row.toggleDetails"
-            ) {{row.detailsShowing?'Tutup':'Buka'}} Input
+							v-if='row.item.capaian === "Belum diinput"' 
+							variant='warning' 
+							size='sm'
+							@click.stop="row.toggleDetails"
+						) {{row.detailsShowing?'Tutup':'Buka'}} Input
 						b-btn(
-              v-if='row.item.capaian === "Belum tercapai"' 
-              variant='danger' 
-              size='sm'
-              @click.stop="row.toggleDetails"
-            ) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
+							v-if='row.item.capaian === "Belum tercapai"' 
+							variant='danger' 
+							size='sm'
+							@click.stop="row.toggleDetails"
+						) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
 				template(slot="row-details" slot-scope="row")
 					b-card
 						pre {{row.item}}

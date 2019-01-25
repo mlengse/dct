@@ -31,6 +31,9 @@ export default {
                 this.loaded = false
             }
         },
+        showing(row) {
+			return row._showDetails
+        },
         info(item, index, button) {
             this.modalInfo.title = `Row index: ${index}`
             this.modalInfo.content = JSON.stringify(item, null, 2)
@@ -55,6 +58,7 @@ export default {
             return JSON.parse(JSON.stringify(this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
                 capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
                 varian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
+                _showDetails: false,
             }))))
 
         }
