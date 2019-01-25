@@ -18,7 +18,7 @@ b-container(fluid)
         striped 
         hover 
         responsive 
-        :items="items"
+        :items="mutus"
         :fields="fields" 
         :current-page="currentPage" 
         :per-page="perPage" 
@@ -51,8 +51,7 @@ b-container(fluid)
             ) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
 				template(slot="row-details" slot-scope="row")
 					b-card
-						ul
-							li(v-for="(value, key) in row.item" :key="key") {{key}}: {{value}}
+						pre {{row.item}}
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")

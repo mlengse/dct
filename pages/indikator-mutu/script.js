@@ -51,15 +51,11 @@ export default {
             key: e,
             sortable: true
         })),
-        items() {
-            return JSON.parse(JSON.stringify(this.mutus));
-        },
         mutus() {
-            return this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
+            return JSON.parse(JSON.stringify(this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
                 capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
                 varian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
-                detailsShowing: false
-            }))
+            }))))
 
         }
     }
