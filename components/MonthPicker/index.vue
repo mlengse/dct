@@ -1,11 +1,6 @@
-<template lang="pug">
-    b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
-        b-button-group.mx-1
-            b-btn(:disabled='loading' variant='primary' @click='prevMonth') &lsaquo;
-            b-btn(:disabled='loading' variant='outline-primary' ) {{month}}
-            b-btn(:disabled='loading' variant='primary' @click='nextMonth') &rsaquo;    
+<template src='./template.pug' lang="pug">
 </template>
 
-<script src='./index.js'>
+<script src='./script.js'>
 </script>
 
