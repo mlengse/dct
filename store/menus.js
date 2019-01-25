@@ -1,16 +1,16 @@
 export const state = () => ({
-    list: []
+	list: []
 })
 
 export const mutations = {
-    add({ list }, menu) {
-        list[list.length] = menu
-    },
-    emptyList({ list }) {
-        list.length = 0
-    }
+	add({ list }, menu) {
+		list[list.length] = menu
+	},
+	emptyList({ list }) {
+		list.length = 0
+	}
 }
 
 export const getters = {
-    list: ({ list }) => list
+	list: ({ list }) => list
 }
