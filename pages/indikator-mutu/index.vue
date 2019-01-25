@@ -21,8 +21,8 @@
               b-btn(v-if='data.item.capaian === "Belum diinput"' variant='warning' size='sm') Input
               b-btn(v-if='data.item.capaian === "Belum tercapai"' variant='danger' size='sm') Evaluasi
             b-modal(:id='data.item.id' :key='data.item.id+"-modal"')
-              b-list-group
-                b-list-group-item(v-for='(value, key) in data.item' :key='data.item.id+key') {{key}}: {{value}}
+              b-card
+                pre {{ data.item }}
     .row
       .col-md-12
         b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
