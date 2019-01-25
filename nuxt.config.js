@@ -1,3 +1,7 @@
+import PurgecssPlugin from 'purgecss-webpack-plugin'
+import glob from 'glob-all'
+import path from 'path'
+
 module.exports = {
   env: {
     apiUrl: process.env.apiUrl
@@ -30,7 +34,23 @@ module.exports = {
     babel: {
       plugins: ['babel-plugin-inline-import']
     },
+    extractCSS: true,
+
     extend (config, { isDev, isClient }) {
+      if (!isDev) {
+        // Remove unused CSS using purgecss. See https://github.com/FullHuman/purgecss
+        // for more information about purgecss.
+        config.plugins.push(
+          new PurgecssPlugin({
+            paths: glob.sync([
+              path.join(__dirname, './pages/**/*.vue'),
+              path.join(__dirname, './layouts/**/*.vue'),
+              path.join(__dirname, './components/**/*.vue')
+            ]),
+            whitelist: ['html', 'body']
+          })
+        )
+      }
       if (isDev && isClient) {
         config.module.rules.push({
           enforce: 'pre',
@@ -41,6 +61,7 @@ module.exports = {
       }
     }
   },
+  
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/dotenv',

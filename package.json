@@ -26,9 +26,10 @@
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-vue": "^4.0.0",
-    "jquery": "^3.3.1",
+    "glob-all": "^3.1.0",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
+    "purgecss-webpack-plugin": "^1.4.0",
     "raw-loader": "^1.0.0"
   }
 }
