@@ -24,6 +24,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    //analyze: true,
     /*
     ** Run ESLint on save
     */
@@ -41,8 +42,14 @@ module.exports = {
       }
     }
   },
+  plugins:[
+    {
+      src: '~/plugins/vue-bootstrap',
+      ssr: false
+
+    }
+  ],
   modules: [
-    'bootstrap-vue/nuxt',
     '@nuxtjs/dotenv',
     ['@nuxtjs/moment', {
       locales: ['id'],
