@@ -1,5 +1,5 @@
 //const glob = require('glob-all')
-//const path = require('path')
+const path = require('path')
 
 module.exports = {
   env: {
@@ -39,12 +39,23 @@ module.exports = {
 	],
 	
   build: {
-    analyze: true,
+    //analyze: true,
     /*
      ** Run ESLint on save
      */
     babel: {
-      plugins: ["babel-plugin-inline-import"]
+      plugins: [
+        [
+          'module-resolver', {
+            'root': ['.'],
+            'alias': {
+              'react': 'nervjs',
+              'react-dom': 'nervjs'
+            }
+          }
+        ],
+        "babel-plugin-inline-import"
+      ]
 		},
 		
     extend(config, { isDev, isClient }) {
