@@ -1,5 +1,5 @@
 //const glob = require('glob-all')
-const path = require('path')
+//const path = require('path')
 
 module.exports = {
   env: {
@@ -72,13 +72,6 @@ module.exports = {
 	
   modules: [
     "@nuxtjs/dotenv",
-    [
-      "@nuxtjs/moment",
-      {
-        locales: ["id"],
-        defaultLocale: "id"
-      }
-    ]
   ]
 };
 

@@ -1,5 +1,7 @@
 import Strapi from 'strapi-sdk-javascript'
 import query from './query.graphql'
+import moment from 'dayjs'
+moment.locale('id')
 
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
@@ -14,7 +16,7 @@ export default async (store, month) => {
 			query,
 			variables: {
 				name: 'mutu',
-				month: month || this.$moment().format('MMMM YYYY')
+				month: month || moment().format('MMMM YYYY')
 			}
 		}
 		});
