@@ -10,7 +10,7 @@ export default {
 		sortBy: null,
 		sortDesc: false,
 		query: null,
-		perPage: 5,
+		perPage: 10,
 		currentPage: 1,
 		loaded: false,
 		totalRows: 0,
@@ -64,7 +64,7 @@ export default {
 		mutus() {
 			return JSON.parse(JSON.stringify(this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
 				capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
-				varian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
+				variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
 				_showDetails: false,
 			}))))
 
