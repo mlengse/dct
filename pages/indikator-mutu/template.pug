@@ -55,8 +55,7 @@ b-container(fluid)
 						@click.stop="info(row.item, row.index, $event.target)"
 					) Info
 				template(slot="row-details" slot-scope="row")
-					b-card
-						pre {{row.item}}
+					RowDetails(:row='row')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")

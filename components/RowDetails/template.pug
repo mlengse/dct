@@ -1,0 +1,30 @@
+b-card
+	dl
+		.list-group-item
+			b-row(align-h='end')
+				b-button.mx-1(variant='warning') edit
+				b-button.mx-1(variant='success') simpan
+		.list-group-item
+			b-row
+				b-col(cols='3')
+					dt.text-right Pembilang
+				b-col(cols='6')
+					dd {{row.item.pembilang}}
+				b-col(cols='3')
+		.list-group-item
+			b-row
+				b-col(cols='3')
+					dt.text-right Penyebut
+				b-col(cols='6')
+					dd {{row.item.penyebut}}
+				b-col(cols='3')
+	.list-group
+		.list-group-item
+			b-row
+				b-col.text-right(cols='9') Capaian
+				b-col(cols='3' v-if='row.item.rekap') {{row.item.rekap.jumlah}}
+				b-col(cols='3' v-else) -
+		.list-group-item
+			b-row
+				b-col.text-right(cols='9') Target
+				b-col(cols='3') {{row.item.target}}
