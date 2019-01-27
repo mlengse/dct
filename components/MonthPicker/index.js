@@ -7,7 +7,7 @@ export default {
 		month: ''
 	}),
 	created() {
-		this.month = moment().format('MMMM YYYY')
+		this.month = moment().add(-1, 'month').format('MMMM YYYY')
 	},
 	watch: {
 		month: function(newVal, oldVal) {

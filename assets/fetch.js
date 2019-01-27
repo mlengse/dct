@@ -1,6 +1,7 @@
 import Strapi from 'strapi-sdk-javascript'
 import query from './query.graphql'
 import moment from 'dayjs'
+import 'dayjs/locale/id'
 moment.locale('id')
 
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
@@ -9,9 +10,7 @@ const strapi = new Strapi(apiUrl)
 
 export default async (store, month) => {
 	store.commit("mutus/emptyList");
-	const {
-		data: { states }
-	} = await strapi.request("post", "/graphql", {
+	const { data: { states } } = await strapi.request("post", "/graphql", {
 		data: {
 			query,
 			variables: {
@@ -19,7 +18,7 @@ export default async (store, month) => {
 				month: month || moment().format('MMMM YYYY')
 			}
 		}
-		});
+	});
 
 	const { indicators } = states[0];
 	for(let i=0; i< indicators.length; i++) {

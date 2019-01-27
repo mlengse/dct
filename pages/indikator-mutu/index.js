@@ -1,5 +1,5 @@
 import MonthPicker from '~/components/MonthPicker/index.vue'
-import fetch from '~/services/fetch'
+import fetch from '~/assets/fetch'
 
 export default {
 	components: {
