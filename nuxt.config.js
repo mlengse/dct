@@ -75,6 +75,7 @@ module.exports = {
 
 	modules: [
 		"@nuxtjs/dotenv",
+		['@nuxtjs/moment', { locales: ['id'], defaultLocale: 'id' }]
 	],
 
 	plugins: [
