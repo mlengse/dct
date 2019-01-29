@@ -30,30 +30,26 @@ b-container(fluid)
 				@filtered='onFiltered'
 			)
 				template(slot='capaian' slot-scope='row') 
-					b-button-group.mx-1
+					span.tag(:class='["is", row.item.variant].join("-")') {{row.item.capaian}}
+				template(slot="action" slot-scope="row")
+					b-button-group.mx-1(size='sm')
 						b-btn(
 							size='sm'
-							disabled
-							variant='outline-primary'
-						) {{row.item.capaian}}       
-						b-btn(
 							v-if='row.item.capaian === "Belum diinput"' 
-							:variant='row.item.variant' 
-							size='sm'
+							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
 						) {{row.detailsShowing?'Tutup':'Buka'}} Input
 						b-btn(
-							v-if='row.item.capaian === "Belum tercapai"' 
-							:variant='row.item.variant' 
 							size='sm'
+							v-if='row.item.capaian === "Belum tercapai"' 
+							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
 						) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
-				template(slot="action" slot-scope="row")
-					b-btn(
-						size="sm" 
-						variant='primary' 
-						@click.stop="info(row.item, row.index, $event.target)"
-					) Info
+						b-btn(
+							size='sm'
+							variant='outline-primary' 
+							@click.stop="info(row.item, row.index, $event.target)"
+						) Info
 				template(slot="row-details" slot-scope="row")
 					RowDetails(:row='row')
 	.row

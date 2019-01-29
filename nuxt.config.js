@@ -44,7 +44,8 @@ module.exports = {
 	
 	css: [
 		"@/node_modules/bootstrap/dist/css/bootstrap.css",
-		"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
+	//	'@/node_modules/buefy/dist/buefy.css',
+	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
 	],
 
 	env: {
@@ -74,11 +75,13 @@ module.exports = {
 	loading: { color: "#3B8070" },
 
 	modules: [
+	//	'nuxt-buefy',
 		"@nuxtjs/dotenv",
-		['@nuxtjs/moment', { locales: ['id'], defaultLocale: 'id' }]
+		['@nuxtjs/moment', { locales: ['id'] }]
 	],
 
 	plugins: [
+		'@/plugins/vue-buefy',
 		'@/plugins/vue-bootstrap',
 		'@/plugins/vue-react'
 	],

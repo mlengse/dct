@@ -1,15 +1,5 @@
-# dependencies
-node_modules
-
-# logs
-npm-debug.log
-
-# Nuxt build
 .nuxt
-
-# Nuxt generate
 dist
-
-#else
+node_modules
 .env
-ecosystem.config.js
+package-lock.json
