@@ -5,7 +5,7 @@ b-container(fluid)
 			h3 Indikator Mutu
 	.row
 		.col-md-12
-			MonthPicker(@updateMonth='updateMonth' :loading='loaded')
+			month-picker(@updateMonth='updateMonth' :loading='loaded')
 	.row
 		.col-md-12
 			.form-group.mt-3
@@ -45,13 +45,15 @@ b-container(fluid)
 							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
 						) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
+					//-	
 						b-btn(
 							size='sm'
 							variant='outline-primary' 
 							@click.stop="info(row.item, row.index, $event.target)"
 						) Info
+					//	
 				template(slot="row-details" slot-scope="row")
-					RowDetails(:row='row')
+					row-details(:row='row' :month='month')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")

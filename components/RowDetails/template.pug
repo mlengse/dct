@@ -2,29 +2,38 @@ b-card
 	dl
 		.list-group-item
 			b-row(align-h='end')
-				b-button.mx-1(variant='warning') edit
-				b-button.mx-1(variant='success') simpan
+				b-button-group
+					b-button(variant='primary' @click='rinci') rinci per hari
+					b-button(v-if='editing' variant='success' @click='simpan') simpan
+					b-button(v-else variant='warning' @click='toggleButton') edit
 		.list-group-item
 			b-row
 				b-col(cols='2')
 					dt.text-right Pembilang
-				b-col(cols='7')
+				b-col(cols='8')
 					dd {{row.item.pembilang}}
-				b-col(cols='3')
+				b-col(cols='2')
+					b-form-input.text-right(v-if='editing' :placeholder='pembilang' v-model='pembilang')
+					.text-right(v-else) {{pembilang}}
 		.list-group-item
 			b-row
 				b-col(cols='2')
 					dt.text-right Penyebut
-				b-col(cols='7')
+				b-col(cols='8')
 					dd {{row.item.penyebut}}
-				b-col(cols='3')
+				b-col(cols='2')
+					b-form-input.text-right(v-if='editing'  :placeholder='penyebut' v-model='penyebut')
+					.text-right(v-else) {{penyebut}}
 	.list-group
 		.list-group-item
 			b-row
 				b-col.text-right(cols='9') Capaian
-				b-col(cols='3' v-if='row.item.rekap') {{row.item.rekap.jumlah}}
-				b-col(cols='3' v-else) -
+				b-col(cols='3') {{rekap}} 
 		.list-group-item
 			b-row
 				b-col.text-right(cols='9') Target
 				b-col(cols='3') {{row.item.target}}
+		.list-group-item(v-if='rincian')
+			b-table(hover :items='items' :fields='fields')
+				template(v-for="day in days" :slot='day' slot-scope='tgl')
+					b-form-input

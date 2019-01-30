@@ -6,8 +6,8 @@ import fetch from '~/assets/fetch'
 export default {
 	components: {
 		'status-capaian': StatusCapaian,
-		MonthPicker,
-		RowDetails
+		'month-picker': MonthPicker,
+		'row-details': RowDetails
 	},
 	data: () => ({
 		month: '',

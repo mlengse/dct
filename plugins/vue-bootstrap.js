@@ -10,7 +10,7 @@ import Layout from "~/node_modules/bootstrap-vue/es/components/layout";
 import Modal from "~/node_modules/bootstrap-vue/es/components/modal";
 import Pagination from "~/node_modules/bootstrap-vue/es/components/pagination";
 import Table from "~/node_modules/bootstrap-vue/es/components/table";
-
+import FormInput from "~/node_modules/bootstrap-vue/es/components/form-input"
 [
   Alert,
   Button,
@@ -21,5 +21,5 @@ import Table from "~/node_modules/bootstrap-vue/es/components/table";
   Modal,
   Pagination,
   Table,
- 
+  FormInput
 ].map(component => Vue.use(component))
