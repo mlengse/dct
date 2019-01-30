@@ -28,6 +28,7 @@ module.exports = {
 		 ** Run ESLint on save
 		 */
 		extend(config, { isDev, isClient }) {
+
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
@@ -43,7 +44,7 @@ module.exports = {
 	},
 	
 	css: [
-		"@/node_modules/bootstrap/dist/css/bootstrap.css",
+	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
 	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
 	],
@@ -76,6 +77,7 @@ module.exports = {
 
 	modules: [
 	//	'nuxt-buefy',
+	//	'nuxt-purgecss',
 		"@nuxtjs/dotenv",
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],

@@ -29,8 +29,8 @@ b-container(fluid)
 				:filter='query'
 				@filtered='onFiltered'
 			)
-				template(slot='capaian' slot-scope='row') 
-					span.tag(:class='["is", row.item.variant].join("-")') {{row.item.capaian}}
+				template(slot='capaian' slot-scope='row')
+					status-capaian(:status='row.item.capaian' :variant='row.item.variant')
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
 						b-btn(

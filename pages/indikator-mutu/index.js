@@ -1,9 +1,11 @@
 import MonthPicker from '~/components/MonthPicker/index.vue'
 import RowDetails from '~/components/RowDetails/index.vue'
+import StatusCapaian from '~/components/StatusCapaian/index.vue'
 import fetch from '~/assets/fetch'
 
 export default {
 	components: {
+		'status-capaian': StatusCapaian,
 		MonthPicker,
 		RowDetails
 	},
