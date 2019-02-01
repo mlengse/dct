@@ -4,5 +4,5 @@
     nuxt
 </template>
 
-<script src='./default.js'>
+<script src='./front.js'>
 </script>
