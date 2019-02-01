@@ -9,7 +9,7 @@ import Card from "~/node_modules/bootstrap-vue/es/components/card";
 import Layout from "~/node_modules/bootstrap-vue/es/components/layout";
 import Modal from "~/node_modules/bootstrap-vue/es/components/modal";
 import Pagination from "~/node_modules/bootstrap-vue/es/components/pagination";
-import Table from "~/node_modules/bootstrap-vue/es/components/table";
+//import Table from "~/node_modules/bootstrap-vue/es/components/table";
 import FormInput from "~/node_modules/bootstrap-vue/es/components/form-input"
 [
   Alert,
@@ -20,6 +20,6 @@ import FormInput from "~/node_modules/bootstrap-vue/es/components/form-input"
   Layout,
   Modal,
   Pagination,
-  Table,
+  //Table,
   FormInput
 ].map(component => Vue.use(component))
