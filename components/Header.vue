@@ -8,13 +8,13 @@ div
 					b-btn(variant='primary' v-b-modal.pre) rinci
 					b-btn(variant='outline-danger' @click='gotologout') Keluar
 				b-btn(v-else variant='outline-success' @click='toggleLogin') Masuk
-	b-modal#pre
-		b-card.mb-2(:title='name' :img-src='photo' :img-alt='name' tag='profil')
+	b-modal#pre(hide-header hide-footer)
+		b-card.mb-2(:title='name' :img-src='photo' :img-alt='name')
 			p.card-text {{email}}
 	b-modal#login(hide-header hide-footer v-model="loginShow")
 		.login
 			no-ssr
-				firebase-ui(@closeLogin='toggleLogin')
+				firebase-ui(@closeLogin='toggleLogin' :logout='logout')
 </template>
 
 <script>
@@ -26,6 +26,7 @@ export default {
 	},
 	data: () => ({
 		loginShow: false,
+		logout: true,
 	}),
 	methods: {
 		toggleLogin(){
@@ -35,8 +36,7 @@ export default {
 
 		},
 		gotologout(){
-			this.$store.commit('users/emptyUser')
-			this.$toast.info('Anda sudah keluar')
+			this.logout = !this.logout
 		}
 	},
 	computed: {

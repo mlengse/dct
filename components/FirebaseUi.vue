@@ -25,15 +25,20 @@ export default {
   props: ['logout'],
   watch: {
     logout(val) {
+      console.log('ready logout')
       firebase.auth().signOut()
       this.$toast.info('Anda sudah logout')
+      this.$store.commit('users/emptyUser')
+      if(typeof window !== 'undefined' && window.location) {
+        window.location.reload(true)
+      }
     }
   },
   mounted() {
     let vm = this
     if(process.browser){
       let firebaseui = require('firebaseui')
-      const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth())
+      let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth())
       const config = {
         signInOptions: [
           authProviders.Google,
@@ -46,7 +51,7 @@ export default {
             whitelistedCountries: ['ID', '+62']
           },
         ],
-        signInSuccessUrl: '/',
+       // signInSuccessUrl: '/',
         tosUrl: '/tos',
         privacyPolicyUrl: '/privacy-policy',
         callbacks: {
@@ -54,11 +59,24 @@ export default {
             vm.$store.commit('users/saveUser', JSON.parse(JSON.stringify(authResult.user)))
             vm.$nuxt.$loading.finish()
             vm.$toast.success('login sukses')
-            return true
+            return false
+          },
+          signInFailure(error) {
+            vm.$toast.error('ada error')
+            return false;
+          },
+          uiShown() {
+   //         vm.$toast.info('ui show')            
           }
         }
       }
-      ui.start('#firebaseui-auth-container', config)
+
+      let user = firebase.auth().currentUser
+      if(!user){
+        ui.start('#firebaseui-auth-container', config)
+      } else {
+        vm.$store.commit('users/saveUser', JSON.parse(JSON.stringify(user)))
+      }
     }
   }
 }

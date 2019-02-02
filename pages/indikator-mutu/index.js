@@ -25,7 +25,9 @@ export default {
 				this.month = val
 				this.loaded = true
 				this.$nuxt.$loading.start()
+				this.$toast.show('Mengambil data...')
 				await fetch(this.$store, val)
+				this.$toast.success('Selesai mengambil data...')
 				this.$nuxt.$loading.finish()
 				this.loaded = false
 			}
