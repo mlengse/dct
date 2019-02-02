@@ -9,7 +9,8 @@ div
 					b-btn(variant='outline-danger' @click='gotologout') Keluar
 				b-btn(v-else variant='outline-success' @click='toggleLogin') Masuk
 	b-modal#pre
-		pre {{user}}
+		b-card.mb-2(:title='nama' :img-src='photo' :img-alt='nama' tag='profil')
+			p.card-text {{email}}
 	b-modal#login(hide-header hide-footer v-model="loginShow")
 		.login
 			no-ssr
@@ -25,10 +26,6 @@ export default {
 	},
 	data: () => ({
 		loginShow: false,
-    photo:'',
-    userId:'',
-    name: '',
-		email: '',
 	}),
 	methods: {
 		toggleLogin(){
@@ -43,6 +40,18 @@ export default {
 		}
 	},
 	computed: {
+		name(){
+			return this.user.displayName
+		},
+		email(){
+			return this.user.email
+		},
+		photo(){
+			return this.user.photoURL
+		},
+		userId(){
+			return this.user.uid
+		},
 		user(){
 			return this.$store.getters['users/getUser']
 		}
@@ -72,7 +81,7 @@ $sizes: ();
 //@import "~/node_modules/bootstrap/scss/_custom-forms.scss";
 //@import "~/node_modules/bootstrap/scss/_nav.scss";
 @import "~/node_modules/bootstrap/scss/_navbar.scss";
-//@import "~/node_modules/bootstrap/scss/_card.scss";
+@import "~/node_modules/bootstrap/scss/_card.scss";
 //@import "~/node_modules/bootstrap/scss/_breadcrumb.scss";
 //@import "~/node_modules/bootstrap/scss/_pagination.scss";
 //@import "~/node_modules/bootstrap/scss/_badge.scss";

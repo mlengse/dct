@@ -54,6 +54,7 @@ export default {
             vm.$store.commit('users/saveUser', JSON.parse(JSON.stringify(authResult.user)))
             vm.$nuxt.$loading.finish()
             vm.$toast.success('login sukses')
+            return true
           }
         }
       }
