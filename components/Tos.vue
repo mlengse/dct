@@ -1,3 +1,4 @@
+<template lang="pug">
 section.container 
 	.row
 		.col-md-12
@@ -20,3 +21,23 @@ section.container
 			p Layanan kami dapat berisi tautan ke situs web pihak ketiga atau layanan yang ada tidak dimiliki atau dikendalikan oleh Puskesmas Sibela.
 			p Puskesmas Sibela tidak memiliki kendali atas, dan tidak bertanggung jawab atas, konten, kebijakan privasi, atau praktik situs web pihak ketiga atau jasa. Anda selanjutnya mengakui dan menyetujui bahwa Puskesmas Sibela tidak akan bertanggung jawab atau berkewajiban, secara langsung atau tidak langsung, untuk setiap kerusakan atau kerugian yang disebabkan atau diduga disebabkan oleh atau sehubungan dengan penggunaan atau kepercayaan pada apa pun konten, barang, atau layanan yang tersedia di atau melalui situs web atau jasa.
 			p Kami sangat menyarankan Anda untuk membaca syarat dan ketentuan dan kebijakan privasi situs web atau layanan pihak ketiga mana pun yang Anda kunjungi.
+</template>
+
+<script>
+export default {
+};
+</script>
+
+<style lang="scss">
+@import "~/node_modules/bootstrap/scss/_functions.scss";
+$sizes: ();
+
+@import "~/node_modules/bootstrap/scss/_variables.scss";
+@import "~/node_modules/bootstrap/scss/_mixins.scss";
+@import "~/node_modules/bootstrap/scss/_root.scss";
+@import "~/node_modules/bootstrap/scss/_reboot.scss";
+@import "~/node_modules/bootstrap/scss/_type.scss";
+@import "~/node_modules/bootstrap/scss/_grid.scss";
+@import "~/node_modules/bootstrap/scss/_utilities.scss";
+
+</style>

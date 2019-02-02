@@ -1,4 +1,42 @@
-<template src='./template.pug' lang="pug">
+<template lang="pug">
+b-card
+	dl
+		.list-group-item
+			b-row(align-h='end')
+				b-button-group
+					b-button(size='sm' variant='primary' @click.stop='rinci') {{rincishow}} harian
+					b-button(size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
+					b-button(size='sm' v-else variant='warning' @click.stop='toggleButton') edit
+		.list-group-item
+			b-row
+				b-col(cols='2')
+					dt.text-right Pembilang
+				b-col(cols='8')
+					dd {{row.item.pembilang}}
+				b-col(cols='2')
+					b-form-input.text-right(v-if='editing && !rincian' :placeholder='pembilang.toString()' v-model='pembilang')
+					.text-right(v-else) {{pembilang}}
+		.list-group-item
+			b-row
+				b-col(cols='2')
+					dt.text-right Penyebut
+				b-col(cols='8')
+					dd {{row.item.penyebut}}
+				b-col(cols='2')
+					b-form-input.text-right(v-if='editing && !rincian'  :placeholder='penyebut.toString()' v-model='penyebut')
+					.text-right(v-else) {{penyebut}}
+	.list-group
+		.list-group-item
+			b-row
+				b-col.text-right(cols='9') Capaian
+				b-col(cols='3') {{rekap}} 
+		.list-group-item
+			b-row
+				b-col.text-right(cols='9') Target
+				b-col(cols='3') {{row.item.target}}
+		.list-group-item(v-if='rincian')
+			harian-detail(:month='month' :editing='editing' @rekapHarian='rekapHarian')
+
 </template>
 
 <script src='./index.js'>

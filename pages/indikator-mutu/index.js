@@ -13,9 +13,11 @@ export default {
 	async beforeMounted() {
 		this.loaded = true
 		this.$nuxt.$loading.start()
+		this.$toast.show('Mengambil data...')
 		await fetch(this.$store)
 		this.$nuxt.$loading.finish()
 		this.loaded = false
+		this.$toast.success('Selesai mengambil data...')
 	},
 	methods: {
 		async updateMonth(val) {

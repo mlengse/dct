@@ -1,3 +1,4 @@
+<template lang="pug">
 section.container 
 	.row
 		.col-md-12
@@ -26,3 +27,24 @@ section.container
 		.col-md-12
 			h4 Persetujuan
 			p Dengan menggunakan situs web kami, Anda dengan ini menyetujui kebijakan privasi kami dan menyetujui persyaratannya.
+
+</template>
+
+<script>
+export default {
+};
+</script>
+
+<style lang="scss">
+@import "~/node_modules/bootstrap/scss/_functions.scss";
+$sizes: ();
+
+@import "~/node_modules/bootstrap/scss/_variables.scss";
+@import "~/node_modules/bootstrap/scss/_mixins.scss";
+@import "~/node_modules/bootstrap/scss/_root.scss";
+@import "~/node_modules/bootstrap/scss/_reboot.scss";
+@import "~/node_modules/bootstrap/scss/_type.scss";
+@import "~/node_modules/bootstrap/scss/_grid.scss";
+@import "~/node_modules/bootstrap/scss/_utilities.scss";
+
+</style>

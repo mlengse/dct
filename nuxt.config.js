@@ -84,6 +84,7 @@ module.exports = {
 	modules: [
 	//	'nuxt-buefy',
 	//	'nuxt-purgecss',
+		'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],
@@ -92,8 +93,11 @@ module.exports = {
 		'@/plugins/vue-buefy',
 		'@/plugins/vue-bootstrap',
 		'@/plugins/vue-react',
-		'@/plugins/firebase'
+		//'@/plugins/firebase'
 	],
-	
+	toast: {
+		position: 'top-right',
+		duration: 1200
+	}
 };
 

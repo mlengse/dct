@@ -1,6 +1,6 @@
 import MonthPicker from '~/components/MonthPicker/index.vue'
 import RowDetails from '~/components/RowDetails/index.vue'
-import StatusCapaian from '~/components/StatusCapaian/index.vue'
+import StatusCapaian from '~/components/StatusCapaian.vue'
 import BTable from "~/node_modules/bootstrap-vue/es/components/table/table";
 
 export default {

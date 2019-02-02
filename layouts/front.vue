@@ -4,5 +4,13 @@
     nuxt
 </template>
 
-<script src='./front.js'>
+<script>
+import Header from '~/components/Header.vue'
+
+export default {
+    components: {
+        Header
+    }
+}
+
 </script>

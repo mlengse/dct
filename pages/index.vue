@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import IndexPage from "~/components/IndexPage/index.vue";
+import IndexPage from "~/components/IndexPage.vue";
 import Strapi from 'strapi-sdk-javascript'
 
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'

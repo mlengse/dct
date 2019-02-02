@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Tos from '~/components/Tos/index.vue'
+import Tos from '~/components/Tos.vue'
 export default {
 	layout: 'front',
 	components: {
