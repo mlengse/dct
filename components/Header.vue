@@ -9,7 +9,7 @@ div
 					b-btn(variant='outline-danger' @click='gotologout') Keluar
 				b-btn(v-else variant='outline-success' @click='toggleLogin') Masuk
 	b-modal#pre
-		b-card.mb-2(:title='nama' :img-src='photo' :img-alt='nama' tag='profil')
+		b-card.mb-2(:title='name' :img-src='photo' :img-alt='name' tag='profil')
 			p.card-text {{email}}
 	b-modal#login(hide-header hide-footer v-model="loginShow")
 		.login
