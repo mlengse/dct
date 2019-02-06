@@ -29,7 +29,7 @@ $sizes: ();
 //@import "~/node_modules/bootstrap/scss/_card.scss";
 //@import "~/node_modules/bootstrap/scss/_breadcrumb.scss";
 @import "~/node_modules/bootstrap/scss/_pagination.scss";
-//@import "~/node_modules/bootstrap/scss/_badge.scss";
+@import "~/node_modules/bootstrap/scss/_badge.scss";
 //@import "~/node_modules/bootstrap/scss/_jumbotron.scss";
 //@import "~/node_modules/bootstrap/scss/_alert.scss";
 //@import "~/node_modules/bootstrap/scss/_progress.scss";

@@ -90,9 +90,9 @@ module.exports = {
 	],
 
 	plugins: [
-		'@/plugins/vue-buefy',
+		//'@/plugins/vue-buefy',
 		'@/plugins/vue-bootstrap',
-		'@/plugins/vue-react',
+		//'@/plugins/vue-react',
 		//'@/plugins/firebase'
 	],
 	toast: {

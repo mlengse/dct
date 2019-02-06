@@ -1,6 +1,8 @@
 <template lang="pug">
-span.tag(:class='["is", variant].join("-")') {{status}}
-
+span.badge(:class='["badge", variant].join("-")') {{status}}
+//--
+	span.tag(:class='["is", variant].join("-")') {{status}}
+//
 </template>
 
 <script>
@@ -9,7 +11,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<!--style lang="sass" scoped>
 @import "~/node_modules/bulma/sass/utilities/_all.sass"
 @import "~/node_modules/bulma/sass/elements/tag.sass"
-</style>
+</style-->
