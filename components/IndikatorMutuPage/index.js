@@ -1,7 +1,7 @@
 import MonthPicker from '~/components/MonthPicker/index.vue'
 import RowDetails from '~/components/RowDetails/index.vue'
 import StatusCapaian from '~/components/StatusCapaian.vue'
-import BTable from "~/node_modules/bootstrap-vue/es/components/table/table";
+//import BTable from "~/node_modules/bootstrap-vue/es/components/table/table";
 
 export default {
   props:[
@@ -9,7 +9,7 @@ export default {
     'loaded'
   ],
   components: {
-    'b-table': BTable,
+    //'b-table': BTable,
     'status-capaian': StatusCapaian,
     'month-picker': MonthPicker,
     'row-details': RowDetails
