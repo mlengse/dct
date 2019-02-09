@@ -5,9 +5,9 @@
 <script>
 import PrivacyPolicy from '~/components/Privacy.vue'
 export default {
-	layout: 'front',
+//	layout: 'front',
 	components: {
-		'privacy-policy': PrivacyPolicy
+		PrivacyPolicy
 	}
 }
 </script>

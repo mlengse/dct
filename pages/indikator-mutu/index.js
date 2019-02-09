@@ -2,9 +2,9 @@ import IndikatorMutuPage from '~/components/IndikatorMutuPage/index.vue'
 import fetch from '~/assets/fetch'
 
 export default {
-	layout: 'front',
+//	layout: 'front',
 	components: {
-		'indikator-mutu': IndikatorMutuPage,
+		IndikatorMutuPage,
 	},
 	data: () => ({
 		month: '',

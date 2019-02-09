@@ -44,6 +44,8 @@ module.exports = {
 	},
 	
 	css: [
+	//	'~/assets/css/style.css'
+
 	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
 	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
@@ -86,12 +88,17 @@ module.exports = {
 	//	'nuxt-purgecss',
 		'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
+		['@nuxtjs/pwa', { icon: false }],
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],
 
 	plugins: [
 		//'@/plugins/vue-buefy',
 		'@/plugins/vue-bootstrap',
+		{
+			src: '~/plugins/auth',
+			ssr: false
+		}
 		//'@/plugins/vue-react',
 		//'@/plugins/firebase'
 	],

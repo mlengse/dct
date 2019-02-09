@@ -1,5 +1,5 @@
 <template lang="pug">
-	indikator-mutu(:month='month' :loaded='loaded' @updateMonth='updateMonth')
+	indikator-mutu-page(:month='month' :loaded='loaded' @updateMonth='updateMonth')
 </template>
 
 <script src='./index.js'>

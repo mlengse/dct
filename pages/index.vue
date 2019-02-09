@@ -25,9 +25,9 @@ query {
 `;
 
 export default {
-	layout: 'front',
+//	layout: 'front',
 	components: {
-		'index-page': IndexPage
+		IndexPage
 	},
 	fetch: async ({ store }) => {
 		store.commit('menus/emptyList')

@@ -1,10 +1,10 @@
-import { Table } from "buefy/dist/components/table";
+//import { Table } from "buefy/dist/components/table";
 
 export default {
   props: ['month', 'editing'],
-  components: {
-    'bf-table': Table
-  },
+//  components: {
+//    'bf-table': Table
+//  },
   data: () => ({
     pembilang: 0,
     penyebut: 0

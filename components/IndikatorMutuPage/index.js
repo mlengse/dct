@@ -10,9 +10,9 @@ export default {
   ],
   components: {
     //'b-table': BTable,
-    'status-capaian': StatusCapaian,
-    'month-picker': MonthPicker,
-    'row-details': RowDetails
+    StatusCapaian,
+    MonthPicker,
+    RowDetails
   },
   data: () => ({
     sortBy: null,

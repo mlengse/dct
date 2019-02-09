@@ -5,9 +5,9 @@
 <script>
 import Tos from '~/components/Tos.vue'
 export default {
-	layout: 'front',
+//	layout: 'front',
 	components: {
-		'tos': Tos
+		Tos
 	}
 }
 </script>
