@@ -15,6 +15,8 @@ export default function ({
 
   return firebase.auth().onAuthStateChanged( user => {
     if (user) {
+     // let curr = firebase.auth().currentUser
+     // console.log(JSON.stringify(curr) === JSON.stringify(user))
       store.commit('users/setUser', JSON.parse(JSON.stringify(user)))
     }
   })

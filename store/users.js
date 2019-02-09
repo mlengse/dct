@@ -102,6 +102,7 @@ export const actions = {
 
 export const mutations = {
   setUser(state, newUser) {
+    //console.log(newUser)
     state.user = newUser
     return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
   },

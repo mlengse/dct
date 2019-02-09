@@ -1,12 +1,12 @@
 <template lang="pug">
 section.container
-	.columns(v-if='account' v-cloak)
+	.columns(v-if='user' v-cloak)
 		.one-half.column.centered
 			.blankslate.blankslate-clean-background
-				.profile-image.centered(v-if='account.image')
-					a.d-inline-block(:href="account.image" target="_blank" title="Click To View")
-						img(:src="account.image" width="100" height="100" :alt="imageAlt")
-				h3(v-text="account.displayName")
+				.profile-image.centered(v-if='user.photoURL')
+					a.d-inline-block(:href="user.photoURL" target="_blank" title="Click To View")
+						img(:src="user.photoURL" width="100" height="100" :alt="imageAlt")
+				h3(v-text="user.displayName")
 	.columns
 		.one-half.column.centered
 			div(v-if="account" v-cloak)
@@ -40,11 +40,12 @@ section.container
 //import { mapState } from 'vuex'
 //import EditAccountForm from '~/components/account/EditAccountForm.vue'
 
+
 export default {
 	// middleware: 'authenticated', // checking if auth'd with firebase kinda sucks as the middleware is triggered before firebase is ready
-	components: {
+//	components: {
 	//	EditAccountForm
-	},
+//	},
 	computed: {
 
 		user() {
@@ -60,7 +61,7 @@ export default {
 		]),
 */
 	imageAlt () {
-			return `Profile image for ${this.account.displayName}`
+			return `Profile image for ${this.user.displayName}`
 		}
 	},
 //	data () {
