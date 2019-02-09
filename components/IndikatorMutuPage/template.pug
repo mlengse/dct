@@ -36,20 +36,20 @@ b-container(fluid)
 							v-if='row.item.capaian === "Belum diinput"' 
 							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
-						) {{row.detailsShowing?'Tutup':'Buka'}} Input
+							v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`'
+						) 
 						b-btn(
 							size='sm'
 							v-if='row.item.capaian === "Belum tercapai"' 
 							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
-						) {{row.detailsShowing?'Tutup':'Buka'}} Evaluasi
-					//-	
+							v-text="`${row.detailsShowing?'Tutup':'Buka'} Evaluasi`"
+						)
 						b-btn(
 							size='sm'
 							variant='outline-primary' 
 							@click.stop="info(row.item, row.index, $event.target)"
 						) Info
-					//	
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month')
 	.row

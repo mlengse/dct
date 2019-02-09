@@ -3,17 +3,16 @@ section.container
 	.columns(v-if='account' v-cloak)
 		.one-half.column.centered
 			.blankslate.blankslate-clean-background
-				.profile-image.centered
+				.profile-image.centered(v-if='account.image')
 					a.d-inline-block(:href="account.image" target="_blank" title="Click To View")
 						img(:src="account.image" width="100" height="100" :alt="imageAlt")
 				h3(v-text="account.displayName")
-				p view and manage your account
 	.columns
 		.one-half.column.centered
 			div(v-if="account" v-cloak)
 				p 
 					| Information pulled from the firebase 
-					code /account
+					code /account 
 					| dataset
 				pre(v-text="`${JSON.stringify(account, null, 2)}`")
 		.mt-4.one-half.column.centered
@@ -76,7 +75,8 @@ export default {
 		signOut () {
 			this.$store.dispatch('users/userLogout')
 				.then(() => {
-					this.$router.go(-1)
+//					this.$router.go(-1)
+					this.$router.push('/')
 //					this.$router.push('/account/login')
 				})
 				.catch((error) => {

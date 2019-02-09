@@ -2,10 +2,15 @@
 div
 	nav.navbar.navbar-expand-lg.navbar-light.bg-light(role="navigation" aria-label="main navigation")
 		section.container
-			nuxt-link.mx-auto.navbar-brand(to='/' exact) Puskesmas Sibela
-			.navbar-right 
-				nuxt-link.navbar-item(v-if="user" to="/account") {{user.email}}
-				nuxt-link.navbar-item(v-else to="/account/login") Login
+			.navbar-collapse.collapse.w-100.order-1.order-md-0.dual-collapse2
+				ul.navbar-nav.mr-auto
+			.mx-auto.order-0
+				nuxt-link.mx-auto.order-0.navbar-brand(to='/' exact) Puskesmas Sibela
+			.navbar-collapse.collapse.w-100.order-3.dual-collapse2
+				.navbar-nav.ml-auto
+					nuxt-link.navbar-item(v-if="user" to="/account" v-text='user.email') 
+					nuxt-link.navbar-item(v-else to="/account/login") 
+						b-btn(variant='outline-success' size='sm') Masuk
 	nuxt
 </template>
 
