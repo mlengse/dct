@@ -3,7 +3,9 @@
 </template>
 
 <script>
-import { auth } from 'firebase/app'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+const { auth } = firebase
 
 const authProviders = {
   Google: auth.GoogleAuthProvider.PROVIDER_ID,
@@ -20,6 +22,7 @@ export default {
       let firebaseui = require('firebaseui')
       let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth())
       const config = {
+        signInFlow: 'popup',
         signInOptions: [
           authProviders.Google,
           authProviders.Facebook,

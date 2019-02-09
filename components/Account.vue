@@ -75,8 +75,9 @@ export default {
 		signOut () {
 			this.$store.dispatch('users/userLogout')
 				.then(() => {
+					this.$router.go(0)
 //					this.$router.go(-1)
-					this.$router.push('/')
+//					this.$router.push('/')
 //					this.$router.push('/account/login')
 				})
 				.catch((error) => {

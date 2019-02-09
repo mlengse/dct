@@ -1,21 +1,39 @@
 <template lang="pug">
 div
 	nav.navbar.navbar-expand-lg.navbar-light.bg-light(role="navigation" aria-label="main navigation")
-		section.container
-			.order-1.order-md-0
-				ul.navbar-nav.mr-auto
-			.mx-auto.order-0
-				nuxt-link.mx-auto.order-0.navbar-brand(to='/' exact) Puskesmas Sibela
-			.order-3
-				.navbar-nav.ml-auto
-					nuxt-link.navbar-item(v-if="user" to="/account" v-text='user.email') 
-					nuxt-link.navbar-item(v-else to="/account/login") 
-						b-btn(variant='outline-success' size='sm') Masuk
+		b-container
+			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
+			.navbar-right 
+				//b-button-group(v-if='user')
+				b-btn(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email}}
+					//b-btn(variant='outline-danger' @click='gotologout') Keluar
+				b-btn(v-else variant='outline-success' size='sm' @click='toggleLogin') Masuk
+	b-modal#pre(hide-header hide-footer)
+		account
+	b-modal#login(hide-header hide-footer v-model="loginShow")
+		login(@close='closeLogin')
 	nuxt
 </template>
 
 <script>
+import Login from '~/components/Login.vue'
+import Account from '~/components/Account.vue'
 export default {
+	components: {
+		Login,
+		Account
+	},
+	data: () => ({
+		loginShow: false,
+	}),
+	methods: {
+		closeLogin() {
+			this.loginShow = false
+		},
+		toggleLogin() {
+			this.loginShow = !this.loginShow
+		}
+	},
 	computed: {
 		user(){
 			return this.$store.state.users.user //getters['users/user']
@@ -41,7 +59,7 @@ $sizes: ();
 @import "~/node_modules/bootstrap/scss/_buttons.scss";
 @import "~/node_modules/bootstrap/scss/_transitions.scss";
 //@import "~/node_modules/bootstrap/scss/_dropdown.scss";
-//@import "~/node_modules/bootstrap/scss/_button-group.scss";
+@import "~/node_modules/bootstrap/scss/_button-group.scss";
 //@import "~/node_modules/bootstrap/scss/_input-group.scss";
 //@import "~/node_modules/bootstrap/scss/_custom-forms.scss";
 //@import "~/node_modules/bootstrap/scss/_nav.scss";
@@ -55,9 +73,9 @@ $sizes: ();
 //@import "~/node_modules/bootstrap/scss/_progress.scss";
 //@import "~/node_modules/bootstrap/scss/_media.scss";
 //@import "~/node_modules/bootstrap/scss/_list-group.scss";
-//@import "~/node_modules/bootstrap/scss/_close.scss";
+@import "~/node_modules/bootstrap/scss/_close.scss";
 //@import "~/node_modules/bootstrap/scss/_toasts.scss";
-//@import "~/node_modules/bootstrap/scss/_modal.scss";
+@import "~/node_modules/bootstrap/scss/_modal.scss";
 //@import "~/node_modules/bootstrap/scss/_tooltip.scss";
 //@import "~/node_modules/bootstrap/scss/_popover.scss";
 //@import "~/node_modules/bootstrap/scss/_carousel.scss";

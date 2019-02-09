@@ -17,9 +17,10 @@ export default {
     // firebase is sometimes slow so we need to account for
     // the user getting authenticated late in the game...
     user (to, from) {
-      this.$router.push('/')
+      this.$emit('close')
+      //this.$router.push('/')
       //this.$router.go(-2)
-    }
+    },
   },
   computed: {
     user(){
