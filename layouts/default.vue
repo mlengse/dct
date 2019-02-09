@@ -2,11 +2,11 @@
 div
 	nav.navbar.navbar-expand-lg.navbar-light.bg-light(role="navigation" aria-label="main navigation")
 		section.container
-			.navbar-collapse.collapse.w-100.order-1.order-md-0.dual-collapse2
+			.order-1.order-md-0
 				ul.navbar-nav.mr-auto
 			.mx-auto.order-0
 				nuxt-link.mx-auto.order-0.navbar-brand(to='/' exact) Puskesmas Sibela
-			.navbar-collapse.collapse.w-100.order-3.dual-collapse2
+			.order-3
 				.navbar-nav.ml-auto
 					nuxt-link.navbar-item(v-if="user" to="/account" v-text='user.email') 
 					nuxt-link.navbar-item(v-else to="/account/login") 
