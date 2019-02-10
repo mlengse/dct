@@ -13,10 +13,10 @@ export default {
   }),
   methods: {
     toggleButton() {
-      this.editing = !this.editing;
+      this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
     },
     simpan() {
-      this.editing = !this.editing;
+      this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
     },
 		rinci() {
 			this.rincian = !this.rincian;
@@ -49,6 +49,9 @@ export default {
 				return 'tutup'
 			}
 			return 'buka'
-		}
+    },
+    isAuth(){
+      return this.$store.getters['users/isAuthenticated']
+    }
   }
 };

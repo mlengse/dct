@@ -7,7 +7,7 @@ div
 				//b-button-group(v-if='user')
 				b-btn(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email}}
 					//b-btn(variant='outline-danger' @click='gotologout') Keluar
-				b-btn(v-else variant='outline-success' size='sm' @click='toggleLogin') Masuk
+				b-btn(v-else variant='outline-success' size='sm' @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)
 		account
 	b-modal#login(hide-header hide-footer v-model="loginShow")
@@ -24,17 +24,28 @@ export default {
 		Account
 	},
 	data: () => ({
-		loginShow: false,
+		loginShow: false
 	}),
 	methods: {
 		closeLogin() {
-			this.loginShow = false
+			this.$store.commit('users/closeLogin')
 		},
-		toggleLogin() {
-			this.loginShow = !this.loginShow
+		openLogin() {
+			this.$store.commit('users/openLogin')
+		},
+	},
+	watch: {
+		login: function(val) {
+			this.loginShow = val
+		},
+		loginShow: function(val) {
+			this.$store.commit('users/toggleLogin', val)
 		}
 	},
 	computed: {
+		login(){
+			return this.$store.getters['users/login']
+		},
 		user(){
 			return this.$store.state.users.user //getters['users/user']
 		}

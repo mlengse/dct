@@ -15,10 +15,12 @@ function createNewAccount(user) {
 
 export const state = () => ({
   user: null,
-  account: null
+  account: null,
+  login: false
 })
 
 export const getters = {
+  login:({login}) => login,
   isAuthenticated: ({ user }) => !!user,
   user: ({user}) => user,
   account: ({ account }) => account
@@ -101,6 +103,15 @@ export const actions = {
 }
 
 export const mutations = {
+  closeLogin(state){
+    state.login = false
+  },
+  openLogin(state){
+    state.login = true
+  },
+  toggleLogin(state, val){
+    state.login = val
+  },
   setUser(state, newUser) {
     //console.log(newUser)
     state.user = newUser
