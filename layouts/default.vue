@@ -5,7 +5,7 @@ div
 			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
 			.navbar-right 
 				//b-button-group(v-if='user')
-				b-btn(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email}}
+				b-btn(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email || user.phoneNumber}}
 					//b-btn(variant='outline-danger' @click='gotologout') Keluar
 				b-btn(v-else variant='outline-success' size='sm' @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)

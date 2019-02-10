@@ -6,7 +6,7 @@ section.container
 				.profile-image.centered(v-if='user.photoURL')
 					a.d-inline-block(:href="user.photoURL" target="_blank" title="Click To View")
 						img(:src="user.photoURL" width="100" height="100" :alt="imageAlt")
-				h3(v-text="user.displayName")
+				h3(v-text="user.displayName || user.phoneNumber")
 	.columns
 		.one-half.column.centered
 			div(v-if="account" v-cloak)
