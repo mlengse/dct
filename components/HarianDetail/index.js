@@ -1,23 +1,44 @@
 //import { Table } from "buefy/dist/components/table";
+import bTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs.js';
+import bTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab.js';
 
 export default {
   props: ['month', 'editing'],
-//  components: {
+  components: {
+    bTabs,
+    bTab
 //    'bf-table': Table
-//  },
+  },
   data: () => ({
+    days: [],
     pembilang: 0,
-    penyebut: 0
+    penyebut: 0,
+    weekSelected:0,
   }), 
+  created(){
+    let startOfMonth = this.$moment(this.month, 'MMMM YYYY').startOf("month").startOf('week');
+    let endOfMonth = this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
+    let day = startOfMonth;
+    while (day <= endOfMonth) {
+      this.days[this.days.length] = {
+        isActive: day.format('MMMM YYYY') === this.month,
+        id: this.days.length,
+        hari: day.format('dddd'),
+        tanggal: day.format('DD-MM-YYYY'),
+        week: day.format('w'),
+        pembilang: 0,
+        penyebut: 0,
+        _rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
+      }
+      day = day.clone().add(1, "d");
+    }
+  },
   methods: {
     inputan(val) {
       let obj = JSON.parse(JSON.stringify(val));
-      this[obj.hari] = 0
-      Object.keys(obj).map( n => {
-        if(n !== 'hari'){
-          this[obj.hari] += Number(obj[n]) 
-        }
-      })
+      this.days[obj.id] = obj
+      this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang), 0)
+      this.penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
     }
   },
   watch: {
@@ -35,34 +56,21 @@ export default {
     }
   },
   computed: {
-    days() {
-      let startOfMonth = this.$moment(this.month, 'MMMM YYYY').startOf("month");
-      let endOfMonth = this.$moment(this.month, 'MMMM YYYY').endOf("month");
-      let day = startOfMonth;
-      let days = []
-      while (day <= endOfMonth) {
-        days.push(day.format('D'))
-        day = day.clone().add(1, "d");
-      }
-      return days
+    weeks() {
+      let weeks = []
+      this.days.map( day => {
+        let week = day.week
+        if(weeks.indexOf(week) < 0 ) {
+          weeks[weeks.length] = week
+        }
+      })
+      return weeks
     },
-    fields() {
-      return ['hari', ...this.days]
-    },
-    hariObj() {
-      let ho = {}
-      this.days.map(day => ho[day] = 0)
-      return ho
+    fields(){
+      return ['hari', 'tanggal', 'pembilang', 'penyebut']
     },
     items() {
-      return [
-        Object.assign({
-          'hari': 'pembilang'
-        }, this.hariObj),
-        Object.assign({
-          'hari': 'penyebut'
-        }, this.hariObj)
-      ]
+      return this.days.filter( day => day.week === this.weeks[this.weekSelected])
     }
   }
 }

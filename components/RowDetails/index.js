@@ -25,7 +25,13 @@ export default {
       this.pembilang = val.pembilang
       this.penyebut = val.penyebut
     },
-	},
+  },
+  mounted(){
+    if (this.row.item.penyebut == Number(this.row.item.penyebut)) {
+      this.penyebut = this.row.item.penyebut
+    }
+    this.penyebut = 0
+  },
   computed: {
     rekap() {
       return this.pembilang / this.penyebut &&
@@ -34,7 +40,10 @@ export default {
         : this.row.item.rekap
         ? `${this.row.item.rekap.jumlah} %`
         : "0 %";
-		},
+    },
+    harianApplied() {
+      return this.row.item.penyebut.includes('hari') || this.row.item.penyebut.includes('pasien')
+    },
 		rincishow() {
 			if(this.rincian){
 				return 'tutup'

@@ -24,7 +24,7 @@ $sizes: ();
 @import "~/node_modules/bootstrap/scss/_button-group.scss";
 //@import "~/node_modules/bootstrap/scss/_input-group.scss";
 //@import "~/node_modules/bootstrap/scss/_custom-forms.scss";
-//@import "~/node_modules/bootstrap/scss/_nav.scss";
+@import "~/node_modules/bootstrap/scss/_nav.scss";
 @import "~/node_modules/bootstrap/scss/_navbar.scss";
 //@import "~/node_modules/bootstrap/scss/_card.scss";
 //@import "~/node_modules/bootstrap/scss/_breadcrumb.scss";

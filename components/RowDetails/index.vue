@@ -4,7 +4,7 @@ b-card
 		.list-group-item
 			b-row(align-h='end')
 				b-button-group
-					b-button(size='sm' variant='primary' @click.stop='rinci') {{rincishow}} harian
+					b-button(size='sm' v-if='harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
 					b-button(size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
 					b-button(size='sm' v-else variant='warning' @click.stop='toggleButton') edit
 		.list-group-item
