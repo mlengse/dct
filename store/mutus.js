@@ -18,9 +18,10 @@ export const mutations = {
 	replace({ list }, indicator) {
 		let ids = list.map( ind => ind.id)
 		let id = ids.indexOf(indicator.id)
-		console.log(JSON.stringify(list[id], null, 2))
+	//	console.log(JSON.stringify(list[id], null, 2))
 		list[id].rekap = indicator.rekap
-		console.log(JSON.stringify(list[id], null, 2))
+		list[id]._showDetails = true
+	//	console.log(JSON.stringify(list[id], null, 2))
 	}
 };
 
