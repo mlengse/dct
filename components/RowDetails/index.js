@@ -26,6 +26,20 @@ export default {
       this.penyebut = val.penyebut
     },
   },
+  watch: {
+    rekap(val) {
+      let row = JSON.parse(JSON.stringify(this.row.item))
+      row.rekap = {
+        periode: this.month,
+        rekaptype: {
+          periode: 'bulanan'
+        },
+        jumlah: Number(val.split(' ')[0])
+      }
+      //console.log(JSON.stringify(row, null, 2))
+      this.$store.commit('mutus/replace', row)
+    }
+  },
   mounted(){
     if (this.row.item.penyebut == Number(this.row.item.penyebut)) {
       this.penyebut = this.row.item.penyebut

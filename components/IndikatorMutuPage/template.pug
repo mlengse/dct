@@ -32,18 +32,10 @@ b-container(fluid)
 					b-button-group.mx-1(size='sm')
 						b-btn(
 							size='sm'
-							v-if='row.item.capaian === "Belum diinput"' 
 							variant='outline-primary' 
 							@click.stop="row.toggleDetails"
 							v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`'
 						) 
-						b-btn(
-							size='sm'
-							v-if='row.item.capaian === "Belum tercapai"' 
-							variant='outline-primary' 
-							@click.stop="row.toggleDetails"
-							v-text="`${row.detailsShowing?'Tutup':'Buka'} Evaluasi`"
-						)
 						b-btn(
 							size='sm'
 							variant='outline-primary' 

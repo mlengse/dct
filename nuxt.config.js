@@ -102,6 +102,10 @@ module.exports = {
 		//'@/plugins/vue-react',
 		//'@/plugins/firebase'
 	],
+	server:{
+		host: '0.0.0.0',
+		port: 6060
+	},
 	toast: {
 		position: 'top-right',
 		duration: 1200

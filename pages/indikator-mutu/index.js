@@ -1,5 +1,5 @@
 import IndikatorMutuPage from '~/components/IndikatorMutuPage/index.vue'
-import fetch from '~/assets/fetch'
+import query from './query.graphql'
 
 export default {
 //	layout: 'front',
@@ -26,7 +26,7 @@ export default {
 				this.loaded = true
 				this.$nuxt.$loading.start()
 				this.$toast.show('Mengambil data...')
-				await fetch(this.$store, val)
+				await this.$store.dispatch('mutus/fetch', { query, month: val })
 				this.$toast.success('Selesai mengambil data...')
 				this.$nuxt.$loading.finish()
 				this.loaded = false
