@@ -116,7 +116,6 @@ export default {
     if (this.rowitem.penyebut == Number(this.rowitem.penyebut)) {
       this.penyebut = this.rowitem.penyebut
     }
-    
   },
   computed: {
     rekap() {
@@ -149,9 +148,18 @@ export default {
       return rekap
     },
     rowitem(){
+      let vm = this
       let rowitem = this.row.item
       for(let des of this.desc) {
         rowitem[des.type] = des.name
+        des.counters.length && des.counters.map( counterId => {
+          let counter = vm.$store.getters['data/counter'](counterId) || vm.$store.dispatch('data/counter', counterId)
+          if(counter){
+            if(vm.$moment(counter.waktu, vm.$moment.ISO_8601).format('MMMM YYYY') === vm.month){
+              vm[des.type] = Number(counter.jumlah)
+            }
+          } 
+        })
       }
       return rowitem
     },

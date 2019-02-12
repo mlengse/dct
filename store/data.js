@@ -5,6 +5,19 @@ const apiUrl = process.env.apiUrl || 'http://localhost:1337'
 
 const strapi = new Strapi(apiUrl)
 
+const counterQuery = `
+query State($id: ID!){
+	counter(id: $id) {
+		_id
+		jumlah
+		waktu
+		countername {
+			_id
+		}
+	}
+}
+				`
+
 export const state = () => ({
 	list:[],
 	data:{},
@@ -71,7 +84,7 @@ export const mutations = {
 				_id: countername._id,
 				name: countername.name,
 				type: countername.countertype.name,
-				counters: countername.counters
+				counters: countername.counters.map(counter => counter._id)
 			}
 		}
 	},
@@ -95,6 +108,18 @@ export const getters = {
 };
 
 export const actions = {
+	async counter( store, counterId){
+		const { data: {counter} } = await strapi.request("post", "/graphql", {
+			data: {
+				query: counterQuery,
+				variables: {
+					id: counterId
+				}
+			}
+		});
+
+		store.commit('counterMutate', counter)
+	},
 	async sendCounter( store, { counter }){
 		let exist = await strapi.getEntries('counters', { 
 			waktu: counter.waktu,
