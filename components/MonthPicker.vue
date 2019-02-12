@@ -1,3 +1,16 @@
+<template lang="pug">
+b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
+	b-button-group.mx-1
+		b-btn(size='sm' :disabled='loading' variant='primary' @click='prevMonth') &lsaquo;
+		b-btn(size='sm' disabled variant='outline-primary' ) {{month}}
+		b-btn(size='sm' :disabled='loading' variant='primary' @click='nextMonth') &rsaquo;
+	b-button-group.mx-1
+		b-btn(size='sm' v-if='blnHitung' :disabled='loading' variant='primary' @click='goBlnHitung') bulan hitung
+		b-btn(size='sm' v-if='blnJalan' :disabled='loading' variant='primary' @click='goBlnJalan') bulan berjalan
+
+</template>
+
+<script>
 export default {
 	props: ['loading'],
 	data: () => ({
@@ -36,3 +49,5 @@ export default {
 		},
 	}
 }
+</script>
+

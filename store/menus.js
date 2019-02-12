@@ -1,16 +1,19 @@
 export const state = () => ({
-	list: []
+	menuList: [],
+	menu: {}
 })
 
 export const mutations = {
-	add({ list }, menu) {
-		list[list.length] = menu
+	add({ menuList, menu}, payload) {
+		payload.cover = payload.cover.url
+		menuList.push(payload._id)
+		menu[payload._id] = payload
 	},
-	emptyList({ list }) {
-		list.length = 0
+	emptyList(state) {
+		state.menuList = []
 	}
 }
 
 export const getters = {
-	list: ({ list }) => list
+	list: ({ menuList, menu }) => menuList.map( menuId => menu[menuId])
 }

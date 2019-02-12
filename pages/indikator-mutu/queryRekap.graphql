@@ -1,0 +1,12 @@
+query States($periode: String!){
+	rekaps(where:{
+  	periode: $periode
+  }){
+    _id
+  	jumlah
+    periode
+    indicator{
+      _id
+    }
+  }
+}

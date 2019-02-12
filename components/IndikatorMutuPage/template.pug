@@ -27,7 +27,7 @@ b-container(fluid)
 				@filtered='onFiltered'
 			)
 				template(slot='capaian' slot-scope='row')
-					status-capaian(:status='row.item.capaian' :variant='row.item.variant')
+					status-capaian(:mutu='row.item' :month='month')
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
 						b-btn(

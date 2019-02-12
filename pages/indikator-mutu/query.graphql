@@ -1,5 +1,7 @@
-query States($name: String!, $month: String!){
+query States($name: String!){
   states(where: { name: $name }) {
+    _id
+    name
     indicators(where: { active: true }) {
       _id
       bagian {
@@ -7,6 +9,7 @@ query States($name: String!, $month: String!){
       }
       name
       counternames {
+        _id
         name
         countertype {
           name
@@ -18,13 +21,6 @@ query States($name: String!, $month: String!){
       target
       satuan {
         name
-      }
-      rekaps(where: { periode: $month}) {
-        periode
-        rekaptype {
-          periode
-        }
-        jumlah
       }
     }
   }

@@ -1,5 +1,5 @@
-import MonthPicker from '~/components/MonthPicker/index.vue'
-import RowDetails from '~/components/RowDetails/index.vue'
+import MonthPicker from '~/components/MonthPicker.vue'
+import RowDetails from '~/components/RowDetails.vue'
 import StatusCapaian from '~/components/StatusCapaian.vue'
 //import BTable from "~/node_modules/bootstrap-vue/es/components/table/table";
 
@@ -57,12 +57,10 @@ export default {
       sortable: true
     })),
     mutus() {
-      return JSON.parse(JSON.stringify(this.$store.getters['mutus/list'].map(mutu => Object.assign(mutu, {
-        capaian: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
-        variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
+      return this.$store.getters['data/mutus'].map(mutu => ({
+        ...mutu,
         _showDetails: mutu._showDetails || false,
-      }))))
-
+      }))
     }
   }
 };
