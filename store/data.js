@@ -1,6 +1,7 @@
 import Strapi from 'strapi-sdk-javascript'
 
-const apiUrl = process.env.apiUrl || 'http://localhost:1337'
+//const apiUrl = process.env.apiUrl || 'http://localhost:1337'
+const apiUrl = 'http://192.168.1.77:1337'
 
 const strapi = new Strapi(apiUrl)
 
@@ -9,6 +10,8 @@ export const state = () => ({
 	data:{},
 	indicatorList: [],
 	indicator: {},
+	counternameList: [],
+	countername: {},
 	counterList: [],
 	counter: {},
 	rekapList: [],
@@ -16,52 +19,114 @@ export const state = () => ({
 });
 
 export const mutations = {
+	counterMutate( state, payload ){
+		if(state.counterList.indexOf(payload._id) < 0){
+			state.counterList.push(payload._id)
+			state.countername[payload.countername._id].counters.push(payload._id)
+		}
+		state.counter = {
+			...state.counter,
+			[payload._id]: {
+				jumlah: payload.jumlah,
+				waktu: payload.waktu,
+				countername: payload.countername._id
+			}
+		}
+	},
 	rekapMutate( state, payload ){
 		if(state.rekapList.indexOf(payload._id) < 0){
 			state.rekapList.push(payload._id)
 			state.indicator[payload.indicator._id].rekaps.push(payload._id)
 		}
-		state.rekap[payload._id] = {
-			jumlah: payload.jumlah,
-			periode: payload.periode,
-			indicator: payload.indicator._id,
+		state.rekap = {
+			...state.rekap,
+			[payload._id]: {
+				jumlah: payload.jumlah,
+				periode: payload.periode,
+				indicator: payload.indicator._id,
+			}
 		}
 	},
 	stateMutate(state, stateData) {
 		if (state.list.indexOf(stateData.name) < 0){
 			state.list.push(stateData.name)
 		}
-		state.data[stateData.name] = {
-			_id: stateData._id,
-			name: stateData.name,
-			indicators: stateData.indicators.map( indicator => indicator._id)
+		state.data = {
+			...state.data,
+			[stateData.name]: {
+				_id: stateData._id,
+				name: stateData.name,
+				indicators: stateData.indicators.map( indicator => indicator._id)
+			}
 		}
 	},
-	counterMutate( state, counter ){
-		if(state.counterList.indexOf(counter._id) < 0){
-			state.counterList.push(counter._id)
+	counternameMutate( state, countername ){
+//		console.log(JSON.stringify(countername, null, 2))
+		if(state.counternameList.indexOf(countername._id) < 0){
+			state.counternameList.push(countername._id)
 		}
-		state.counter[counter._id] = {
-			name: counter.name,
-			type: counter.countertype.name
+		state.countername = {
+			...state.countername,
+			[countername._id]: {
+				_id: countername._id,
+				name: countername.name,
+				type: countername.countertype.name,
+				counters: countername.counters
+			}
 		}
 	},
 	indicatorMutate(state, indicator) {
 		if (state.indicatorList.indexOf(indicator._id) < 0) {
 			state.indicatorList.push(indicator._id)
 		}
-		state.indicator[indicator._id] = indicator
+		state.indicator = {
+			...state.indicator,
+			[indicator._id]: indicator
+		}
 	}
 
 };
 
 export const getters = {
 	mutus: ({indicator, data}) => data.mutu && data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
-	counters: ({ counter }) => id => counter[id],
+	countername: ({ countername }) => id => countername[id],
 	rekap: ({rekap}) => id => rekap[id],
+	counter: ({counter}) => id => counter[id]
 };
 
 export const actions = {
+	async sendCounter( store, { counter }){
+		let exist = await strapi.getEntries('counters', { 
+			waktu: counter.waktu,
+			countername: {
+				_id: counter.countername._id
+			}
+		})
+		let res
+		if(exist.length){
+			let counterId = exist[0]._id
+			res = await strapi.updateEntry('counters', counterId, counter)
+		} else {
+			res = await strapi.createEntry('counters', counter)
+		}
+		store.commit('counterMutate', res)
+	},
+	async sendRekap( store, { rekap }){
+		let exist = await strapi.getEntries('rekaps', { 
+			periode: rekap.periode,
+			indicator: {
+				_id: rekap.indicator._id
+			}
+		})
+		let res
+		if(exist.length){
+			let rekapId = exist[0]._id
+			res = await strapi.updateEntry('rekaps', rekapId, rekap)
+		} else {
+			res = await strapi.createEntry('rekaps', rekap)
+		}
+		store.commit('rekapMutate', res)
+	},
 	async fetchRekap( store, { query, periode}){
 		const { data: { rekaps} } = await strapi.request("post", "/graphql", {
 			data: {
@@ -101,14 +166,14 @@ export const actions = {
 					numtarget: indicators[i].target,
 					satuan: indicators[i].satuan.name,
 					target: `${indicators[i].operator.name === '<=' ? `<= ` : ``}${indicators[i].target} ${indicators[i].satuan.name === 'persen' ? '%' : indicators[i].satuan.name}`,
-					counters: [],
+					counternames: [],
 					rekaps: [],
 				}
 
 				if (indicators[i].counternames.length) {
-					for (let counter of indicators[i].counternames) {
-						store.commit('counterMutate', counter)
-						indicator.counters.push(counter._id)
+					for (let countername of indicators[i].counternames) {
+						store.commit('counternameMutate', countername)
+						indicator.counternames.push(countername._id)
 					}
 				}
 

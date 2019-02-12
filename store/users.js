@@ -4,24 +4,42 @@ import '~/node_modules/firebase/auth'
 
 import { firebaseAction } from 'vuexfire'
 
+import Strapi from 'strapi-sdk-javascript'
+
+//const apiUrl = 'http://192.168.1.77:1337'
+
+const apiUrl = process.env.apiUrl || 'http://localhost:1337'
+
+const strapi = new Strapi(apiUrl)
+
 export const state = () => ({
   user: null,
   account: null,
-  login: false
+  login: false,
+  auth: null,
+  token: '',
+  jwt:''
 })
 
 export const getters = {
   login:({login}) => login,
   isAuthenticated: ({ user }) => !!user,
   user: ({user}) => user,
-  account: ({ account }) => account
+  account: ({ account }) => account,
+  token: ({token}) => token
 }
 
 export const actions = {
   setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
     return bindFirebaseRef('account', firebase.database().ref(path))
   }),
-  userLogout({ state }) {
+  async strapiLogin({ state }){
+    let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
+   // console.log(JSON.stringify(auth, null, 2))
+    this.commit('users/setAuth', auth)
+    return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
+  },
+  userLogout() {
     return firebase.auth()
       .signOut()
       .then(() => {
@@ -31,6 +49,11 @@ export const actions = {
 }
 
 export const mutations = {
+  setAuth(state, val){
+    state.auth = val.user
+    state.jwt = val.jwt
+    state.token = val.user._id
+  },
   closeLogin(state){
     state.login = false
   },
@@ -42,7 +65,7 @@ export const mutations = {
   },
   setUser(state, newUser) {
     state.user = newUser
-    return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
+    return this.dispatch('users/strapiLogin')
   },
   resetUser(state) {
     state.user = null

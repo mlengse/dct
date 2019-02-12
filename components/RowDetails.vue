@@ -52,14 +52,44 @@ export default {
     editing: false,
     pembilang: 0,
     penyebut: 0,
-    rincian: false
+    rincian: false,
+    rowRekap: null,
   }),
   methods: {
     toggleButton() {
       this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
     },
-    simpan() {
+    async simpan() {
+      let vm = this
       this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
+      this.$nuxt.$loading.start()
+      this.$toast.show('Simpan rekap')
+      try {
+        this.rowRekap && await Promise.all([
+          this.$store.dispatch('data/sendRekap', {
+            rekap: this.rowRekap
+          }),
+          this.desc.map( async des => {
+            await vm.$store.dispatch('data/sendCounter', {
+              counter: {
+                jumlah: Number(vm[des.type]),
+                waktu: vm.$moment(vm.month, 'MMMM YYYY').toISOString(),
+                countername: {
+                  _id: des._id
+                }
+              }
+            })
+          })
+        ])
+        this.$toast.success('Rekap tersimpan')
+        this.$nuxt.$loading.finish()
+
+      } catch(err){
+        this.$toast.success('simpan gagal')
+        this.$nuxt.$loading.finish()
+
+      }
+
     },
 		rinci() {
 			this.rincian = !this.rincian;
@@ -74,18 +104,19 @@ export default {
       let row = JSON.parse(JSON.stringify(this.rowitem))
       row.rekap = {
         periode: this.month,
-        rekaptype: {
-          periode: 'bulanan'
-        },
-        jumlah: Number(val.split(' ')[0])
+        jumlah: Number(val.split(' ')[0]),
+        indicator: {
+          _id: row._id
+        }
       }
+      this.rowRekap = row.rekap
     }
   },
   mounted(){
     if (this.rowitem.penyebut == Number(this.rowitem.penyebut)) {
       this.penyebut = this.rowitem.penyebut
     }
-    this.penyebut = 0
+    
   },
   computed: {
     rekap() {
@@ -125,7 +156,7 @@ export default {
       return rowitem
     },
     desc(){
-      return this.row.item.counters.map(counterId => this.$store.getters['data/counters'](counterId))
+      return this.row.item.counternames.map(counternameId => this.$store.getters['data/countername'](counternameId))
     },
     isAuth(){
       return this.$store.getters['users/isAuthenticated']

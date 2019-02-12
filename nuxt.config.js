@@ -32,7 +32,7 @@ module.exports = {
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
-					test: /\.(js|vue)$/,
+					test: /\.(js|vue|graphql)$/,
 					loader: "eslint-loader",
 					exclude: /(node_modules)/
 				});
@@ -58,7 +58,9 @@ module.exports = {
 		databaseURL: process.env.databaseURL,
 		projectId: process.env.projectId,
 		storageBucket: process.env.storageBucket,
-		messagingSenderId: process.env.messagingSenderId
+		messagingSenderId: process.env.messagingSenderId,
+		strapiUser: process.env.strapiUser,
+		strapiPwd: process.env.strapiPwd
 	},
 
 	/*
