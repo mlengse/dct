@@ -56,7 +56,7 @@ export const mutations = {
 };
 
 export const getters = {
-	mutus: ({indicator, data}) => data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
+	mutus: ({indicator, data}) => data.mutu && data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
 	counters: ({ counter }) => id => counter[id],
 	rekap: ({rekap}) => id => rekap[id],
 };

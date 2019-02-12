@@ -16,6 +16,16 @@ export default {
 			name: 'mutu'
 		})
 	},
+	async beforeMounted(){
+		this.month = this.$moment().format('MMMM YYYY')
+		this.loaded = true
+		this.$nuxt.$loading.start()
+		this.$toast.show('Mengambil data...')
+		await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
+		this.$toast.success('Selesai mengambil data...')
+		this.$nuxt.$loading.finish()
+		this.loaded = false
+	},
 	methods: {
 		async updateMonth(val) {
 			this.month = val
