@@ -85,7 +85,7 @@ export default {
         this.$nuxt.$loading.finish()
 
       } catch(err){
-        this.$toast.success('simpan gagal')
+        this.$toast.error('simpan gagal')
         this.$nuxt.$loading.finish()
 
       }
@@ -153,7 +153,7 @@ export default {
       for(let des of this.desc) {
         rowitem[des.type] = des.name
         des.counters.length && des.counters.map( counterId => {
-          let counter = vm.$store.getters['data/counter'](counterId) || vm.$store.dispatch('data/counter', counterId)
+          let counter = vm.$store.getters['data/counter'](counterId) || vm.$store.dispatch('data/counter', {vm, counterId})
           if(counter){
             if(vm.$moment(counter.waktu, vm.$moment.ISO_8601).format('MMMM YYYY') === vm.month){
               vm[des.type] = Number(counter.jumlah)

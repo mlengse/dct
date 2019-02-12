@@ -108,7 +108,8 @@ export const getters = {
 };
 
 export const actions = {
-	async counter( store, counterId){
+	async counter( store, {vm, counterId}){
+		vm.$nuxt.$loading.start()
 		const { data: {counter} } = await strapi.request("post", "/graphql", {
 			data: {
 				query: counterQuery,
@@ -117,7 +118,7 @@ export const actions = {
 				}
 			}
 		});
-
+		vm.$nuxt.$loading.finish()
 		store.commit('counterMutate', counter)
 	},
 	async sendCounter( store, { counter }){
