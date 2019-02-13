@@ -5,6 +5,11 @@ module.exports = {
 	/*
 	** Build configuration
 	*/
+	axios: {
+		baseURL: 'https://fyyzavv98cy2ef0q.v1.p.beameio.net',
+		proxyHeaders: false,
+		credentials: false
+	},
 
 	build: {
 		//analyze: true,
@@ -88,6 +93,7 @@ module.exports = {
 	modules: [
 	//	'nuxt-buefy',
 	//	'nuxt-purgecss',
+		'@nuxtjs/axios',
 		'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
 		['@nuxtjs/pwa', { icon: false }],
