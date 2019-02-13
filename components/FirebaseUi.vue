@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import firebase from '~/node_modules/firebase/app'
+import '~/node_modules/firebase/auth'
 const { auth } = firebase
 
 const authProviders = {
@@ -19,7 +19,8 @@ export default {
   mounted() {
     let vm = this
     if(process.browser){
-      let firebaseui = require('firebaseui')
+//      let firebaseui = require('~/assets/firebaseui')
+      let firebaseui = require('~/node_modules/firebaseui/dist/npm')
       let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth())
       const config = {
         signInFlow: 'popup',

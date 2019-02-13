@@ -2,10 +2,52 @@
 	indikator-mutu-page(:month='month' :loaded='loaded' @updateMonth='updateMonth')
 </template>
 
-<script src='./index.js'>
+<script>
+import IndikatorMutuPage from '~/components/IndikatorMutuPage.vue'
+import queryRekap from './queryRekap.graphql'
+import query from './query.graphql'
+
+export default {
+	components: {
+		IndikatorMutuPage,
+	},
+	data: () => ({
+		month: '',
+		loaded: false,
+	}),
+	async fetch({store}) {
+		await store.dispatch('data/fetch', {
+			query,
+			name: 'mutu'
+		})
+	},
+	async beforeMounted(){
+		this.month = this.$moment().format('MMMM YYYY')
+		this.loaded = true
+		this.$nuxt.$loading.start()
+		//this.$toast.show('Mengambil data...')
+		await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
+		//this.$toast.success('Selesai mengambil data...')
+		this.$nuxt.$loading.finish()
+		this.loaded = false
+	},
+	methods: {
+		async updateMonth(val) {
+			this.month = val
+			this.loaded = true
+			this.$nuxt.$loading.start()
+			//this.$toast.show('Mengambil data...')
+			await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: val })
+			//this.$toast.success('Selesai mengambil data...')
+			this.$nuxt.$loading.finish()
+			this.loaded = false
+		},
+	},
+
+};
 </script>
 
-<style lang="scss">
+<!--style lang="scss">
 @import "~/node_modules/bootstrap/scss/_functions.scss";
 $sizes: ();
 
@@ -18,4 +60,4 @@ $sizes: ();
 @import "~/node_modules/bootstrap/scss/_grid.scss";
 @import "~/node_modules/bootstrap/scss/_utilities.scss";
 
-</style>
+</style--!>

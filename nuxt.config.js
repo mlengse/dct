@@ -6,13 +6,13 @@ module.exports = {
 	** Build configuration
 	*/
 	axios: {
-		baseURL: 'https://fyyzavv98cy2ef0q.v1.p.beameio.net',
+		baseURL: process.env.API_SIBELA,
 		proxyHeaders: false,
 		credentials: false
 	},
 
 	build: {
-		//analyze: true,
+		analyze: true,
 
 		babel: {
 			plugins: [
@@ -37,7 +37,7 @@ module.exports = {
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
-					test: /\.(js|vue|graphql)$/,
+					test: /\.(js|vue)$/,
 					loader: "eslint-loader",
 					exclude: /(node_modules)/
 				});
@@ -51,12 +51,14 @@ module.exports = {
 	css: [
 	//	'~/assets/css/style.css'
 
-	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
+		"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
-	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
+		"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
 	],
 
 	env: {
+		API_URL: process.env.API_URL,
+		API_SIBELA: process.env.API_SIBELA,
 		apiUrl: process.env.apiUrl,
 		apiKey: process.env.apiKey,
 		authDomain: process.env.authDomain,
@@ -81,10 +83,13 @@ module.exports = {
 				content: "aplikasi bantu Puskesmas Sibela"
 			}
 		],
-		link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+		link: [
+			{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+//			{type:"text/css", rel:"stylesheet", href:"https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth.css"}
+		],
 		title: "Puskesmas Sibela",
+//		script: [{ src:"https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth__id.js"}],
 	},
-	
 	/*
 	 ** Customize the progress bar color
 	 */
@@ -94,9 +99,9 @@ module.exports = {
 	//	'nuxt-buefy',
 	//	'nuxt-purgecss',
 		'@nuxtjs/axios',
-		'@nuxtjs/toast',
+	//	'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
-		['@nuxtjs/pwa', { icon: false }],
+	//	['@nuxtjs/pwa', { icon: false }],
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],
 
@@ -114,9 +119,11 @@ module.exports = {
 		host: '0.0.0.0',
 		port: 6060
 	},
+/*	
 	toast: {
 		position: 'top-right',
 		duration: 1200
 	}
-};
+*/
+}
 

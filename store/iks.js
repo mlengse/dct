@@ -30,7 +30,7 @@ export const getters = {
 
 export const actions = {
   async all(store){
-    let { data } = await this.$axios.get('https://fyyzavv98cy2ef0q.v1.p.beameio.net/api/iks', {}, {
+    let { data } = await this.$axios.get(`${process.env.API_SIBELA}/api/iks`, {}, {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },

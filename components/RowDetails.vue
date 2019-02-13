@@ -63,7 +63,7 @@ export default {
       let vm = this
       this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
       this.$nuxt.$loading.start()
-      this.$toast.show('Simpan rekap')
+     // this.$toast.show('Simpan rekap')
       try {
         this.rowRekap && await Promise.all([
           this.$store.dispatch('data/sendRekap', {
@@ -81,11 +81,11 @@ export default {
             })
           })
         ])
-        this.$toast.success('Rekap tersimpan')
+       // this.$toast.success('Rekap tersimpan')
         this.$nuxt.$loading.finish()
 
       } catch(err){
-        this.$toast.error('simpan gagal')
+       // this.$toast.error('simpan gagal')
         this.$nuxt.$loading.finish()
 
       }

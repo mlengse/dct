@@ -1,8 +1,8 @@
 import firebase from '~/node_modules/firebase/app'
-import '~/node_modules/firebase/database'
+//import '~/node_modules/firebase/database'
 import '~/node_modules/firebase/auth'
 
-import { firebaseAction } from 'vuexfire'
+//import { firebaseAction } from 'vuexfire'
 
 import Strapi from 'strapi-sdk-javascript'
 
@@ -30,14 +30,14 @@ export const getters = {
 }
 
 export const actions = {
-  setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
-    return bindFirebaseRef('account', firebase.database().ref(path))
-  }),
+  //setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
+  //  return bindFirebaseRef('account', firebase.database().ref(path))
+  //}),
   async strapiLogin({ state }){
     let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
    // console.log(JSON.stringify(auth, null, 2))
-    this.commit('users/setAuth', auth)
-    return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
+    return this.commit('users/setAuth', auth)
+    //return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
   },
   userLogout() {
     return firebase.auth()

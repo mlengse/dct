@@ -1,5 +1,5 @@
 import firebaseConfig from '~/firebaseConfig'
-import firebase from 'firebase/app'
+import firebase from '~/node_modules/firebase/app'
 
 if (!firebaseConfig) {
   throw new Error('missing firebaseConfig.js config.')

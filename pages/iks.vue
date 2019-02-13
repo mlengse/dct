@@ -57,13 +57,13 @@ section.container
 import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
 import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
 import bProgress from '~/node_modules/bootstrap-vue/es/components/progress/progress';
-import bTable from '~/node_modules/bootstrap-vue/es/components/table/table';
+//import bTable from '~/node_modules/bootstrap-vue/es/components/table/table';
 export default {
 	components: {
 		bInputGroup,
 		bFormSelect,
 		bProgress,
-		bTable,
+	//	bTable,
 	},
 	data: () => ({
 		kelSelected: 'MOJOSONGO',
@@ -177,7 +177,7 @@ export default {
 	}
 }
 </script>
-<style lang="scss">
+<!--style lang="scss">
 @import "~/node_modules/bootstrap/scss/_functions.scss";
 $sizes: ();
 
@@ -218,4 +218,4 @@ $sizes: ();
 @import "~/node_modules/bootstrap/scss/_utilities.scss";
 //@import "~/node_modules/bootstrap/scss/_print.scss";
 
-</style>
+</style--!>

@@ -53,7 +53,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<!--style lang="scss">
 @import "~/node_modules/bootstrap/scss/_functions.scss";
 $sizes: ();
 
@@ -93,4 +93,4 @@ $sizes: ();
 //@import "~/node_modules/bootstrap/scss/_spinners.scss";
 @import "~/node_modules/bootstrap/scss/_utilities.scss";
 //@import "~/node_modules/bootstrap/scss/_print.scss";
-</style>
+</style--!>

@@ -21,7 +21,7 @@ section.container
 <script>
 import Strapi from 'strapi-sdk-javascript'
 
-const apiUrl = process.env.apiUrl || 'http://localhost:1337'
+const apiUrl = process.env.apiUrl
 
 const strapi = new Strapi(apiUrl)
 
@@ -67,7 +67,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<!--style lang="scss">
 @import "~/node_modules/bootstrap/scss/_functions.scss";
 $sizes: ();
 
@@ -87,4 +87,4 @@ $sizes: ();
 //@import "~/node_modules/bootstrap/scss/_close.scss";
 //@import "~/node_modules/bootstrap/scss/_modal.scss";
 @import "~/node_modules/bootstrap/scss/_utilities.scss";
-</style>
+</style--!>
