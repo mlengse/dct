@@ -3,13 +3,13 @@ section.container
 	.row.mt-2
 		h3 Indeks Keluarga Sehat Wilayah
 	.row.mt-2
-		.col-6
+		.col-md-6.mt-2
 			b-input-group(prepend='Kelurahan' size='sm')
 				b-form-select(v-model='kelSelected' :options='kel' size='sm')
-		.col-3
+		.col-md-3.mt-2
 			b-input-group(prepend='RW' size='sm')
 				b-form-select(v-model='rwSelected' :options='rw' size='sm')
-		.col-3
+		.col-md-3.mt-2
 			b-input-group(prepend='RT' size='sm')
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
@@ -19,36 +19,36 @@ section.container
 				.row
 					.col IKS 
 					.col(:class='["text", iksTotalAttr.variant].join("-")') {{iksTotal}}  
-					.col-6
+					.col-md-6
 						span.badge(:class='["badge", iksTotalAttr.variant].join("-")') {{iksTotalAttr.text}}
 			.list-group-item
 				.row
 					.col Jumlah Keluarga
 					.col {{iks.jml}}
-					.col-6
+					.col-md-6
 						b-progress(:value="iks.jml" :max="iks.jml" variant='secondary')
 			.list-group-item
 				.row
 					.col Sehat
 					.col {{iks.sehat}}
-					.col-6
+					.col-md-6
 						b-progress(:value="iks.sehat" :max="iks.jml" variant='success')
 			.list-group-item
 				.row
 					.col Pra Sehat
 					.col {{iks.prasehat}}
-					.col-6
+					.col-md-6
 						b-progress(:value="iks.prasehat" :max="iks.jml" variant='warning')
 			.list-group-item
 				.row
 					.col Tidak Sehat
 					.col {{iks.tdksehat}}
-					.col-6
+					.col-md-6
 						b-progress(:value="iks.tdksehat" :max="iks.jml" variant='danger')
 	.row.mt-2.fluid
-		b-table(responsive striped hover :fields='fields' :items="items")
+		b-table(responsive stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
-				.text-right(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
+				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
 	//.row.mt-2.fluid
 		pre {{iks}}
 
@@ -66,7 +66,7 @@ export default {
 		bTable,
 	},
 	data: () => ({
-		kelSelected: 'Semua',
+		kelSelected: 'MOJOSONGO',
 		rwSelected: 'Semua',
 		rtSelected: 'Semua',
 		fields:{
