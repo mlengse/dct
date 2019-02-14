@@ -4,8 +4,8 @@
 
 <script>
 import IndikatorMutuPage from '~/components/IndikatorMutuPage.vue'
-import queryRekap from './queryRekap.graphql'
-import query from './query.graphql'
+import queryRekap from '../schema/queryRekap.graphql'
+import query from '../schema/query.graphql'
 
 export default {
 	components: {
@@ -15,12 +15,10 @@ export default {
 		month: '',
 		loaded: false,
 	}),
-	async fetch({store}) {
-		await store.dispatch('data/fetch', {
+	fetch: async ({store}) => await store.dispatch('data/fetch', {
 			query,
 			name: 'mutu'
-		})
-	},
+	}),
 	async beforeMounted(){
 		this.month = this.$moment().format('MMMM YYYY')
 		this.loaded = true

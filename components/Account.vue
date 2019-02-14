@@ -8,7 +8,7 @@ section.container
 						img(:src="user.photoURL" width="100" height="100" :alt="imageAlt")
 				h3(v-text="user.displayName || user.phoneNumber")
 	.columns
-		.one-half.column.centered
+		//.one-half.column.centered
 			div(v-if="account" v-cloak)
 				p 
 					| Information pulled from the firebase 

@@ -81,7 +81,7 @@ export default {
 				label: 'Σ Keluarga Bernilai Y',
 				sortable: true
 			},
-			t: {
+			penyebut: {
 				label: 'Σ Keluarga yang Diukur',
 				sortable: true
 			},
@@ -112,12 +112,10 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
-	async created(){
+	async beforeMounted(){
 		await this.$store.dispatch('iks/all')
 	},
-	async fetch({store}) {
-		await store.dispatch('iks/all')
-	},
+	fetch: async ({store}) => await store.dispatch('iks/all'),
 	computed: {
 		kel(){
 			return this.$store.getters['iks/kel']

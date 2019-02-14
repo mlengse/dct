@@ -13,7 +13,7 @@ section.container
 						h5.card-title {{ menu.nama }}
 						p.card-text {{ menu.deskripsi || '' }}
 						a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
-						nuxt-link.btn.btn-primary(v-else :to="menu.nama.toLowerCase().split(' ').join('-')" tag='a' append) Lihat menu
+						nuxt-link.btn.btn-primary(v-else :to="menu => getlink(menu)" tag='a' append) Lihat menu
 				p(v-if='!filteredList.length') No results :(
 
 </template>
@@ -63,6 +63,9 @@ export default {
 		menus.forEach(menu => {
 			store.commit('menus/add', menu)
 		})
+	},
+	methods:{
+		getlink: (menu) => menu.nama.toLowerCase().split(' ').join('-')
 	}
 }
 </script>

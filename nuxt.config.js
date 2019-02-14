@@ -37,7 +37,7 @@ module.exports = {
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
-					test: /\.(js|vue)$/,
+					test: /\.(js|vue|graphql)$/,
 					loader: "eslint-loader",
 					exclude: /(node_modules)/
 				});
@@ -101,7 +101,7 @@ module.exports = {
 		'@nuxtjs/axios',
 	//	'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
-	//	['@nuxtjs/pwa', { icon: false }],
+		['@nuxtjs/pwa', { icon: false }],
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],
 
