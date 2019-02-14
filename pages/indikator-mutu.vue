@@ -37,13 +37,13 @@ b-container
 							@click.stop="row.toggleDetails"
 							v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`'
 						)
-						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
-					row-details(:row='row' :month='month')
+					row-details(:row='row' :month='month' :loaded='loaded' @save='save')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
-	//b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
 		pre {{modalInfo.content}}
 
 </template>
@@ -78,7 +78,7 @@ export default {
 			query,
 			name: 'mutu'
 	}),
-	async mounted(){
+	async created(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
 		this.loaded = true
 		await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
@@ -96,6 +96,9 @@ export default {
 		onFiltered(filteredItems) {
 			this.totalRows = filteredItems.length
 			this.currentPage = 1
+		},
+		save(val){
+			this.loaded = val
 		},
 		showing(row) {
 			return row._showDetails

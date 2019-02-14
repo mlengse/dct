@@ -7,14 +7,14 @@ b-card(noBody)
 					.row(v-if='editing && tgl.item.isActive' )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='JSON.stringify(tgl.item[tgl.field.key])' v-model='tgl.item[tgl.field.key]' @input='inputPembilang(tgl.item)') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].toString()' v-model='tgl.item[tgl.field.key]' @input='inputPembilang') 
 						.col-lg
 					.text-center(v-else) {{tgl.item[tgl.field.key]}}
 				template( slot='penyebut' slot-scope='tgl')
-					.row(v-if='editing && tgl.item.isActive && tgl.item.penyebut === 0' )
+					.row(v-if="editing && tgl.item.isActive && tgl.item.penyebut !== 1" )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='JSON.stringify(tgl.item[tgl.field.key])' v-model='tgl.item[tgl.field.key]' @input='inputPenyebut(tgl.item)') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].toString()' v-model='tgl.item[tgl.field.key]' @input='inputPenyebut') 
 						.col-lg
 					.text-center(v-else) {{tgl.item[tgl.field.key]}}
 </template>
@@ -25,7 +25,7 @@ import bTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs.js';
 import bTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab.js';
 
 export default {
-	props: ['rowitem', 'month', 'editing'],
+	props: ['rowitem', 'month', 'editing', 'desc'],
 	components: {
 		bTabs,
 		bTab
@@ -37,13 +37,10 @@ export default {
 		penyebut: 0,
 		weekSelected:0,
 	}), 
-	created(){
-		let startOfMonth = this.$moment(this.month, 'MMMM YYYY').startOf("month").startOf('week');
-		let endOfMonth = this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
-		let day = startOfMonth;
-		//console.log(JSON.stringify(this.rowitem, null, 2))
-		while (day <= endOfMonth) {
-			this.days[this.days.length] = {
+	async created(){
+		let day = this.startOfMonth;
+		while (day <= this.endOfMonth) {
+			let dayObj = {
 				isActive: day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' && day.isSameOrBefore(this.$moment()),
 				id: this.days.length,
 				hari: day.format('dddd'),
@@ -53,16 +50,28 @@ export default {
 				penyebut: this.rowitem.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
 				_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
 			}
+			this.days[this.days.length] = dayObj
+
 			day = day.clone().add(1, "d");
+
 		}
 		let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
 		if(penyebut > 0){
 			this.penyebut = penyebut
 		}	
+		for( let dayObj of this.days ) for(let des of this.desc) {
+			await this.$store.dispatch('data/counterTimeName', {
+				waktu: this.$moment(dayObj.tanggal, 'DD-MM-YYYY').add(1, 'second').toISOString(),
+				countername: des._id
+			})
+			//des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
+		}
 	},
 	methods: {
 		inputPembilang(val) {
+//			console.log(JSON.stringify(val, null, 2))
 			this.days[val.id] = {...val}
+	//		console.log(JSON.stringify(this.days, null, 2))
 			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang), 0)
 			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
 			if(penyebut > 0){
@@ -77,36 +86,20 @@ export default {
 				this.penyebut = penyebut
 			}
 		},
-		getArr() {
-			let arr = []
-			
-			this.days.map( day => ( this.rowitem.counternames.map( (countername, id) => {
-				let obj = {
-					tanggal: this.$moment(day.tanggal, 'DD-MM-YYYY').toISOString(),
-					countername,
-					jumlah: id === 0 ? day.pembilang : day.penyebut
-				}
-				if(obj.jumlah > 0 ){
-					arr[arr.length] = obj
-					//console.log(JSON.stringify(obj, null, 2))
-				}
-			})))
-			return arr
-		}
 	},
 	watch: {
 		pembilang(val){
 			this.$emit('rekapHarian', {
 				pembilang: this.pembilang,
 				penyebut: this.penyebut,
-				arr: this.getArr()
+				arr: this.getArr
 			})
 		},
 		penyebut(val) {
 			this.$emit('rekapHarian', {
 				pembilang: this.pembilang,
 				penyebut: this.penyebut,
-				arr: this.getArr()
+				arr: this.getArr
 			})
 		},
 		month(val){
@@ -128,11 +121,29 @@ export default {
 
 	},
 	computed: {
+		getArr() {
+			let arr = []
+			
+			this.allDays.map( day => ( this.rowitem.counternames.map( (countername, id) => {
+				let obj = {
+					waktu: this.$moment(day.tanggal, 'DD-MM-YYYY').add(1, 'second').toISOString(),
+					countername: {
+						_id: countername
+					},
+					jumlah: id === 0 ? Number(day.pembilang) : Number(day.penyebut)
+				}
+				if(obj.jumlah > 0 ){
+					arr[arr.length] = obj
+				}
+			})))
+			//console.log(arr.length)
+			return arr
+		},
 		startOfMonth() {
 			return this.$moment(this.month, 'MMMM YYYY').startOf("month").startOf('week');
 		},
 		endOfMonth() {
-		 	return this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
+			 return this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
 		},
 		weeks() {
 			let weeks = []
@@ -152,7 +163,22 @@ export default {
 			return ['hari', 'tanggal', 'pembilang', 'penyebut']
 		},
 		items() {
-			return this.days.filter( day => day.week === this.weeks[this.weekSelected])
+			return this.allDays.filter( day => day.week === this.weeks[this.weekSelected])
+		},
+		allDays(){
+			return this.days.map( dayObj => {
+				for(let i = 0; i< this.desc.length; i++){
+					let des = this.desc[i]
+					if(des.counters.length) for( let a = 0; a< des.counters.length; a++){
+						let counterId = des.counters[a]
+						let counter = this.$store.getters['data/counter'](counterId)
+						if(counter && this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY') === this.month && this.$moment(counter.waktu, this.$moment.ISO_8601).format('HH mm ss') === '00 00 01' && this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY') === dayObj.tanggal){
+							dayObj[des.type] = Number(counter.jumlah)
+						} 
+					}
+				}
+				return dayObj
+			})
 		}
 	}
 }

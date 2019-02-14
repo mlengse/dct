@@ -36,7 +36,9 @@ export const mutations = {
 		if(state.counterList.indexOf(payload._id) < 0){
 			state.counterList.push(payload._id)
 		}
-		state.countername[payload.countername._id].counters.push(payload._id)
+		if(state.countername[payload.countername._id].counters.indexOf(payload._id) < 0) {
+			state.countername[payload.countername._id].counters.push(payload._id)
+		}
 		state.counter = {
 			...state.counter,
 			[payload._id]: {
@@ -51,7 +53,9 @@ export const mutations = {
 		if(state.rekapList.indexOf(payload._id) < 0){
 			state.rekapList.push(payload._id)
 		}
-		state.indicator[payload.indicator._id].rekaps.push(payload._id)
+		if(state.indicator[payload.indicator._id].rekaps.indexOf(payload._id) < 0) {
+			state.indicator[payload.indicator._id].rekaps.push(payload._id)
+		}
 //		console.log(JSON.stringify(state.indicator[payload.indicator._id], null, 2))
 		state.rekap = {
 			...state.rekap,
@@ -103,13 +107,33 @@ export const mutations = {
 };
 
 export const getters = {
-	mutus: ({ indicator, data }) => data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
+	mutus: ({ indicator, data }) => data.mutu && data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
 	countername: ({ countername }) => id => countername[id],
 	rekap: ({rekap}) => id => rekap[id],
 	counter: ({counter}) => id => counter[id]
 };
 
 export const actions = {
+	async counterTimeName( store, { 
+		waktu, 
+		countername
+	}){
+		const res = await strapi.getEntries('counters', { 
+			waktu,
+			countername: {
+				_id: countername
+			}
+		})
+
+		let counter = res[0]
+		if(counter){
+			store.commit('counterMutate', counter)
+			//console.log('dispatch done')
+			//console.log(JSON.stringify(counter, null, 2))
+			return counter
+		}
+		return null
+	},
 	async counter( store, {vm, counterId}){
 		vm.$nuxt.$loading.start()
 		const { data: {counter} } = await strapi.request("post", "/graphql", {

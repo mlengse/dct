@@ -5,9 +5,9 @@ b-card
 			.list-group-item
 				b-row(align-h='end')
 					b-button-group
-						b-button(size='sm' v-if='harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
-						b-button(size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
-						b-button(size='sm' v-else variant='warning' @click.stop='toggleButton') edit
+						b-button(:disabled='loaded' size='sm' v-if='harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
+						b-button(:disabled='loaded' size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
+						b-button(:disabled='loaded' size='sm' v-else variant='warning' @click.stop='toggleButton') edit
 			.list-group-item
 				.row
 					.col-lg-2.col-md-3
@@ -15,7 +15,7 @@ b-card
 					.col
 						dd {{rowitem.pembilang}}
 					.col-md-2
-						b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='pembilang.toString()' v-model='pembilang')
+						b-form-input.text-right(v-if='editing && !rincian && pembilangRekap === 0 && pembilangPredefined === 0 ' type='number' :placeholder='pembilang.toString()' v-model='pembilangInput')
 						.text-right(v-else) {{pembilang}}
 			.list-group-item
 				b-row
@@ -24,9 +24,9 @@ b-card
 					.col
 						dd {{rowitem.penyebut}}
 					.col-md-2
-						b-form-input.text-right(v-if="editing && !rincian && rowitem.penyebut != penyebut && !rowitem.penyebut.includes('hari')"  type='number' :placeholder='penyebut.toString()' v-model='penyebut')
+						b-form-input.text-right(v-if="editing && !rincian && penyebutRekap === 0 && penyebutPredefined === 0 && rowitem.penyebut != penyebut && !rowitem.penyebut.includes('hari')"  type='number' :placeholder='penyebut.toString()' v-model='penyebutInput')
 						.text-right(v-else) {{penyebut}}
-	harian-detail(v-if='rincian' :rowitem='rowitem' :month='month' :editing='editing' @rekapHarian='rekapHarian')
+	harian-detail(v-if='rincian' :desc='desc' :rowitem='rowitem' :month='month' :editing='editing' @rekapHarian='rekapHarian')
 	.container.mt-3
 		.list-group
 			.list-group-item
@@ -47,14 +47,20 @@ export default {
 	components: {
 		HarianDetail
 	},
-	props: ["row", "month"],
+	props: ["row", "month", 'loaded'],
 	data: () => ({
 		editing: false,
-		pembilang: 0,
-		penyebut: 0,
 		rincian: false,
 		rowRekap: null,
-		arrRekap: []
+		arrRekap: [],
+		pembilangRekap: 0,
+		penyebutRekap: 0,
+		pembilangInput: 0,
+		penyebutInput: 0,
+		pembilangPredefined: 0,
+		penyebutPredefined: 0,
+		pembilangFromDB: 0,
+		penyebutFromDB: 0,
 	}),
 	methods: {
 		toggleButton() {
@@ -64,71 +70,93 @@ export default {
 			let vm = this
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 			this.$nuxt.$loading.start()
+			this.$emit('save', true)
 			try {
-				//console.log(JSON.stringify(this.arrRekap, null, 2))
-				this.rowRekap && await Promise.all([
-					this.$store.dispatch('data/sendRekap', {
-						rekap: this.rowRekap
-					}),
-					this.desc.map( async des => {
-						await vm.$store.dispatch('data/sendCounter', {
-							counter: {
-								jumlah: Number(vm[des.type]),
-								waktu: vm.$moment(vm.month, 'MMMM YYYY').toISOString(),
-								countername: {
-									_id: des._id
-								}
-							}
-						})
-					})
-				])
-				this.$nuxt.$loading.finish()
+				this.rowRekap && await this.$store.dispatch('data/sendRekap', {
+					rekap: this.rowRekap
+				})
+				await this.desc.map( async des => await this.$store.dispatch('data/sendCounter', {
+					counter: {
+						jumlah: Number(this[des.type]),
+						waktu: this.$moment(this.month, 'MMMM YYYY').toISOString(),
+						countername: {
+							_id: des._id
+						}
+					}
+				}))
+				//console.log(this.arrRekap.length)
+				this.arrRekap.length && await this.arrRekap.map( async rekap => {
+					//console.log(JSON.stringify(rekap, null, 2))
+					await this.$store.dispatch('data/sendCounter', { counter: rekap })
+					//console.log('done')
+				})
 
 			} catch(err){
-				this.$nuxt.$loading.finish()
-
+				throw err
 			}
+			this.$nuxt.$loading.finish()
+			this.$emit('save', false)
+			
 
 		},
 		rinci() {
 			this.rincian = !this.rincian;
 		},
 		rekapHarian(val){
-			this.pembilang = val.pembilang
-			this.penyebut = val.penyebut
+			//console.log(val)
+			this.pembilangRekap = val.pembilang
+			this.penyebutRekap = val.penyebut
 			this.arrRekap = val.arr
+			//console.log(this.arrRekap.length)
 		},
 	},
 	watch: {
 		rekap(val) {
-			let row = JSON.parse(JSON.stringify(this.rowitem))
-			row.rekap = {
+			this.rowRekap = this.rowitem.rekap = {
 				periode: this.month,
 				jumlah: Number(val.split(' ')[0]),
 				indicator: {
-					_id: row._id
+					_id: this.rowitem._id
 				}
 			}
-			this.rowRekap = row.rekap
 		},
 		month(val) {
 			if (this.rowitem.penyebut == Number(this.rowitem.penyebut)) {
-				this.penyebut = Number(this.rowitem.penyebut)
+				this.penyebutPredefined = Number(this.rowitem.penyebut)
 			}
 			if(this.rowitem.penyebut.includes('hari')){
-				this.penyebut = this.hariKerja
+				this.penyebutPredefined = this.hariKerja
 			}
 		}
 	},
-	mounted(){
+	async created(){
 		if (this.rowitem.penyebut == Number(this.rowitem.penyebut)) {
-			this.penyebut = Number(this.rowitem.penyebut)
+			this.penyebutPredefined = Number(this.rowitem.penyebut)
 		}
 		if(this.rowitem.penyebut.includes('hari')){
-			this.penyebut = this.hariKerja
+			this.penyebutPredefined = this.hariKerja
+		}
+		for(let des of this.desc) {
+			let res = await this.$store.dispatch('data/counterTimeName', {
+				waktu: this.$moment(this.month, 'MMMM YYYY').toISOString(),
+				countername: des._id
+			})
+			this[`${des.type}FromDB`] = res.jumlah
+		//	des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
 		}
 	},
 	computed: {
+		pembilang(){
+			console.log('--')
+			console.log(this.pembilangRekap)
+			console.log(this.pembilangFromDB)
+			console.log(this.pembilangPredefined)
+			console.log(this.pembilangInput)
+			return this.pembilangRekap > 0 ? this.pembilangRekap : this.pembilangFromDB > 0 ? this.pembilangFromDB : this.pembilangPredefined ? this.pembilangPredefined : this.pembilangInput
+		},
+		penyebut(){
+			return this.penyebutRekap > 0 ? this.penyebutRekap : this.penyebutFromDB > 0 ? this.penyebutFromDB : this.penyebutPredefined ? this.penyebutPredefined : this.penyebutInput
+		},
 		rekap() {
 			return this.pembilang / this.penyebut &&
 				this.pembilang / this.penyebut !== Infinity
@@ -163,18 +191,6 @@ export default {
 			let rowitem = this.row.item
 			for(let des of this.desc) {
 				rowitem[des.type] = des.name
-				des.counters.length && des.counters.map( counterId => {
-					let counter = vm.$store.getters['data/counter'](counterId) || vm.$store.dispatch('data/counter', {vm, counterId})
-					if(counter){
-						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'))
-						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'))
-						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HH mm ss'))
-						console.log(counter.waktu)
-						if(vm.$moment(counter.waktu, vm.$moment.ISO_8601).format('MMMM YYYY') === vm.month){
-							vm[des.type] = Number(counter.jumlah)
-						}
-					} 
-				})
 			}
 			return rowitem
 		},
