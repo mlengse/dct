@@ -11,9 +11,9 @@ section.container
 					img.card-img-top(v-if='menu.cover' :src='menu.cover')
 					.card-body
 						h5.card-title {{ menu.nama }}
-						p.card-text {{ menu.deskripsi || '' }}
+						p.card-text {{ menu.deskripsi }}
 						a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
-						nuxt-link.btn.btn-primary(v-else :to="menu => getlink(menu)" tag='a' append) Lihat menu
+						nuxt-link.btn.btn-primary(v-else :to="menu.nama.toLowerCase().split(' ').join('-')" tag='a') Lihat menu
 				p(v-if='!filteredList.length') No results :(
 
 </template>
@@ -64,9 +64,6 @@ export default {
 			store.commit('menus/add', menu)
 		})
 	},
-	methods:{
-		getlink: (menu) => menu.nama.toLowerCase().split(' ').join('-')
-	}
 }
 </script>
 

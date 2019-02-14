@@ -35,8 +35,8 @@ export const mutations = {
 	counterMutate( state, payload ){
 		if(state.counterList.indexOf(payload._id) < 0){
 			state.counterList.push(payload._id)
-			state.countername[payload.countername._id].counters.push(payload._id)
 		}
+		state.countername[payload.countername._id].counters.push(payload._id)
 		state.counter = {
 			...state.counter,
 			[payload._id]: {
@@ -47,10 +47,12 @@ export const mutations = {
 		}
 	},
 	rekapMutate( state, payload ){
+		//console.log(JSON.stringify(payload, null, 2))
 		if(state.rekapList.indexOf(payload._id) < 0){
 			state.rekapList.push(payload._id)
-			state.indicator[payload.indicator._id].rekaps.push(payload._id)
 		}
+		state.indicator[payload.indicator._id].rekaps.push(payload._id)
+//		console.log(JSON.stringify(state.indicator[payload.indicator._id], null, 2))
 		state.rekap = {
 			...state.rekap,
 			[payload._id]: {
@@ -101,7 +103,10 @@ export const mutations = {
 };
 
 export const getters = {
-	mutus: ({indicator, data}) => data.mutu && data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
+	mutus: ({ indicator, data }) => data.mutu.indicators.map(indicatorId => indicator[indicatorId]).map(mutu => ({
+		...mutu,
+		_showDetails: mutu._showDetails || false,
+	})),
 	countername: ({ countername }) => id => countername[id],
 	rekap: ({rekap}) => id => rekap[id],
 	counter: ({counter}) => id => counter[id]
@@ -154,6 +159,7 @@ export const actions = {
 		store.commit('rekapMutate', res)
 	},
 	async fetchRekap( store, { query, periode}){
+	//	console.log(periode)
 		const { data: { rekaps} } = await strapi.request("post", "/graphql", {
 			data: {
 				query,

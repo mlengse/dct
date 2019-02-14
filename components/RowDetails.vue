@@ -10,7 +10,7 @@ b-card
 						b-button(size='sm' v-else variant='warning' @click.stop='toggleButton') edit
 			.list-group-item
 				b-row
-					b-col.col-md-2
+					.col-lg-2.col-md-3
 						dt.text-right Pembilang
 					b-col
 						dd {{rowitem.pembilang}}
@@ -19,7 +19,7 @@ b-card
 						.text-right(v-else) {{pembilang}}
 			.list-group-item
 				b-row
-					b-col.col-md-2
+					.col-lg-2.col-md-3
 						dt.text-right Penyebut
 					b-col
 						dd {{rowitem.penyebut}}

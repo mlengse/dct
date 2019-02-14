@@ -23,6 +23,8 @@ export default {
 			if(this.rekapsLength){
 				for(let rekapId of this.rekaps) {
 					let rek = this.$store.getters['data/rekap'](rekapId)
+					//console.log(JSON.stringify(rek, null, 2))
+					//console.log(this.month)
 					if(rek.periode === this.month) {
 						rekap = rek
 					//	console.log(rekap)
