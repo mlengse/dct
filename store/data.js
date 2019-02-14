@@ -103,10 +103,7 @@ export const mutations = {
 };
 
 export const getters = {
-	mutus: ({ indicator, data }) => data.mutu.indicators.map(indicatorId => indicator[indicatorId]).map(mutu => ({
-		...mutu,
-		_showDetails: mutu._showDetails || false,
-	})),
+	mutus: ({ indicator, data }) => data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
 	countername: ({ countername }) => id => countername[id],
 	rekap: ({rekap}) => id => rekap[id],
 	counter: ({counter}) => id => counter[id]

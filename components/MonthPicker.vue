@@ -1,12 +1,12 @@
 <template lang="pug">
 b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
 	b-button-group.mx-1
-		b-btn(size='sm' :disabled='loading' variant='primary' @click='prevMonth') &lsaquo;
-		b-btn(size='sm' disabled variant='outline-primary' ) {{month}}
-		b-btn(size='sm' :disabled='loading' variant='primary' @click='nextMonth') &rsaquo;
+		b-btn(:disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
+		b-btn(disabled variant='outline-primary' ) {{month}}
+		b-btn(v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
 	b-button-group.mx-1
-		b-btn(size='sm' v-if='blnHitung' :disabled='loading' variant='primary' @click='goBlnHitung') bulan hitung
-		b-btn(size='sm' v-if='blnJalan' :disabled='loading' variant='primary' @click='goBlnJalan') bulan berjalan
+		b-btn(v-if='blnHitung' :disabled='loading' variant='primary' @click='goBlnHitung') bulan hitung
+		b-btn(v-if='blnJalan' :disabled='loading' variant='primary' @click='goBlnJalan') bulan berjalan
 
 </template>
 
@@ -20,10 +20,8 @@ export default {
 		this.month = this.$moment().subtract(1, 'month').format('MMMM YYYY')
 	},
 	watch: {
-		month: function(newVal, oldVal) {
-			if(newVal !== oldVal) {
-				this.$emit('updateMonth', newVal)
-			}
+		month: function(newVal) {
+			this.$emit('updateMonth', newVal)
 		}
 	},
 	methods: {
@@ -41,6 +39,15 @@ export default {
 		}
 	},
 	computed: {
+		prev() {
+			return this.loading
+		},
+		sameOrAfter(){
+			return this.$moment(this.month).isSameOrAfter(this.$moment().format('MMMM YYYY')) 
+		},
+		next() {
+			return this.loading || this.sameOrAfter
+		},
 		blnJalan() {
 			return this.month !== this.$moment().format('MMMM YYYY')
 		},

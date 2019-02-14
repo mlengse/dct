@@ -80,7 +80,7 @@ export default {
 			name: 'mutu'
 	}),
 	async mounted(){
-		this.month = this.$moment().add(-1, 'month').format('MMMM YYYY')
+		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
 		//console.log(this.month)
 		this.loaded = true
 		//this.$nuxt.$loading.start()
@@ -130,7 +130,10 @@ export default {
 			sortable: true
 		})),
 		mutus() {
-			return this.$store.getters['data/mutus']
+			return this.$store.getters['data/mutus'].map(mutu => ({
+				...mutu,
+				_showDetails: mutu._showDetails || false,
+			}))
 		}
 	}
 
