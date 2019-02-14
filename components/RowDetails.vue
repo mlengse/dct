@@ -26,7 +26,7 @@ b-card
 					.col-md-2
 						b-form-input.text-right(v-if="editing && !rincian && rowitem.penyebut != penyebut && !rowitem.penyebut.includes('hari')"  type='number' :placeholder='penyebut.toString()' v-model='penyebut')
 						.text-right(v-else) {{penyebut}}
-	harian-detail(v-if='rincian' :row='row' :month='month' :editing='editing' @rekapHarian='rekapHarian')
+	harian-detail(v-if='rincian' :rowitem='rowitem' :month='month' :editing='editing' @rekapHarian='rekapHarian')
 	.container.mt-3
 		.list-group
 			.list-group-item
@@ -54,6 +54,7 @@ export default {
 		penyebut: 0,
 		rincian: false,
 		rowRekap: null,
+		arrRekap: []
 	}),
 	methods: {
 		toggleButton() {
@@ -63,8 +64,8 @@ export default {
 			let vm = this
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 			this.$nuxt.$loading.start()
-		 // this.$toast.show('Simpan rekap')
 			try {
+				//console.log(JSON.stringify(this.arrRekap, null, 2))
 				this.rowRekap && await Promise.all([
 					this.$store.dispatch('data/sendRekap', {
 						rekap: this.rowRekap
@@ -81,11 +82,9 @@ export default {
 						})
 					})
 				])
-			 // this.$toast.success('Rekap tersimpan')
 				this.$nuxt.$loading.finish()
 
 			} catch(err){
-			 // this.$toast.error('simpan gagal')
 				this.$nuxt.$loading.finish()
 
 			}
@@ -97,6 +96,7 @@ export default {
 		rekapHarian(val){
 			this.pembilang = val.pembilang
 			this.penyebut = val.penyebut
+			this.arrRekap = val.arr
 		},
 	},
 	watch: {
@@ -166,6 +166,10 @@ export default {
 				des.counters.length && des.counters.map( counterId => {
 					let counter = vm.$store.getters['data/counter'](counterId) || vm.$store.dispatch('data/counter', {vm, counterId})
 					if(counter){
+						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'))
+						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'))
+						console.log(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HH mm ss'))
+						console.log(counter.waktu)
 						if(vm.$moment(counter.waktu, vm.$moment.ISO_8601).format('MMMM YYYY') === vm.month){
 							vm[des.type] = Number(counter.jumlah)
 						}

@@ -49,7 +49,6 @@ b-container
 </template>
 
 <script>
-//import IndikatorMutuPage from '~/components/IndikatorMutuPage.vue'
 import MonthPicker from '~/components/MonthPicker.vue'
 import RowDetails from '~/components/RowDetails.vue'
 import StatusCapaian from '~/components/StatusCapaian.vue'
@@ -81,13 +80,8 @@ export default {
 	}),
 	async mounted(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		//console.log(this.month)
 		this.loaded = true
-		//this.$nuxt.$loading.start()
-		//this.$toast.show('Mengambil data...')
 		await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
-		//this.$toast.success('Selesai mengambil data...')
-		//this.$nuxt.$loading.finish()
 		this.loaded = false
 	},
 	methods: {
@@ -95,9 +89,7 @@ export default {
 			this.month = val
 			this.loaded = true
 			this.$nuxt.$loading.start()
-			//this.$toast.show('Mengambil data...')
 			await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: val })
-			//this.$toast.success('Selesai mengambil data...')
 			this.$nuxt.$loading.finish()
 			this.loaded = false
 		},
@@ -127,7 +119,7 @@ export default {
 	computed: {
 		fields: () => ['bagian', 'indikator', 'capaian', 'action'].map(e => ({
 			key: e,
-			sortable: true
+			sortable: ['bagian', 'indikator'].indexOf(e) > -1
 		})),
 		mutus() {
 			return this.$store.getters['data/mutus'].map(mutu => ({

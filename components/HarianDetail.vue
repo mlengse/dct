@@ -25,7 +25,7 @@ import bTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs.js';
 import bTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab.js';
 
 export default {
-	props: ['row', 'month', 'editing'],
+	props: ['rowitem', 'month', 'editing'],
 	components: {
 		bTabs,
 		bTab
@@ -41,7 +41,7 @@ export default {
 		let startOfMonth = this.$moment(this.month, 'MMMM YYYY').startOf("month").startOf('week');
 		let endOfMonth = this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
 		let day = startOfMonth;
-		//console.log(JSON.stringify(this.row.item, null, 2))
+		//console.log(JSON.stringify(this.rowitem, null, 2))
 		while (day <= endOfMonth) {
 			this.days[this.days.length] = {
 				isActive: day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' && day.isSameOrBefore(this.$moment()),
@@ -50,7 +50,7 @@ export default {
 				tanggal: day.format('DD-MM-YYYY'),
 				week: day.format('w'),
 				pembilang: 0,
-				penyebut: this.row.item.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
+				penyebut: this.rowitem.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
 				_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
 			}
 			day = day.clone().add(1, "d");
@@ -76,19 +76,37 @@ export default {
 			if(penyebut > 0){
 				this.penyebut = penyebut
 			}
+		},
+		getArr() {
+			let arr = []
+			
+			this.days.map( day => ( this.rowitem.counternames.map( (countername, id) => {
+				let obj = {
+					tanggal: this.$moment(day.tanggal, 'DD-MM-YYYY').toISOString(),
+					countername,
+					jumlah: id === 0 ? day.pembilang : day.penyebut
+				}
+				if(obj.jumlah > 0 ){
+					arr[arr.length] = obj
+					//console.log(JSON.stringify(obj, null, 2))
+				}
+			})))
+			return arr
 		}
 	},
 	watch: {
 		pembilang(val){
 			this.$emit('rekapHarian', {
 				pembilang: this.pembilang,
-				penyebut: this.penyebut
+				penyebut: this.penyebut,
+				arr: this.getArr()
 			})
 		},
 		penyebut(val) {
 			this.$emit('rekapHarian', {
 				pembilang: this.pembilang,
-				penyebut: this.penyebut
+				penyebut: this.penyebut,
+				arr: this.getArr()
 			})
 		},
 		month(val){
@@ -101,7 +119,7 @@ export default {
 					tanggal: day.format('DD-MM-YYYY'),
 					week: day.format('w'),
 					pembilang: 0,
-					penyebut: this.row.item.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
+					penyebut: this.rowitem.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
 					_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
 				}
 				day = day.clone().add(1, "d");
