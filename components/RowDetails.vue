@@ -147,11 +147,11 @@ export default {
 	},
 	computed: {
 		pembilang(){
-			console.log('--')
-			console.log(this.pembilangRekap)
-			console.log(this.pembilangFromDB)
-			console.log(this.pembilangPredefined)
-			console.log(this.pembilangInput)
+			//console.log('--')
+			//console.log(this.pembilangRekap)
+			//console.log(this.pembilangFromDB)
+			//console.log(this.pembilangPredefined)
+			//console.log(this.pembilangInput)
 			return this.pembilangRekap > 0 ? this.pembilangRekap : this.pembilangFromDB > 0 ? this.pembilangFromDB : this.pembilangPredefined ? this.pembilangPredefined : this.pembilangInput
 		},
 		penyebut(){

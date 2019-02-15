@@ -7,16 +7,16 @@ b-card(noBody)
 					.row(v-if='editing && tgl.item.isActive' )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].toString()' v-model='tgl.item[tgl.field.key]' @input='inputPembilang') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jml.toString()' v-model='tgl.item[tgl.field.key].jml' @input='inputPembilang') 
 						.col-lg
-					.text-center(v-else) {{tgl.item[tgl.field.key]}}
+					.text-center(v-else) {{tgl.item[tgl.field.key].jml}}
 				template( slot='penyebut' slot-scope='tgl')
 					.row(v-if="editing && tgl.item.isActive && tgl.item.penyebut !== 1" )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].toString()' v-model='tgl.item[tgl.field.key]' @input='inputPenyebut') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jml.toString()' v-model='tgl.item[tgl.field.key].jml' @input='inputPenyebut') 
 						.col-lg
-					.text-center(v-else) {{tgl.item[tgl.field.key]}}
+					.text-center(v-else) {{tgl.item[tgl.field.key].jml}}
 </template>
 
 <script>
@@ -55,18 +55,43 @@ export default {
 			day = day.clone().add(1, "d");
 
 		}
-		let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
-		if(penyebut > 0){
-			this.penyebut = penyebut
+		let penyebutNum = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
+		if(penyebutNum > 0){
+			this.penyebut = penyebutNum
 		}	
-		for( let dayObj of this.days ) for(let des of this.desc) {
-		/*
-			await this.$store.dispatch('data/counterTimeName', {
-				waktu: this.$moment(dayObj.tanggal, 'DD-MM-YYYY').add(1, 'second').toISOString(),
-				countername: des._id
-			})
-		*/	//des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
+		for( let dayObj of this.days ) {
+			for(let des of this.desc) {
+				dayObj[des.type] = {
+					jml: dayObj[des.type],
+					_id: des._id,
+					name: des.name
+				}
+			}
+			//console.log(JSON.stringify(dayObj, null, 2))
+			//des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
 		}
+
+		let pembilang = {
+			id: this.desc.map(({_id}) => _id)[0],
+		}
+		let tglPembilang = this.days.filter(day => day.pembilang._id === pembilang.id).map( ({tanggal})=> tanggal).flat()
+		pembilang = {
+			...pembilang,
+			from: this.$moment(tglPembilang[0], 'DD-MM-YYYY').toISOString(),
+			to: this.$moment(tglPembilang[tglPembilang.length-1], 'DD-MM-YYYY').toISOString()
+		}
+		
+		let penyebut = {
+			id: this.desc.map(({_id}) => _id)[1],
+		}
+		let tglPenyebut = this.days.filter(day => day.penyebut._id === penyebut.id).map( ({tanggal})=> tanggal).flat()
+		penyebut = {
+			...penyebut,
+			from: this.$moment(tglPenyebut[0], 'DD-MM-YYYY').toISOString(),
+			to: this.$moment(tglPenyebut[tglPenyebut.length-1], 'DD-MM-YYYY').toISOString()
+		}
+
+		await this.$store.dispatch('harian/counterTimeName', { pembilang, penyebut })
 	},
 	methods: {
 		inputPembilang(val) {
@@ -141,10 +166,10 @@ export default {
 			return arr
 		},
 		startOfMonth() {
-			return this.$moment(this.month, 'MMMM YYYY').startOf("month").startOf('week');
+			return this.$moment(this.month, 'MMMM YYYY').startOf("month")//.startOf('week');
 		},
 		endOfMonth() {
-			 return this.$moment(this.month, 'MMMM YYYY').endOf("month").endOf('week');
+			 return this.$moment(this.month, 'MMMM YYYY').endOf("month")//.endOf('week');
 		},
 		weeks() {
 			let weeks = []
@@ -172,11 +197,7 @@ export default {
 				for(let i = 0; i< this.desc.length; i++){
 					let des = this.desc[i]
 					if(des.counters.length) for( let a = 0; a< des.counters.length; a++){
-						let counterId = des.counters[a]
-						let counter = this.$store.getters['data/counter'](counterId)
-						if(counter && this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY') === this.month && this.$moment(counter.waktu, this.$moment.ISO_8601).format('HH mm ss') === '00 00 01' && this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY') === dayObj.tanggal){
-							dayObj[des.type] = Number(counter.jumlah)
-						} 
+						//here!!!
 					}
 				}
 				return dayObj
