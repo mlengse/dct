@@ -87,7 +87,7 @@ export default {
 				//console.log(this.arrRekap.length)
 				this.arrRekap.length && await this.arrRekap.map( async rekap => {
 					//console.log(JSON.stringify(rekap, null, 2))
-					await this.$store.dispatch('data/sendCounter', { counter: rekap })
+					await this.$store.dispatch('data/sendCounter', { vm: this, counter: rekap })
 					//console.log('done')
 				})
 
@@ -96,7 +96,7 @@ export default {
 			}
 			this.$nuxt.$loading.finish()
 			this.$emit('save', false)
-			
+		//	console.log('done')
 
 		},
 		rinci() {
@@ -136,12 +136,15 @@ export default {
 		if(this.rowitem.penyebut.includes('hari')){
 			this.penyebutPredefined = this.hariKerja
 		}
+		if(this.rowitem.penyebut.includes('visite')){
+			this.penyebutPredefined = this.hariKerja
+		}
 		for(let des of this.desc) {
 			let res = await this.$store.dispatch('data/counterTimeName', {
 				waktu: this.$moment(this.month, 'MMMM YYYY').toISOString(),
 				countername: des._id
 			})
-			this[`${des.type}FromDB`] = res.jumlah
+			if(res) this[`${des.type}FromDB`] = res.jumlah
 		//	des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
 		}
 	},
@@ -166,7 +169,9 @@ export default {
 				: "0 %";
 		},
 		harianApplied() {
-			return this.rowitem.penyebut.includes('hari') || this.rowitem.penyebut.includes('pasien')
+			return this.rowitem.penyebut.includes('hari') 
+			|| this.rowitem.penyebut.includes('pasien')
+			|| this.rowitem.penyebut.includes('visite')
 		},
 		rincishow() {
 			if(this.rincian){

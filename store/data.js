@@ -147,21 +147,32 @@ export const actions = {
 		vm.$nuxt.$loading.finish()
 		store.commit('counterMutate', counter)
 	},
-	async sendCounter( store, { counter }){
+	async sendCounter( store, { vm, counter }){
+		vm.$nuxt.$loading.start()
+		vm.$emit('save', true)
+
+		//console.log(JSON.stringify(counter, null, 2))
 		let exist = await strapi.getEntries('counters', { 
 			waktu: counter.waktu,
 			countername: {
 				_id: counter.countername._id
 			}
 		})
+		console.log(JSON.stringify(exist, null, 2))
 		let res
 		if(exist.length){
 			let counterId = exist[0]._id
 			res = await strapi.updateEntry('counters', counterId, counter)
+			console.log('ada')
 		} else {
 			res = await strapi.createEntry('counters', counter)
+			console.log('tidak')
 		}
+		//console.log(JSON.stringify(res, null, 2))
 		store.commit('counterMutate', res)
+		vm.$nuxt.$loading.finish()
+		vm.$emit('save', false)
+		console.log('done')
 	},
 	async sendRekap( store, { rekap }){
 		let exist = await strapi.getEntries('rekaps', { 

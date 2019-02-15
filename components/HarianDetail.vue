@@ -7,16 +7,16 @@ b-card(noBody)
 					.row(v-if='editing && tgl.item.isActive' )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jml.toString()' v-model='tgl.item[tgl.field.key].jml' @input='inputPembilang') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jumlah.toString()' v-model='tgl.item[tgl.field.key].jumlah' @input='inputPembilang') 
 						.col-lg
-					.text-center(v-else) {{tgl.item[tgl.field.key].jml}}
+					.text-center(v-else) {{tgl.item[tgl.field.key].jumlah}}
 				template( slot='penyebut' slot-scope='tgl')
-					.row(v-if="editing && tgl.item.isActive && tgl.item.penyebut !== 1" )
+					.row(v-if="editing && tgl.item.isActive && tgl.item.penyebut.jumlah !== 1" )
 						.col-lg
 						.col-lg-6
-							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jml.toString()' v-model='tgl.item[tgl.field.key].jml' @input='inputPenyebut') 
+							b-form-input.text-center(type='number' :placeholder='tgl.item[tgl.field.key].jumlah.toString()' v-model='tgl.item[tgl.field.key].jumlah' @input='inputPenyebut') 
 						.col-lg
-					.text-center(v-else) {{tgl.item[tgl.field.key].jml}}
+					.text-center(v-else) {{tgl.item[tgl.field.key].jumlah}}
 </template>
 
 <script>
@@ -47,7 +47,7 @@ export default {
 				tanggal: day.format('DD-MM-YYYY'),
 				week: day.format('w'),
 				pembilang: 0,
-				penyebut: this.rowitem.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
+				penyebut: (this.rowitem.penyebut.includes('hari') || this.rowitem.penyebut.includes('visite')) &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
 				_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
 			}
 			this.days[this.days.length] = dayObj
@@ -62,7 +62,7 @@ export default {
 		for( let dayObj of this.days ) {
 			for(let des of this.desc) {
 				dayObj[des.type] = {
-					jml: dayObj[des.type],
+					jumlah: dayObj[des.type],
 					_id: des._id,
 					name: des.name
 				}
@@ -98,16 +98,16 @@ export default {
 //			console.log(JSON.stringify(val, null, 2))
 			this.days[val.id] = {...val}
 	//		console.log(JSON.stringify(this.days, null, 2))
-			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang), 0)
-			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
+			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang.jumlah), 0)
+			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut.jumlah), 0)
 			if(penyebut > 0){
 				this.penyebut = penyebut
 			}
 		},
 		inputPenyebut(val) {
 			this.days[val.id] = {...val}
-			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang), 0)
-			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut), 0)
+			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang.jumlah), 0)
+			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut.jumlah), 0)
 			if(penyebut > 0){
 				this.penyebut = penyebut
 			}
@@ -138,7 +138,7 @@ export default {
 					tanggal: day.format('DD-MM-YYYY'),
 					week: day.format('w'),
 					pembilang: 0,
-					penyebut: this.rowitem.penyebut.includes('hari') &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
+					penyebut: (this.rowitem.penyebut.includes('hari') || this.rowitem.penyebut.includes('visite')) &&  day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' ? 1 : 0,
 					_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
 				}
 				day = day.clone().add(1, "d");
@@ -156,7 +156,7 @@ export default {
 					countername: {
 						_id: countername
 					},
-					jumlah: id === 0 ? Number(day.pembilang) : Number(day.penyebut)
+					jumlah: id === 0 ? Number(day.pembilang.jumlah) : Number(day.penyebut.jumlah)
 				}
 				if(obj.jumlah > 0 ){
 					arr[arr.length] = obj
@@ -194,12 +194,23 @@ export default {
 		
 		allDays(){
 			return this.days.map( dayObj => {
-				for(let i = 0; i< this.desc.length; i++){
-					let des = this.desc[i]
-					if(des.counters.length) for( let a = 0; a< des.counters.length; a++){
-						//here!!!
-					}
+				dayObj.pembilang = {
+					...dayObj.pembilang,
+					...this.$store.getters['harian/gettgl']({
+						name: dayObj.pembilang.name,
+						tanggal: dayObj.tanggal
+					})
 				}
+				dayObj.penyebut = {
+					...dayObj.penyebut,
+					...this.$store.getters['harian/gettgl']({
+						name: dayObj.penyebut.name,
+						tanggal: dayObj.tanggal
+					})
+				}
+
+
+			//	console.log(JSON.stringify(dayObj, null, 2))
 				return dayObj
 			})
 		}
