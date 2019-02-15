@@ -67,7 +67,7 @@ export default {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 		},
 		async simpan() {
-			let vm = this
+			//let vm = this
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 			this.$nuxt.$loading.start()
 			this.$emit('save', true)
@@ -96,18 +96,15 @@ export default {
 			}
 			this.$nuxt.$loading.finish()
 			this.$emit('save', false)
-		//	console.log('done')
 
 		},
 		rinci() {
 			this.rincian = !this.rincian;
 		},
 		rekapHarian(val){
-			//console.log(val)
 			this.pembilangRekap = val.pembilang
 			this.penyebutRekap = val.penyebut
 			this.arrRekap = val.arr
-			//console.log(this.arrRekap.length)
 		},
 	},
 	watch: {
@@ -150,11 +147,6 @@ export default {
 	},
 	computed: {
 		pembilang(){
-			//console.log('--')
-			//console.log(this.pembilangRekap)
-			//console.log(this.pembilangFromDB)
-			//console.log(this.pembilangPredefined)
-			//console.log(this.pembilangInput)
 			return this.pembilangRekap > 0 ? this.pembilangRekap : this.pembilangFromDB > 0 ? this.pembilangFromDB : this.pembilangPredefined ? this.pembilangPredefined : this.pembilangInput
 		},
 		penyebut(){
@@ -192,7 +184,6 @@ export default {
 			return rekap
 		},
 		rowitem(){
-			let vm = this
 			let rowitem = this.row.item
 			for(let des of this.desc) {
 				rowitem[des.type] = des.name

@@ -5,7 +5,14 @@ b-container
 			h3 Indikator Mutu
 	.row
 		.col-md-12
-			month-picker(@updateMonth='updateMonth' :loading='loaded')
+			b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
+				b-button-group.mx-1
+					b-btn(:disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
+					b-btn(disabled variant='outline-primary' ) {{month}}
+					b-btn(v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
+				b-button-group.mx-1
+					b-btn(v-if='blnHitung' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
+					b-btn(v-if='blnJalan' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
 	.row
 		.col-md-12
 			.form-group.mt-3
@@ -28,28 +35,22 @@ b-container
 				@filtered='onFiltered'
 			)
 				template(slot='capaian' slot-scope='row')
-					status-capaian(:mutu='row.item' :month='month')
+					status-capaian(:item='row.item' :month='month')
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
-						b-btn(
-							size='sm'
-							variant='outline-primary' 
-							@click.stop="row.toggleDetails"
-							v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`'
-						)
-						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+						//-b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
-	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+	//-b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
 		pre {{modalInfo.content}}
 
 </template>
 
 <script>
-import MonthPicker from '~/components/MonthPicker.vue'
 import RowDetails from '~/components/RowDetails.vue'
 import StatusCapaian from '~/components/StatusCapaian.vue'
 
@@ -59,7 +60,6 @@ import query from '../schema/query.graphql'
 export default {
 	components: {
 		StatusCapaian,
-		MonthPicker,
 		RowDetails
 	},
 	data: () => ({
@@ -85,6 +85,18 @@ export default {
 		this.loaded = false
 	},
 	methods: {
+		goBlnJalan() {
+			this.month = this.$moment().format('MMMM YYYY')
+		},
+		goBlnHitung() {
+			this.month = this.$moment().subtract(1, 'month').format('MMMM YYYY')
+		},
+		prevMonth() {
+			this.month = this.$moment(this.month, 'MMMM YYYY').subtract(1, 'month').format('MMMM YYYY')
+		},
+		nextMonth() {
+			this.month = this.$moment(this.month, 'MMMM YYYY').add(1, 'month').format('MMMM YYYY')
+		},
 		async updateMonth(val) {
 			this.month = val
 			this.loaded = true
@@ -120,6 +132,21 @@ export default {
 		}
 	},
 	computed: {
+		prev() {
+			return this.loaded
+		},
+		sameOrAfter(){
+			return this.$moment(this.month, 'MMMM YYYY').isSameOrAfter(this.$moment()) 
+		},
+		next() {
+			return this.loaded || this.sameOrAfter
+		},
+		blnJalan() {
+			return this.month !== this.$moment().format('MMMM YYYY')
+		},
+		blnHitung() {
+			return this.month !== this.$moment().subtract(1, 'month').format('MMMM YYYY')
+		},
 		fields: () => ['bagian', 'indikator', 'capaian', 'action'].map(e => ({
 			key: e,
 			sortable: ['bagian', 'indikator'].indexOf(e) > -1

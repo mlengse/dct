@@ -4,16 +4,16 @@ span.badge(:class='["badge", variant].join("-")') {{status}}
 
 <script>
 export default {
-	props: ['mutu', 'month'],
+	props: ['item', 'month'],
 	computed: {
 	  status() {
-			return this.rekap ? (this.mutu.operator === '>=' ? (this.rekap.jumlah >= this.mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.rekap.jumlah <= this.mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
+			return this.rekap ? (this.item.operator === '>=' ? (this.rekap.jumlah >= this.item.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.rekap.jumlah <= this.item.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
 		},
     variant() {
-			return this.rekap ? (this.mutu.operator === '>=' ? (this.rekap.jumlah >= this.mutu.numtarget ? 'success' : 'danger') : (this.rekap.jumlah <= this.mutu.numtarget ? 'success' : 'danger')) : 'warning'
+			return this.rekap ? (this.item.operator === '>=' ? (this.rekap.jumlah >= this.item.numtarget ? 'success' : 'danger') : (this.rekap.jumlah <= this.item.numtarget ? 'success' : 'danger')) : 'warning'
 		},
 		rekaps(){
-			return this.mutu.rekaps
+			return this.item.rekaps
 		},
 		rekapsLength(){
 			return this.rekaps.length
@@ -23,11 +23,8 @@ export default {
 			if(this.rekapsLength){
 				for(let rekapId of this.rekaps) {
 					let rek = this.$store.getters['data/rekap'](rekapId)
-					//console.log(JSON.stringify(rek, null, 2))
-					//console.log(this.month)
 					if(rek.periode === this.month) {
 						rekap = rek
-					//	console.log(rekap)
 					}
 				}
 			}
