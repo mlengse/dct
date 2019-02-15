@@ -1,29 +1,9 @@
 import Strapi from 'strapi-sdk-javascript'
-
+import query from '../schema/counter.graphql'
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
-//const apiUrl = 'http://192.168.1.77:1337'
 
 const strapi = new Strapi(apiUrl)
 
-const query = `
-query State($id: ID! $from: String! $to: String!){
-  countername(id:$id){
-    _id,
-    name,
-    countertype{
-      _id,
-      name
-    }
-    counters(where:{
-      waktu_gte: $from,
-      waktu_lte: $to
-    }){
-      _id,
-      waktu,
-      jumlah
-    }
-  }
-}`
 
 export const state = () => ({
   counterList: [],
@@ -54,7 +34,6 @@ export const mutations = {
           state.bln[`${nc.name} ${nc.bln}`] = nc
         } else {
           state.tgl[`${nc.name} ${nc.tgl}`] = nc
-          //console.log(JSON.stringify(nc, null, 2))
         }
       })
       

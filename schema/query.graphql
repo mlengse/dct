@@ -14,9 +14,9 @@ query States($name: String!){
         countertype {
           name
         }
-        counters {
-          _id
-        }
+        #counters {
+        #  _id
+        #}
       }
       operator {
         name

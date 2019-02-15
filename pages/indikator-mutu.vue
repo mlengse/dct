@@ -24,7 +24,7 @@ b-container
 				hover 
 				small
 				responsive 
-				:items="mutus"
+				:items="items"
 				:fields="fields" 
 				:current-page="currentPage" 
 				:per-page="perPage" 
@@ -35,31 +35,29 @@ b-container
 				@filtered='onFiltered'
 			)
 				template(slot='capaian' slot-scope='row')
-					status-capaian(:item='row.item' :month='month')
+					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
 						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						//-b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
-	//-b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
 		pre {{modalInfo.content}}
 
 </template>
 
 <script>
 import RowDetails from '~/components/RowDetails.vue'
-import StatusCapaian from '~/components/StatusCapaian.vue'
 
 import queryRekap from '../schema/queryRekap.graphql'
 import query from '../schema/query.graphql'
 
 export default {
 	components: {
-		StatusCapaian,
 		RowDetails
 	},
 	data: () => ({
@@ -80,9 +78,7 @@ export default {
 	}),
 	async created(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		this.loaded = true
-		await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
-		this.loaded = false
+		await this.updateMonth(this.month)
 	},
 	methods: {
 		goBlnJalan() {
@@ -98,11 +94,23 @@ export default {
 			this.month = this.$moment(this.month, 'MMMM YYYY').add(1, 'month').format('MMMM YYYY')
 		},
 		async updateMonth(val) {
-			this.month = val
 			this.loaded = true
-			this.$nuxt.$loading.start()
-			await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: val })
-			this.$nuxt.$loading.finish()
+			await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
+			await this.mutus.map( async mutu => {
+				if(mutu.pembilang && mutu.penyebut) {
+					let pembilang = {
+						id: mutu.pembilang._id,
+						from: mutu.from,
+						to: mutu.to
+					}
+					let penyebut = {
+						id: mutu.penyebut._id,
+						from: mutu.from,
+						to: mutu.to
+					}
+					await this.$store.dispatch('harian/counterTimeName', { pembilang, penyebut })
+				}
+			})
 			this.loaded = false
 		},
 		onFiltered(filteredItems) {
@@ -129,6 +137,9 @@ export default {
 	watch: {
 		mutus(val) {
 			this.totalRows = val.length
+		},
+		month(val) {
+			this.updateMonth(val)
 		}
 	},
 	computed: {
@@ -151,10 +162,87 @@ export default {
 			key: e,
 			sortable: ['bagian', 'indikator'].indexOf(e) > -1
 		})),
+		startOfMonth(){
+			return this.$moment(this.month, 'MMMM YYYY').startOf("month");
+		},
+		endOfMonth(){
+			return this.$moment(this.month, 'MMMM YYYY').endOf("month");
+		},
+		hariKerja(){
+			let day = this.startOfMonth;
+			let hk = 0
+			while (day <= this.endOfMonth) {
+				if(day.format('dddd') !== 'Minggu') {
+					hk++
+				}
+				day = day.clone().add(1, "d");
+			}
+			return hk
+		},
+		days(){
+			let days = []
+			let day = this.startOfMonth;
+			while (day <= this.endOfMonth) {
+				let dayObj = {
+					isActive: day.format('MMMM YYYY') === this.month && day.format('dddd') !== 'Minggu' && day.isSameOrBefore(this.$moment()),
+					id: days.length,
+					hari: day.format('dddd'),
+					tanggal: day.format('DD-MM-YYYY'),
+					week: day.format('w'),
+					_rowVariant: day.format('dddd') === 'Minggu' ? 'danger' : undefined
+				}
+				days[days.length] = dayObj
+				day = day.clone().add(1, "d");
+			}
+			return days
+		},
+		from(){
+			return this.$moment(this.month, 'MMMM YYYY').toISOString()
+		},
+		to(){
+			return this.$moment(this.month, 'MMMM YYYY').add(1, 'month').toISOString()
+		},
+		items() {
+			return this.mutus.map( mutu => ({
+				...mutu,
+				days: this.days,
+				pembilang:{
+					...mutu.pembilang,
+					jumlah: mutu.pembilang ? this.$store.getters['harian/getbln']({
+						name: mutu.pembilang.name,
+						bulan: this.month
+					}) : 0
+				},
+				penyebut: {
+					...mutu.penyebut,
+					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
+					? Number(mutu.penyebut.name) 
+					: mutu.penyebut && mutu.penyebut.name.includes('hari') || mutu.penyebut && mutu.penyebut.name.includes('visit') 
+					? this.hariKerja 
+					: (mutu.penyebut ? this.$store.getters['harian/getbln']({
+						name: mutu.penyebut.name,
+						bulan: this.month
+					}) : 0)
+				}
+
+			}))
+		},
 		mutus() {
 			return this.$store.getters['data/mutus'].map(mutu => ({
 				...mutu,
+				counternames: undefined,
+				hariKerja: this.hariKerja,
+				from: this.from,
+				to: this.to,
+				month: this.month,
+				rekap: mutu.rekaps.length ? mutu.rekaps.filter(rekapId=>this.$store.getters['data/rekap'](rekapId).periode === this.month).map(rekapId=>this.$store.getters['data/rekap'](rekapId))[0] : null,
+			})).map( mutu => ({
+				...mutu,
+				rekaps: undefined,
+				status: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
+				variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
 				_showDetails: mutu._showDetails || false,
+				harianApplied: mutu.penyebut ? (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('pasien') || mutu.penyebut.name.includes('visite')) : false ,
 			}))
 		}
 	}
@@ -162,17 +250,3 @@ export default {
 };
 </script>
 
-<!--style lang="scss">
-@import "~/node_modules/bootstrap/scss/_functions.scss";
-$sizes: ();
-
-@import "~/node_modules/bootstrap/scss/_variables.scss";
-@import "~/node_modules/bootstrap/scss/_mixins.scss";
-@import "~/node_modules/bootstrap/scss/_root.scss";
-@import "~/node_modules/bootstrap/scss/_reboot.scss";
-@import "~/node_modules/bootstrap/scss/_type.scss";
-@import "~/node_modules/bootstrap/scss/_images.scss";
-@import "~/node_modules/bootstrap/scss/_grid.scss";
-@import "~/node_modules/bootstrap/scss/_utilities.scss";
-
-</style--!>

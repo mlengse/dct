@@ -25,38 +25,37 @@ export const state = () => ({
 	indicator: {},
 	counternameList: [],
 	countername: {},
-	counterList: [],
-	counter: {},
 	rekapList: [],
 	rekap: {}
 });
 
+export const getters = {
+	mutus: ({ indicator, data, countername }) => data.mutu && data.mutu.indicators.map(indicatorId => {
+		let mutu = { ...indicator[indicatorId] }
+		mutu = {
+			...mutu,
+			counternames: mutu.counternames
+			.map( counternameId => countername[counternameId] )
+			.map( _countername => {
+				mutu[_countername.type] = {..._countername}
+			}),
+	}
+		return mutu
+	}),
+	countername: ({ countername }) => id => countername[id],
+	rekap: ({rekap}) => id => rekap[id],
+};
+
+
+
 export const mutations = {
-	counterMutate( state, payload ){
-		if(state.counterList.indexOf(payload._id) < 0){
-			state.counterList.push(payload._id)
-		}
-		if(state.countername[payload.countername._id].counters.indexOf(payload._id) < 0) {
-			state.countername[payload.countername._id].counters.push(payload._id)
-		}
-		state.counter = {
-			...state.counter,
-			[payload._id]: {
-				jumlah: payload.jumlah,
-				waktu: payload.waktu,
-				countername: payload.countername._id
-			}
-		}
-	},
 	rekapMutate( state, payload ){
-		//console.log(JSON.stringify(payload, null, 2))
 		if(state.rekapList.indexOf(payload._id) < 0){
 			state.rekapList.push(payload._id)
 		}
 		if(state.indicator[payload.indicator._id].rekaps.indexOf(payload._id) < 0) {
 			state.indicator[payload.indicator._id].rekaps.push(payload._id)
 		}
-//		console.log(JSON.stringify(state.indicator[payload.indicator._id], null, 2))
 		state.rekap = {
 			...state.rekap,
 			[payload._id]: {
@@ -80,7 +79,6 @@ export const mutations = {
 		}
 	},
 	counternameMutate( state, countername ){
-//		console.log(JSON.stringify(countername, null, 2))
 		if(state.counternameList.indexOf(countername._id) < 0){
 			state.counternameList.push(countername._id)
 		}
@@ -90,7 +88,6 @@ export const mutations = {
 				_id: countername._id,
 				name: countername.name,
 				type: countername.countertype.name,
-				counters: countername.counters.map(counter => counter._id)
 			}
 		}
 	},
@@ -104,13 +101,6 @@ export const mutations = {
 		}
 	}
 
-};
-
-export const getters = {
-	mutus: ({ indicator, data }) => data.mutu && data.mutu.indicators.map(indicatorId => indicator[indicatorId]),
-	countername: ({ countername }) => id => countername[id],
-	rekap: ({rekap}) => id => rekap[id],
-	counter: ({counter}) => id => counter[id]
 };
 
 export const actions = {
@@ -128,11 +118,7 @@ export const actions = {
 		let counter = res[0]
 		if(counter){
 			store.commit('counterMutate', counter)
-			//console.log('dispatch done')
-			//console.log(JSON.stringify(counter, null, 2))
-			return counter
 		}
-		return null
 	},
 	async counter( store, {vm, counterId}){
 		vm.$nuxt.$loading.start()
@@ -151,28 +137,26 @@ export const actions = {
 		vm.$nuxt.$loading.start()
 		vm.$emit('save', true)
 
-		//console.log(JSON.stringify(counter, null, 2))
 		let exist = await strapi.getEntries('counters', { 
 			waktu: counter.waktu,
 			countername: {
 				_id: counter.countername._id
 			}
 		})
-		console.log(JSON.stringify(exist, null, 2))
+
 		let res
 		if(exist.length){
 			let counterId = exist[0]._id
 			res = await strapi.updateEntry('counters', counterId, counter)
-			console.log('ada')
+
 		} else {
 			res = await strapi.createEntry('counters', counter)
-			console.log('tidak')
+
 		}
-		//console.log(JSON.stringify(res, null, 2))
+
 		store.commit('counterMutate', res)
 		vm.$nuxt.$loading.finish()
 		vm.$emit('save', false)
-		console.log('done')
 	},
 	async sendRekap( store, { rekap }){
 		let exist = await strapi.getEntries('rekaps', { 

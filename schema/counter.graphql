@@ -1,0 +1,18 @@
+query State($id: ID! $from: String! $to: String!){
+  countername(id:$id){
+    _id,
+    name,
+    countertype{
+      _id,
+      name
+    }
+    counters(where:{
+      waktu_gte: $from,
+      waktu_lte: $to
+    }){
+      _id,
+      waktu,
+      jumlah
+    }
+  }
+}
