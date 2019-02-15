@@ -60,11 +60,12 @@ export default {
 			this.penyebut = penyebut
 		}	
 		for( let dayObj of this.days ) for(let des of this.desc) {
+		/*
 			await this.$store.dispatch('data/counterTimeName', {
 				waktu: this.$moment(dayObj.tanggal, 'DD-MM-YYYY').add(1, 'second').toISOString(),
 				countername: des._id
 			})
-			//des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
+		*/	//des[this.$moment(res.waktu, this.$moment.ISO_8601).format('MMMM YYYY')] = res
 		}
 	},
 	methods: {
@@ -165,6 +166,7 @@ export default {
 		items() {
 			return this.allDays.filter( day => day.week === this.weeks[this.weekSelected])
 		},
+		
 		allDays(){
 			return this.days.map( dayObj => {
 				for(let i = 0; i< this.desc.length; i++){

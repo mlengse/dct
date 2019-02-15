@@ -43,7 +43,7 @@ export default {
 			return this.loading
 		},
 		sameOrAfter(){
-			return this.$moment(this.month).isSameOrAfter(this.$moment().format('MMMM YYYY')) 
+			return this.$moment(this.month, 'MMMM YYYY').isSameOrAfter(this.$moment()) 
 		},
 		next() {
 			return this.loading || this.sameOrAfter
