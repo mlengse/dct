@@ -1,0 +1,25 @@
+query States($name: String!){
+  states(where: { name: $name }) {
+    indicators(where: { active: true }) {
+      _id
+      bagian {
+        nama
+      }
+      name
+      operator {
+        name
+      }
+      target
+      satuan {
+        name
+      }
+      counternames {
+        _id
+        name
+        countertype {
+          name
+        }
+      }
+    }
+  }
+}

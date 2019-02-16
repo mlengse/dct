@@ -39,13 +39,13 @@ b-container
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
 						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						//-b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
-					row-details(:row='row' :month='month' :loaded='loaded' @save='save')
+					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
 	.row
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
-	//-b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
 		pre {{modalInfo.content}}
 
 </template>
@@ -72,13 +72,12 @@ export default {
 		modalInfo: { title: '', content: '' }
 
 	}),
-	fetch: async ({store}) => await store.dispatch('data/fetch', {
-			query,
-			name: 'mutu'
-	}),
-	async created(){
+	fetch: async ({store}) => await store.dispatch('data/fetch'),
+	mounted(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		await this.updateMonth(this.month)
+		this.$nextTick(async () => {
+			await this.updateMonth(this.month)
+		})
 	},
 	methods: {
 		goBlnJalan() {
@@ -94,24 +93,13 @@ export default {
 			this.month = this.$moment(this.month, 'MMMM YYYY').add(1, 'month').format('MMMM YYYY')
 		},
 		async updateMonth(val) {
+			console.log(val)
 			this.loaded = true
-			await this.$store.dispatch('data/fetchRekap', { query: queryRekap, periode: this.month })
-			await this.mutus.map( async mutu => {
-				if(mutu.pembilang && mutu.penyebut) {
-					let pembilang = {
-						id: mutu.pembilang._id,
-						from: mutu.from,
-						to: mutu.to
-					}
-					let penyebut = {
-						id: mutu.penyebut._id,
-						from: mutu.from,
-						to: mutu.to
-					}
-					await this.$store.dispatch('harian/counterTimeName', { pembilang, penyebut })
-				}
-			})
+			this.$nuxt.$loading.start()
+			await this.$store.dispatch('data/createdMutu')
+			this.$nuxt.$loading.finish()
 			this.loaded = false
+
 		},
 		onFiltered(filteredItems) {
 			this.totalRows = filteredItems.length
@@ -135,7 +123,7 @@ export default {
 
 	},
 	watch: {
-		mutus(val) {
+		items(val) {
 			this.totalRows = val.length
 		},
 		month(val) {
@@ -203,42 +191,33 @@ export default {
 			return this.$moment(this.month, 'MMMM YYYY').add(1, 'month').toISOString()
 		},
 		items() {
-			return this.mutus.map( mutu => ({
-				...mutu,
-				days: this.days,
-				pembilang:{
-					...mutu.pembilang,
-					jumlah: mutu.pembilang ? this.$store.getters['harian/getbln']({
-						name: mutu.pembilang.name,
-						bulan: this.month
-					}) : 0
-				},
-				penyebut: {
-					...mutu.penyebut,
-					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
-					? Number(mutu.penyebut.name) 
-					: mutu.penyebut && mutu.penyebut.name.includes('hari') || mutu.penyebut && mutu.penyebut.name.includes('visit') 
-					? this.hariKerja 
-					: (mutu.penyebut ? this.$store.getters['harian/getbln']({
-						name: mutu.penyebut.name,
-						bulan: this.month
-					}) : 0)
-				}
-
-			}))
-		},
-		mutus() {
-			return this.$store.getters['data/mutus'].map(mutu => ({
-				...mutu,
+			return this.$store.getters['data/mutus'].map(mutu => Object.assign({}, mutu, {
 				counternames: undefined,
 				hariKerja: this.hariKerja,
 				from: this.from,
 				to: this.to,
 				month: this.month,
-				rekap: mutu.rekaps.length ? mutu.rekaps.filter(rekapId=>this.$store.getters['data/rekap'](rekapId).periode === this.month).map(rekapId=>this.$store.getters['data/rekap'](rekapId))[0] : null,
-			})).map( mutu => ({
-				...mutu,
+				rekap: mutu.rekaps && mutu.rekaps.length ? mutu.rekaps.filter( rekap => rekap.periode === this.month )[0] : undefined,
 				rekaps: undefined,
+				days: this.days,
+				pembilang: Object.assign({}, mutu.pembilang, {
+					jumlah: 0
+				}, this.$store.getters['data/getbln']({
+					name: mutu.pembilang.name,
+					bulan: this.month
+				})),
+				penyebut: Object.assign({}, mutu.penyebut, {
+					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
+					? Number(mutu.penyebut.name) 
+					: mutu.penyebut && mutu.penyebut.name.includes('hari') || mutu.penyebut && mutu.penyebut.name.includes('visit') 
+					? this.hariKerja 
+					: 0
+					}, this.$store.getters['data/getbln']({
+						name: mutu.penyebut.name,
+						bulan: this.month
+					})
+				)
+			})).map( mutu => Object.assign({}, mutu, {
 				status: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
 				variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
 				_showDetails: mutu._showDetails || false,

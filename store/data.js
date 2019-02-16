@@ -1,48 +1,36 @@
 import Strapi from 'strapi-sdk-javascript'
 
 const apiUrl = process.env.apiUrl || 'http://localhost:1337'
-//const apiUrl = 'http://192.168.1.77:1337'
 
 const strapi = new Strapi(apiUrl)
 
-const counterQuery = `
-query State($id: ID!){
-	counter(id: $id) {
-		_id
-		jumlah
-		waktu
-		countername {
-			_id
-		}
-	}
-}
-				`
+import fetchQuery from '../schema/fetchmutu.graphql'
+import createdQuery from '../schema/createdmutu.graphql'
 
 export const state = () => ({
-	list:[],
-	data:{},
 	indicatorList: [],
 	indicator: {},
-	counternameList: [],
-	countername: {},
-	rekapList: [],
-	rekap: {}
+	pembilang: {},
+	penyebut: {},
+	counter: {},
+	rekap: {},
+	bln: {},
+	tgl: {},
+
 });
 
 export const getters = {
-	mutus: ({ indicator, data, countername }) => data.mutu && data.mutu.indicators.map(indicatorId => {
-		let mutu = { ...indicator[indicatorId] }
-		mutu = {
-			...mutu,
-			counternames: mutu.counternames
-			.map( counternameId => countername[counternameId] )
-			.map( _countername => {
-				mutu[_countername.type] = {..._countername}
-			}),
-	}
-		return mutu
-	}),
-	countername: ({ countername }) => id => countername[id],
+	mutus: ({ indicatorList, indicator, pembilang, penyebut, counter, rekap }) => indicatorList.map(indicatorId => Object.assign({}, indicator[indicatorId], {
+		rekaps: indicator[indicatorId].rekaps.map( rekapId => rekap[rekapId]),
+		pembilang: Object.assign({}, pembilang[indicator[indicatorId].pembilang], {
+			counters: pembilang[indicator[indicatorId].pembilang].counters.length ? pembilang[indicator[indicatorId].pembilang].counters.map(id => counter[id]) : [],
+		}),
+		penyebut: Object.assign({}, penyebut[indicator[indicatorId].penyebut], {
+			counters: penyebut[indicator[indicatorId].penyebut].counters.length ? penyebut[indicator[indicatorId].penyebut].counters.map(id => counter[id]) : [],
+		}),
+	})),
+	gettgl: ({ tgl }) => ({ name, tanggal }) => tgl[`${name} ${tanggal}`],
+	getbln: ({ bln }) => ({ name, bulan }) => bln[`${name} ${bulan}`],
 	rekap: ({rekap}) => id => rekap[id],
 };
 
@@ -50,160 +38,149 @@ export const getters = {
 
 export const mutations = {
 	rekapMutate( state, payload ){
-		if(state.rekapList.indexOf(payload._id) < 0){
-			state.rekapList.push(payload._id)
-		}
 		if(state.indicator[payload.indicator._id].rekaps.indexOf(payload._id) < 0) {
 			state.indicator[payload.indicator._id].rekaps.push(payload._id)
 		}
-		state.rekap = {
-			...state.rekap,
+		state.rekap = Object.assign({}, state.rekap, {
 			[payload._id]: {
 				jumlah: payload.jumlah,
 				periode: payload.periode,
 				indicator: payload.indicator._id,
 			}
-		}
+		})
 	},
 	stateMutate(state, stateData) {
 		if (state.list.indexOf(stateData.name) < 0){
 			state.list.push(stateData.name)
 		}
-		state.data = {
-			...state.data,
+		state.data = Object.assign({}, state.data, {
 			[stateData.name]: {
 				_id: stateData._id,
 				name: stateData.name,
 				indicators: stateData.indicators.map( indicator => indicator._id)
 			}
-		}
+		})
 	},
 	counternameMutate( state, countername ){
-		if(state.counternameList.indexOf(countername._id) < 0){
-			state.counternameList.push(countername._id)
-		}
-		state.countername = {
-			...state.countername,
-			[countername._id]: {
-				_id: countername._id,
-				name: countername.name,
-				type: countername.countertype.name,
-			}
-		}
+		state[countername.countertype.name][countername._id] = Object.assign({}, countername, {
+			type: countername.countertype.name,
+			countertype: undefined,
+			counters: []
+		})
+	},
+	counternameCountersMutate( state, countername){
+		state[countername.countertype.name][countername._id] = Object.assign({}, state[countername.countertype.name][countername._id],{
+			counters: countername.counters.map( counter =>{
+				state.counter[counter._id] = Object.assign({}, counter, {
+					name: state[countername.countertype.name][countername._id].name,
+					type: countername.countertype.name,
+					tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
+					bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'),
+					isMonth: !!!Number(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HHmmssss'))
+				})
+				
+				if (state.counter[counter._id].isMonth) {
+					state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]
+				} else {
+					state.tgl[`${state.counter[counter._id].name} ${state.counter[counter._id].tgl}`] = state.counter[counter._id]
+				}
+				return counter._id
+			})
+		})
+	},
+	counternameRekapsMutate(state, indicator) {
+		state.indicator[indicator._id].rekaps = indicator.rekaps.map( rekap => {
+			state.rekap[rekap._id] = rekap
+			return rekap._id
+		})
 	},
 	indicatorMutate(state, indicator) {
 		if (state.indicatorList.indexOf(indicator._id) < 0) {
 			state.indicatorList.push(indicator._id)
 		}
-		state.indicator = {
-			...state.indicator,
-			[indicator._id]: indicator
-		}
+		state.indicator[indicator._id] = indicator
 	}
 
 };
 
 export const actions = {
-	async counterTimeName( store, { 
-		waktu, 
-		countername
-	}){
-		const res = await strapi.getEntries('counters', { 
-			waktu,
-			countername: {
-				_id: countername
-			}
-		})
-
-		let counter = res[0]
-		if(counter){
-			store.commit('counterMutate', counter)
-		}
-	},
-	async counter( store, {vm, counterId}){
-		vm.$nuxt.$loading.start()
-		const { data: {counter} } = await strapi.request("post", "/graphql", {
-			data: {
-				query: counterQuery,
-				variables: {
-					id: counterId
-				}
-			}
-		});
-		vm.$nuxt.$loading.finish()
-		store.commit('counterMutate', counter)
-	},
-	async sendCounter( store, { vm, counter }){
-		vm.$nuxt.$loading.start()
-		vm.$emit('save', true)
-
-		let exist = await strapi.getEntries('counters', { 
+	async sendCounter(store, counter) {
+		let exist = await strapi.getEntries('counters', {
 			waktu: counter.waktu,
 			countername: {
-				_id: counter.countername._id
+				_id: counter.countername
 			}
 		})
-
 		let res
-		if(exist.length){
+		if (exist.length) {
 			let counterId = exist[0]._id
 			res = await strapi.updateEntry('counters', counterId, counter)
-
 		} else {
 			res = await strapi.createEntry('counters', counter)
 
 		}
-
-		store.commit('counterMutate', res)
-		vm.$nuxt.$loading.finish()
-		vm.$emit('save', false)
+		//console.log(JSON.stringify(res, null, 2))
+		//store.commit('counterMutate', res)
+		return
 	},
-	async sendRekap( store, { rekap }){
-		let exist = await strapi.getEntries('rekaps', { 
+	async sendRekap(store, rekap) {
+		let exist = rekap._id
+
+		if (!exist) exist =	await strapi.getEntries('rekaps', {
 			periode: rekap.periode,
 			indicator: {
-				_id: rekap.indicator._id
+				_id: rekap.indicator
 			}
 		})
+
 		let res
-		if(exist.length){
-			let rekapId = exist[0]._id
+		if ( exist || exist.length) {
+			let rekapId = rekap._id || exist[0]._id
 			res = await strapi.updateEntry('rekaps', rekapId, rekap)
 		} else {
 			res = await strapi.createEntry('rekaps', rekap)
 		}
-		store.commit('rekapMutate', res)
+	//	console.log(JSON.stringify(res, null, 2))
+		//store.commit('rekapMutate', res)
+		return
 	},
-	async fetchRekap( store, { query, periode}){
-	//	console.log(periode)
-		const { data: { rekaps} } = await strapi.request("post", "/graphql", {
-			data: {
-				query,
-				variables: {
-					periode
-				}
-			}
-		});
-
-		if(rekaps.length){
-			rekaps.map( rekap => {
-				store.commit('rekapMutate', rekap)
-			})
-		}
-
-	},
-	async fetch( store, { query, name }) {
+	async createdMutu( store ){
 		const { data: { states } } = await strapi.request("post", "/graphql", {
 			data: {
-				query,
+				query: createdQuery,
 				variables: {
-					name
+					name: 'mutu'
 				}
 			}
 		});
+		states.map(stateData => {
+			const { indicators } = stateData;
+			for (let i = 0; i < indicators.length; i++) {
+				if (indicators[i].rekaps.length) {
+					store.commit("counternameRekapsMutate", indicators[i]);
+				}
+				if (indicators[i].counternames.length) {
+					for (let countername of indicators[i].counternames) {
+						if(countername.counters.length) {
+							store.commit("counternameCountersMutate", countername);
+						}
+					}
+				}
+			}
+		})
 
+	},
+
+	async fetch( store) {
+		const { data: { states } } = await strapi.request("post", "/graphql", {
+			data: {
+				query: fetchQuery,
+				variables: {
+					name: 'mutu'
+				}
+			}
+		});
 		states.map( stateData => {
-			store.commit('stateMutate', stateData)
 			const { indicators } = stateData;
 			for (let i = 0; i < indicators.length; i++) {
 				let indicator = {
@@ -214,17 +191,14 @@ export const actions = {
 					numtarget: indicators[i].target,
 					satuan: indicators[i].satuan.name,
 					target: `${indicators[i].operator.name === '<=' ? `<= ` : ``}${indicators[i].target} ${indicators[i].satuan.name === 'persen' ? '%' : indicators[i].satuan.name}`,
-					counternames: [],
-					rekaps: [],
+					rekaps:[]
 				}
-
 				if (indicators[i].counternames.length) {
 					for (let countername of indicators[i].counternames) {
-						store.commit('counternameMutate', countername)
-						indicator.counternames.push(countername._id)
+						indicator[countername.countertype.name] = countername._id
+						store.commit("counternameMutate", countername);
 					}
 				}
-
 				store.commit("indicatorMutate", indicator);
 			}
 		})

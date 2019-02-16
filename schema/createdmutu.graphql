@@ -1,0 +1,23 @@
+query States($name: String!){
+  states(where: { name: $name }) {
+    indicators(where: { active: true }) {
+      _id
+      rekaps {
+        _id
+        jumlah
+        periode
+      }
+      counternames {
+        _id
+        countertype {
+          name
+        }
+        counters {
+          waktu
+          jumlah
+          _id
+        }
+      }
+    }
+  }
+}
