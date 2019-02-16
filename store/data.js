@@ -119,7 +119,7 @@ export const actions = {
 			res = await strapi.createEntry('counters', counter)
 
 		}
-		//console.log(JSON.stringify(res, null, 2))
+		console.log(JSON.stringify(res, null, 2))
 		//store.commit('counterMutate', res)
 		return
 	},
@@ -134,13 +134,14 @@ export const actions = {
 		})
 
 		let res
-		if ( exist || exist.length) {
-			let rekapId = rekap._id || exist[0]._id
-			res = await strapi.updateEntry('rekaps', rekapId, rekap)
+		if ( exist.length) {
+			rekap._id = exist[0]._id
+		} else if ( rekap._id){
+			res = await strapi.updateEntry('rekaps', rekap._id, rekap)
 		} else {
 			res = await strapi.createEntry('rekaps', rekap)
 		}
-	//	console.log(JSON.stringify(res, null, 2))
+		//console.log(JSON.stringify(res, null, 2))
 		//store.commit('rekapMutate', res)
 		return
 	},

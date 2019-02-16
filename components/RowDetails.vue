@@ -74,17 +74,17 @@ export default {
 			if (this.rekapSend.jumlah > 0 ) {
 				await this.$store.dispatch('data/sendRekap', {...this.rekapSend})
 			}
-			//console.log(this.pembilangSend.jumlah)
+			console.log(JSON.stringify(this.pembilangSend, null, 2))
 			if(this.pembilangSend.jumlah > 0) {
 				await this.$store.dispatch('data/sendCounter', {...this.pembilangSend})
 			}
 			if(this.penyebutSend.jumlah > 0) {
 	 			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
 			}
-			this.row.item.harianApplied && this.row.item.days.map( async day => {
+			this.row.item.harianApplied && this.arrRekap.length && this.row.item.days.map( async day => {
 				if(day.pembilang){
 					let pembilangConvert = this.convertSend( day, this.row, 'pembilang')
-					console.log(JSON.stringify(pembilangConvert, null, 2))
+					//console.log(JSON.stringify(pembilangConvert, null, 2))
 					if(pembilangConvert.jumlah > 0) {
 						await this.$store.dispatch('data/sendCounter', {...pembilangConvert})
 					}
@@ -140,7 +140,7 @@ export default {
 		},
 		rekapSend(){
 			return {
-				_id: this.row.item.rekap._id || undefined,
+				_id: this.row.item.rekap ? this.row.item.rekap._id : undefined,
 				jumlah: Number(this.rekap),
 				periode: this.row.item.month,
 				indicator: this.row.item._id

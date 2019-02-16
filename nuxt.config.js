@@ -46,6 +46,7 @@ module.exports = {
 
 		extractCSS: true,
 
+		
 	},
 	
 	css: [

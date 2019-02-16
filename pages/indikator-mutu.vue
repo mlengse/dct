@@ -205,7 +205,9 @@ export default {
 				}, this.$store.getters['data/getbln']({
 					name: mutu.pembilang.name,
 					bulan: this.month
-				})),
+				}), {
+					_id: mutu.pembilang._id
+				}),
 				penyebut: Object.assign({}, mutu.penyebut, {
 					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
 					? Number(mutu.penyebut.name) 
@@ -215,13 +217,17 @@ export default {
 					}, this.$store.getters['data/getbln']({
 						name: mutu.penyebut.name,
 						bulan: this.month
-					})
+					}), {
+						_id: mutu.penyebut._id
+					}
 				)
 			})).map( mutu => Object.assign({}, mutu, {
 				status: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
 				variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
 				_showDetails: mutu._showDetails || false,
 				harianApplied: mutu.penyebut ? (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('pasien') || mutu.penyebut.name.includes('visite')) : false ,
+			})).map( mutu => Object.assign({}, mutu, {
+				days: mutu.harianApplied ? mutu.days : undefined
 			}))
 		}
 	}

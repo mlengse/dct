@@ -52,6 +52,24 @@ export default {
 				this.penyebut = penyebut
 			}
 		},
+	},
+	watch: {
+		pembilang(val){
+			this.$emit('rekapHarian', {
+				pembilang: this.pembilang,
+				penyebut: this.penyebut,
+				arr: this.getArr
+			})
+		},
+		penyebut(val) {
+			this.$emit('rekapHarian', {
+				pembilang: this.pembilang,
+				penyebut: this.penyebut,
+				arr: this.getArr
+			})
+		},
+	},
+	computed: {
 		getArr() {
 			let arr = []
 			this.days.map( day => ( ['pembilang', 'penyebut'].map( (countername, id) => {
@@ -63,24 +81,6 @@ export default {
 			})))
 			return arr		
 		},
-	},
-	watch: {
-		pembilang(val){
-			this.$emit('rekapHarian', {
-				pembilang: this.pembilang,
-				penyebut: this.penyebut,
-				arr: this.getArr()
-			})
-		},
-		penyebut(val) {
-			this.$emit('rekapHarian', {
-				pembilang: this.pembilang,
-				penyebut: this.penyebut,
-				arr: this.getArr()
-			})
-		},
-	},
-	computed: {
 		weeks() {
 			let weeks = []
 			this.row.item.days.map( day => {
