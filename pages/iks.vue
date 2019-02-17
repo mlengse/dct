@@ -14,8 +14,10 @@ section.container
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
 	b-button-toolbar
-		b-btn(size='sm' primary)
-			download-excel(:data="items" :fields="json_fields" :name='iksId + ".xls"') download
+		download-excel.mr-2(:data="items" :fields="json_fields" :name='iksId + ".xls"') 
+			b-btn(size='sm' variant="primary") Download IKS
+		download-excel.mr-2(:data="resume" :fields="resume_fields" name='resume_pispk.xls') 
+			b-btn(size='sm' variant="primary") Download Resume Pelaksanaan
 	.row.mt-2
 	b-card
 		.list-group
@@ -60,8 +62,8 @@ section.container
 		b-table(responsive stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
-	//.row.mt-2.fluid
-		pre {{items}}
+	.row.mt-2.fluid
+		pre {{resume}}
 
 </template>
 <script>
@@ -102,6 +104,14 @@ export default {
 				sortable: true
 			}
 
+		},
+		resume_fields: {
+			"No": "no",
+			"RW": 'rw',
+			'RT': 'rt',
+			'Jumlah KK': 'jmlKK',
+			'Jumlah KK Diinput': 'jml',
+			'Jumlah Kesenjangan': 'selisih'
 		}
 	}),
 	methods:{
@@ -135,6 +145,14 @@ export default {
 				a[this.fields[e].label] = e
 			})
 			return a
+		},
+		resume(){
+			return this.jmlkk.map( (e, id) => Object.assign( {}, e, {
+				no: id+1,
+				_key: `iks-MOJOSONGO-${e.rw}-${e.rt}`
+			})).map( e => Object.assign({}, e, this.$store.getters['iks/iks'](e._key))).map(e => Object.assign( {}, e, {
+				selisih: e.jmlKK - e.jml
+			}))
 		},
 		kkInd(){
 			let a = {}
