@@ -130,8 +130,9 @@ export const actions = {
 
 		if( exist ){
 			getEntries = store.state.counter[counter._id] ? true : false
-			sameJml = store.state.counter[counter._id].jumlah == counter.jumlah ? true : false
-			if(!getEntries){
+			if(getEntries) {
+				sameJml = store.state.counter[counter._id].jumlah == counter.jumlah ? true : false
+			} else {
 				let length = (await strapi.getEntries('counters', {
 					waktu: counter.waktu,
 					countername: {
@@ -140,14 +141,13 @@ export const actions = {
 				})).length
 				
 				if (length) {
-					getEntries = true
 					sameJml = counter.jumlah == exist[0].jumlah ? true : false
 					counter._id = exist[0]._id
 				} 
 			}
 		}
-		
-		if ( !sameJml && !getEntries ) {
+
+		if ( !sameJml ) {
 			if(counter._id){
 				res = await strapi.updateEntry('counters', counter._id, counter)
 			} else {
@@ -155,7 +155,7 @@ export const actions = {
 			}
 		} 
 		if( res ) {
-		//	console.log(JSON.stringify(res, null, 2))
+			console.log(JSON.stringify(res, null, 2))
 			store.commit('counterMutate', res)
 		}
 		return
@@ -168,24 +168,24 @@ export const actions = {
 
 		if( exist ){
 			getEntries = store.state.rekap[rekap._id] ? true : false
-			sameJml = store.state.rekap[rekap._id].jumlah == rekap.jumlah ? true : false
-			if(!getEntries){
+			if(getEntries) {
+				sameJml = store.state.rekap[rekap._id].jumlah == rekap.jumlah ? true : false
+			} else {
 				let length = (await strapi.getEntries('rekaps', {
 					waktu: rekap.waktu,
-					rekapname: {
-						_id: rekap.rekapname
+					indicator: {
+						_id: rekap.indicator
 					}
 				})).length
 				
 				if (length) {
-					getEntries = true
 					sameJml = rekap.jumlah == exist[0].jumlah ? true : false
 					rekap._id = exist[0]._id
 				} 
 			}
 		}
 		
-		if ( !sameJml && !getEntries ) {
+		if ( !sameJml ) {
 			if(rekap._id){
 				res = await strapi.updateEntry('rekaps', rekap._id, rekap)
 			} else {
@@ -193,7 +193,7 @@ export const actions = {
 			}
 		} 
 		if( res ) {
-		//	console.log(JSON.stringify(res, null, 2))
+			console.log(JSON.stringify(res, null, 2))
 			store.commit('rekapMutate', res)
 		}
 		return

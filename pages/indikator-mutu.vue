@@ -73,9 +73,9 @@ export default {
 
 	}),
 	fetch: async ({store}) => await store.dispatch('data/fetch'),
-	mounted(){
+	async mounted(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		this.$nextTick(() => this.updateMonth(this.month))
+		await this.$nextTick(async () => await this.updateMonth(this.month))
 	},
 	methods: {
 		goBlnJalan() {
@@ -104,6 +104,7 @@ export default {
 			this.currentPage = 1
 		},
 		save(val){
+			console.log(val)
 			this.loaded = val
 		},
 		showing(row) {
@@ -202,7 +203,7 @@ export default {
 					name: mutu.pembilang.name,
 					bulan: this.month
 				}), {
-					_id: mutu.pembilang._id
+					counternameId: mutu.pembilang._id
 				}),
 				penyebut: Object.assign({}, mutu.penyebut, {
 					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
@@ -214,7 +215,7 @@ export default {
 						name: mutu.penyebut.name,
 						bulan: this.month
 					}), {
-						_id: mutu.penyebut._id
+						counternameId: mutu.penyebut._id
 					}
 				),
 			})).map( mutu => Object.assign({}, mutu, {
@@ -252,10 +253,12 @@ export default {
 					}
 				})(),
 				days: !mutu.harianApplied ? undefined : mutu.days.map( dayObj => Object.assign({}, dayObj, {
-					pembilang: Object.assign({},  mutu.pembilang, /**this.$store.getters['data/gettgl']({
-						name: this.row.item.pembilang.name,
+					pembilang: Object.assign({},  mutu.pembilang, {
+						_id: undefined
+					}, this.$store.getters['data/gettgl']({
+						name: mutu.pembilang.name,
 						tanggal: dayObj.tanggal
-					}),  */{
+					}),  {
 						//_id: this.row.item.pembilang._id,
 						//name: this.row.item.pembilang.name,
 						//type: this.row.item.pembilang.type,
@@ -268,12 +271,14 @@ export default {
 						counters: undefined,
 					}),
 					penyebut: Object.assign({}, mutu.penyebut, {
+						_id: undefined
+					}, {
 						jumlah: (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('visit')) && this.$moment(dayObj.tanggal, 'DD-MM-YYYY').format('dddd') !== 'Minggu' ? 1 : 0,
 						counters: undefined
-					}, /** this.$store.getters['data/gettgl']({
-						name: this.row.item.penyebut.name,
+					}, this.$store.getters['data/gettgl']({
+						name: mutu.penyebut.name,
 						tanggal: dayObj.tanggal
-					})*/)
+					}))
 				})),
 			})).map( mutu => Object.assign({}, mutu, {
 				pembilang: Object.assign({}, mutu.pembilang, {

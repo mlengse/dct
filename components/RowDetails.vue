@@ -52,27 +52,15 @@ export default {
 		editing: false,
 		rincian: false,
 		rowRekap: null,
-		pembilangRekap: 0,
-		penyebutRekap: 0,
 		arrRekap: []
 	}),
 	watch:{
-		pembilangRekap(val) {
-			this.row.item.pembilang.jumlah = val
-			this.row.item.penyebut.jumlah = this.penyebutRekap
-		},
-		penyebutRekap(val) {
-			this.row.item.pembilang.jumlah = this.pembilangRekap
-			this.row.item.penyebut.jumlah = val
-		},
 		rowItemRekapJumlah(val){
 			this.row.item.rekap.jumlah =  val
 		},
 	},
 	methods: {
 		rekapHarian(val){
-			this.pembilangRekap = val.pembilang
-			this.penyebutRekap = val.penyebut
 			this.arrRekap = val.arr
 		},
 		toggleButton() {
@@ -94,7 +82,7 @@ export default {
 			if(this.penyebutSend.jumlah > 0) {
 	 			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
 			}
-			this.row.item.harianApplied && this.arrRekap.length && this.row.item.days.map( async day => {
+			this.row.item.harianApplied && this.arrRekap.length ? await this.row.item.days.map( async day => {
 				if(day.pembilang){
 					let pembilangConvert = this.convertSend( day, this.row, 'pembilang')
 					//console.log(JSON.stringify(pembilangConvert, null, 2))
@@ -109,13 +97,15 @@ export default {
 					}
 				}
 				return true
-			})
+			}) : null
 			this.$nuxt.$loading.finish()
 			this.$emit('save', false)
 			//this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
+			console.log(JSON.stringify(day, null, 2))
 			return {
+				_id: day[type] ? day[type]._id : undefined,
 				jumlah: Number(day[type].jumlah) || 0,
 				countername: row.item[type]._id,
 				waktu: this.$moment(day.tanggal, 'DD-MM-YYYY').add(1, 'second').toISOString()
@@ -129,28 +119,25 @@ export default {
 		penyebutEdit(){
 			return this.row.item.penyebut.name == Number(this.row.item.penyebut.name)
 		},
-		rowItemPembilangJumlah(){
-			return this.row.item.pembilang.jumlah
-		},
-		rowItemPenyebutJumlah(){
-			return this.row.item.penyebut.jumlah
-		},
 		rowItemRekapJumlah() {
 			return this.row.item.penyebut.jumlah > 0 
 			? 100*this.row.item.pembilang.jumlah/this.row.item.penyebut.jumlah 
 			: 0
 		},
 		pembilangSend(){
+			//console.log(this.row.item.pembilang.jumlah)
 			return {
-				jumlah: Number(this.row.item.pembilang.jumlah) || 0,
-				countername: this.row.item.pembilang._id,
+				_id: this.row.item.pembilang._id,
+				jumlah: Number(this.row.item.pembilang.jumlah),
+				countername: this.row.item.pembilang.counternameId,
 				waktu: this.$moment(this.row.item.month, 'MMMM YYYY').toISOString()
 			}
 		},
 		penyebutSend(){
 			return {
-				jumlah: Number(this.row.item.penyebut.jumlah) || 0,
-				countername: this.row.item.penyebut._id,
+				_id: this.row.item.penyebut._id,
+				jumlah: Number(this.row.item.penyebut.jumlah),
+				countername: this.row.item.penyebut.counternameId,
 				waktu: this.$moment(this.row.item.month, 'MMMM YYYY').toISOString()
 			}
 		},

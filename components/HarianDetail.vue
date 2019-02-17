@@ -31,40 +31,34 @@ export default {
 	},
 	data: () => ({
 		days: [],
-		pembilang: 0,
-		penyebut: 0,
 		weekSelected:0,
 	}), 
 	methods: {
 		inputPembilang(val) {
 			this.days[val.id] = val
-			this.pembilang = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
+			this.row.item.pembilang.jumlah = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
 			let penyebut = this.row.item.days.reduce((total, day) => total + Number(day.penyebut.jumlah), 0)
 			if(penyebut > 0){
-				this.penyebut = penyebut
+				this.row.item.penyebut.jumlah = penyebut
 			}
 		},
 		inputPenyebut(val) {
 			this.days[val.id] = val
-			this.pembilang = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
+			this.row.item.pembilang.jumlah = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
 			let penyebut = this.row.item.days.reduce((total, day) => total + Number(day.penyebut.jumlah), 0)
 			if(penyebut > 0){
-				this.penyebut = penyebut
+				this.row.item.penyebut.jumlah = penyebut
 			}
 		},
 	},
 	watch: {
 		pembilang(val){
 			this.$emit('rekapHarian', {
-				pembilang: this.pembilang,
-				penyebut: this.penyebut,
 				arr: this.getArr
 			})
 		},
 		penyebut(val) {
 			this.$emit('rekapHarian', {
-				pembilang: this.pembilang,
-				penyebut: this.penyebut,
 				arr: this.getArr
 			})
 		},
