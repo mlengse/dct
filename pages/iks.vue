@@ -62,7 +62,7 @@ section.container
 		b-table(responsive stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
-	.row.mt-2.fluid
+	//.row.mt-2.fluid
 		pre {{resume}}
 
 </template>
