@@ -15,7 +15,7 @@ b-card
 			.list-group-item
 				b-row(align-h='end')
 					b-button-group
-						b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
+						//-b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
 						b-button(:disabled='loaded' size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
 						b-button(:disabled='loaded' size='sm' v-else variant='warning' @click.stop='toggleButton') edit
 			.list-group-item
@@ -36,7 +36,7 @@ b-card
 					.col-md-2
 						b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
 						.text-right(v-else) {{row.item.penyebut.jumlah}}
-	harian-detail(v-if='rincian' :row='row' :editing='editing' @rekapHarian='rekapHarian')
+	harian-detail(v-if='rincian' :row='row' :editing='editing' )
 
 </template>
 
@@ -52,7 +52,6 @@ export default {
 		editing: false,
 		rincian: false,
 		rowRekap: null,
-		arrRekap: []
 	}),
 	watch:{
 		rowItemRekapJumlah(val){
@@ -60,52 +59,37 @@ export default {
 		},
 	},
 	methods: {
-		rekapHarian(val){
-			this.arrRekap = val.arr
-		},
 		toggleButton() {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 		},
 		async simpan() {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 			this.$nuxt.$loading.start()
-			//this.$emit('save')
+			this.$emit('save', true)
 			this.row.item.status = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
 			this.row.item.variant = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'success' : 'danger') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'success' : 'danger')) : 'warning'
-			if (this.rekapSend.jumlah > 0 ) {
-				await this.$store.dispatch('data/sendRekap', {...this.rekapSend})
-			}
-			//console.log(JSON.stringify(this.pembilangSend, null, 2))
-			if(this.pembilangSend.jumlah > 0) {
-				await this.$store.dispatch('data/sendCounter', {...this.pembilangSend})
-			}
-			if(this.penyebutSend.jumlah > 0) {
-	 			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
-			}
-			//console.log('month done')
-			this.row.item.harianApplied && this.arrRekap.length ? await this.row.item.days.map( async day => {
+			await this.$store.dispatch('data/sendRekap', {...this.rekapSend})
+			await this.$store.dispatch('data/sendCounter', {...this.pembilangSend})
+			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
+			
+			/**			this.row.item.harianApplied ? await this.row.item.days.map( async day => {
 				if(day.pembilang){
 					let pembilangConvert = this.convertSend( day, this.row, 'pembilang')
-					//console.log(JSON.stringify(pembilangConvert, null, 2))
-					if(pembilangConvert.jumlah > 0) {
-						await this.$store.dispatch('data/sendCounter', {...pembilangConvert})
-					}
+					await this.$store.dispatch('data/sendCounter', {...pembilangConvert})
 				}
 				if(day.penyebut){
 					let penyebutConvert = this.convertSend( day, this.row, 'penyebut')
-					if(penyebutConvert.jumlah > 0) {
-						await this.$store.dispatch('data/sendCounter', {...penyebutConvert})
-					}
+					await this.$store.dispatch('data/sendCounter', {...penyebutConvert})
 				}
 				return true
 			}) : null
-			//console.log('days done')
+ */
+
 			this.$nuxt.$loading.finish()
-			///this.$emit('save')
+			this.$emit('save', true)
 			this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
-			//console.log(JSON.stringify(day, null, 2))
 			return {
 				_id: day[type] ? day[type]._id : undefined,
 				jumlah: Number(day[type].jumlah) || 0,
@@ -127,7 +111,6 @@ export default {
 			: 0
 		},
 		pembilangSend(){
-			//console.log(this.row.item.pembilang.jumlah)
 			return {
 				_id: this.row.item.pembilang._id,
 				jumlah: Number(this.row.item.pembilang.jumlah),

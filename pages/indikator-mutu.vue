@@ -37,9 +37,9 @@ b-container
 				template(slot='capaian' slot-scope='row')
 					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
-					b-button-group.mx-1(size='sm')
-						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+					//-b-button-group.mx-1(size='sm')
+					b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+					//-b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
 	.row
@@ -73,9 +73,11 @@ export default {
 
 	}),
 	fetch: async ({store}) => await store.dispatch('data/fetch'),
-	async mounted(){
+	async created() {
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		await this.$nextTick(async () => await this.updateMonth(this.month))
+		this.loaded = true
+		await this.$store.dispatch('data/createdMutu')
+		this.loaded = false
 	},
 	methods: {
 		goBlnJalan() {
@@ -91,13 +93,11 @@ export default {
 			this.month = this.$moment(this.month, 'MMMM YYYY').add(1, 'month').format('MMMM YYYY')
 		},
 		async updateMonth(val) {
-		//	console.log(val)
 			this.loaded = true
 			this.$nuxt.$loading.start()
 			await this.$store.dispatch('data/createdMutu')
 			this.$nuxt.$loading.finish()
 			this.loaded = false
-
 		},
 		onFiltered(filteredItems) {
 			this.totalRows = filteredItems.length
@@ -260,9 +260,6 @@ export default {
 						name: mutu.pembilang.name,
 						tanggal: dayObj.tanggal
 					}),  {
-						//_id: this.row.item.pembilang._id,
-						//name: this.row.item.pembilang.name,
-						//type: this.row.item.pembilang.type,
 						jumlah: (() => {
 							let j = 0
 							let a = mutu.pembilang.counters.filter(counter=> !counter.isMonth && counter.tgl === dayObj.tanggal)

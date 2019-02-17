@@ -51,30 +51,7 @@ export default {
 			}
 		},
 	},
-	watch: {
-		pembilang(val){
-			this.$emit('rekapHarian', {
-				arr: this.getArr
-			})
-		},
-		penyebut(val) {
-			this.$emit('rekapHarian', {
-				arr: this.getArr
-			})
-		},
-	},
 	computed: {
-		getArr() {
-			let arr = []
-			this.days.map( day => ( ['pembilang', 'penyebut'].map( (countername, id) => {
-				let obj = Object.assign({}, day, {
-					tanggal: this.$moment(day.tanggal, 'DD-MM-YYYY').toISOString(),
-					countername: day[countername]._id,
-				})
-				arr[arr.length] = obj
-			})))
-			return arr		
-		},
 		weeks() {
 			let weeks = []
 			this.row.item.days.map( day => {
