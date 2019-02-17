@@ -111,6 +111,10 @@ module.exports = {
 		{
 			src: '~/plugins/auth',
 			ssr: false
+		},
+		{ 
+			src: '~plugins/download', 
+			ssr: false 
 		}
 		//'@/plugins/vue-react',
 		//'@/plugins/firebase'

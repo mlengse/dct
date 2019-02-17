@@ -13,6 +13,10 @@ section.container
 			b-input-group(prepend='RT' size='sm')
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
+	b-button-toolbar
+		b-btn(size='sm' primary)
+			download-excel(:data="items" :fields="json_fields" :name='iksId + ".xls"') download
+	.row.mt-2
 	b-card
 		.list-group
 			.list-group-item
@@ -24,9 +28,16 @@ section.container
 			.list-group-item
 				.row
 					.col Jumlah Keluarga
-					.col {{iks.jml}}
+					.col {{iks.jmlKK}}
 					.col-md-6
-						b-progress(:value="iks.jml" :max="iks.jml" variant='secondary')
+						b-progress(:value="iks.jmlKK" :max="iks.jmlKK" variant='secondary')
+			.list-group-item
+				.row
+					.col Jumlah Terindeks
+					.col {{iks.jml}}
+						span(v-if='kesenjangan')  ({{kesenjangan}})
+					.col-md-6
+						b-progress(:value="iks.jml" :max="iks.jmlKK")
 			.list-group-item
 				.row
 					.col Sehat
@@ -50,7 +61,7 @@ section.container
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
 	//.row.mt-2.fluid
-		pre {{iks}}
+		pre {{items}}
 
 </template>
 <script>
@@ -58,6 +69,7 @@ import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/
 import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
 import bProgress from '~/node_modules/bootstrap-vue/es/components/progress/progress';
 //import bTable from '~/node_modules/bootstrap-vue/es/components/table/table';
+ 
 export default {
 	components: {
 		bInputGroup,
@@ -112,28 +124,59 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
-	async beforeMounted(){
-		await this.$store.dispatch('iks/all')
+	async mounted(){
+	//	await this.$store.dispatch('iks/all')
 	},
 	fetch: async ({store}) => await store.dispatch('iks/all'),
 	computed: {
+		json_fields(){
+			let a = {}
+			Object.keys(this.fields).map( e => {
+				a[this.fields[e].label] = e
+			})
+			return a
+		},
+		kkInd(){
+			let a = {}
+			this.jmlkk.map( e=> {
+				let _key = `iks-MOJOSONGO-${e.rw}-${e.rt}`
+				a[_key] = Object.assign({}, e, {
+					_key
+				})
+			})
+			return a
+		},
+		jmlkk(){
+			return this.$store.state.iks.jmlkk
+		},
 		kel(){
 			return this.$store.getters['iks/kel']
 		},
 		rw(){
+			if(this.kelSelected === 'MOJOSONGO'){
+				return [...new Set(this.jmlkk.map( e => e.rw))].sort((a, b) => a - b)
+			}
 			return this.$store.getters['iks/rw']({kel: this.kelSelected})
 		},
 		rt(){
+			if(this.kelSelected === 'MOJOSONGO'){
+				return [...new Set(this.jmlkk.filter(e => e.rw===this.rwSelected).map( e => e.rt))].sort((a, b) => a - b)
+			}
 			return this.$store.getters['iks/rt']({
 				kel: this.kelSelected,
 				rw: this.rwSelected
 			})
 		},
+		kesenjangan(){
+			return this.iks.jml - this.iks.jmlKK
+		},
 		iksId(){
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
 		iks(){
-			return this.$store.getters['iks/iks'](this.iksId)
+			return Object.assign({}, 
+			this.$store.getters['iks/iks'](this.iksId), 
+			this.kkInd[this.iksId])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
@@ -156,6 +199,11 @@ export default {
 					variant: 'danger',
 					text: 'Tidak Sehat'
 				}
+			} else {
+				return {
+					variant: 'info',
+					text: 'Belum Terindeks'
+				}
 			}
 		},
 		template(){
@@ -163,14 +211,12 @@ export default {
 			return [ 'Keluarga mengikuti program Keluarga Berencana (KB)', 'Ibu melakukan persalinan di fasilitas kesehatan',	'Bayi mendapat imunisasi dasar lengkap', 'Bayi mendapat air susu ibu (ASI) eksklusif', 'Balita mendapatkan pematauan pertumbuhan', 'Penderita tuberkulosis paru mendapatkan pengobatan sesuai standar', 'Penderita hipertensi melakukan pengobatan secara teratur', 'Penderita gangguan jiwa mendapatkan pengobatan dan tidak ditelantarkan', 'Anggota keluarga tidak ada yang merokok', 'Keluarga sudah menjadi anggota Jaminan Kesehatan Nasional (JKN)', 'Keluarga mempunyai akses sarana air bersih', 'Keluarga mempunyai akses atau menggunakan jamban sehat'].map( (ind, i) => ({
 				no: i+1,
 				ind: ind,
-				key: a[i]
+				key: a[i],
+				iks: 0
 			}))
 		},
 		items(){
-			return this.template.map( ind => ({
-				...ind,
-				...this.iks[ind.key]
-			}))
+			return this.template.map( ind => Object.assign({}, ind, this.iks[ind.key] ))
 		}
 	}
 }
