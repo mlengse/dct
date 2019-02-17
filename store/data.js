@@ -68,10 +68,25 @@ export const mutations = {
 			counters: []
 		})
 	},
+	counterMutate( state, counter){
+		state.counter[counter._id] = Object.assign({}, state.counter[counter._id], counter, {
+			//name: state[countername.countertype.name][countername._id].name,
+			//type: countername.countertype.name,
+			tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
+			bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'),
+			isMonth: !!!Number(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HHmmssss'))
+		})
+		
+		if (state.counter[counter._id].isMonth) {
+			state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]
+		} else {
+			state.tgl[`${state.counter[counter._id].name} ${state.counter[counter._id].tgl}`] = state.counter[counter._id]
+		}
+	},
 	counternameCountersMutate( state, countername){
 		state[countername.countertype.name][countername._id] = Object.assign({}, state[countername.countertype.name][countername._id],{
 			counters: countername.counters.map( counter =>{
-				state.counter[counter._id] = Object.assign({}, counter, {
+				state.counter[counter._id] = Object.assign({}, state.counter[counter._id], counter, {
 					name: state[countername.countertype.name][countername._id].name,
 					type: countername.countertype.name,
 					tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
@@ -91,6 +106,9 @@ export const mutations = {
 	counternameRekapsMutate(state, indicator) {
 		state.indicator[indicator._id].rekaps = indicator.rekaps.map( rekap => {
 			state.rekap[rekap._id] = rekap
+			//if( rekap._id === '5c4963c706083f0d9c0d4d53') {
+			//	console.log(JSON.stringify(state.rekap[rekap._id], null, 2))
+			//}
 			return rekap._id
 		})
 	},
@@ -105,44 +123,79 @@ export const mutations = {
 
 export const actions = {
 	async sendCounter(store, counter) {
-		let exist = await strapi.getEntries('counters', {
-			waktu: counter.waktu,
-			countername: {
-				_id: counter.countername
-			}
-		})
-		let res
-		if (exist.length) {
-			let counterId = exist[0]._id
-			res = await strapi.updateEntry('counters', counterId, counter)
-		} else {
-			res = await strapi.createEntry('counters', counter)
+		let exist = counter._id
+		let getEntries = false
+		let sameJml = false
+		let res = false
 
+		if( exist ){
+			getEntries = store.state.counter[counter._id] ? true : false
+			sameJml = store.state.counter[counter._id].jumlah == counter.jumlah ? true : false
+			if(!getEntries){
+				let length = (await strapi.getEntries('counters', {
+					waktu: counter.waktu,
+					countername: {
+						_id: counter.countername
+					}
+				})).length
+				
+				if (length) {
+					getEntries = true
+					sameJml = counter.jumlah == exist[0].jumlah ? true : false
+					counter._id = exist[0]._id
+				} 
+			}
 		}
-		console.log(JSON.stringify(res, null, 2))
-		//store.commit('counterMutate', res)
+		
+		if ( !sameJml && !getEntries ) {
+			if(counter._id){
+				res = await strapi.updateEntry('counters', counter._id, counter)
+			} else {
+				res = await strapi.createEntry('counters', counter)
+			}
+		} 
+		if( res ) {
+		//	console.log(JSON.stringify(res, null, 2))
+			store.commit('counterMutate', res)
+		}
 		return
 	},
 	async sendRekap(store, rekap) {
 		let exist = rekap._id
+		let getEntries = false
+		let sameJml = false
+		let res = false
 
-		if (!exist) exist =	await strapi.getEntries('rekaps', {
-			periode: rekap.periode,
-			indicator: {
-				_id: rekap.indicator
+		if( exist ){
+			getEntries = store.state.rekap[rekap._id] ? true : false
+			sameJml = store.state.rekap[rekap._id].jumlah == rekap.jumlah ? true : false
+			if(!getEntries){
+				let length = (await strapi.getEntries('rekaps', {
+					waktu: rekap.waktu,
+					rekapname: {
+						_id: rekap.rekapname
+					}
+				})).length
+				
+				if (length) {
+					getEntries = true
+					sameJml = rekap.jumlah == exist[0].jumlah ? true : false
+					rekap._id = exist[0]._id
+				} 
 			}
-		})
-
-		let res
-		if ( exist.length) {
-			rekap._id = exist[0]._id
-		} else if ( rekap._id){
-			res = await strapi.updateEntry('rekaps', rekap._id, rekap)
-		} else {
-			res = await strapi.createEntry('rekaps', rekap)
 		}
-		//console.log(JSON.stringify(res, null, 2))
-		//store.commit('rekapMutate', res)
+		
+		if ( !sameJml && !getEntries ) {
+			if(rekap._id){
+				res = await strapi.updateEntry('rekaps', rekap._id, rekap)
+			} else {
+				res = await strapi.createEntry('rekaps', rekap)
+			}
+		} 
+		if( res ) {
+		//	console.log(JSON.stringify(res, null, 2))
+			store.commit('rekapMutate', res)
+		}
 		return
 	},
 	async createdMutu( store ){

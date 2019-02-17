@@ -1,6 +1,16 @@
 <template lang="pug">
 b-card
-	.container
+	.container.mt-3
+		.list-group
+			.list-group-item
+				.row
+					.col.text-right Capaian
+					.col-md-2.col-sm-3 {{row.item.rekap.jumlah.toFixed()}} %
+			.list-group-item
+				.row
+					.col.text-right Target
+					.col-md-2.col-sm-3 {{row.item.target}}
+	.container.mt-3
 		dl
 			.list-group-item
 				b-row(align-h='end')
@@ -15,8 +25,8 @@ b-card
 					.col
 						dd {{row.item.pembilang.name}}
 					.col-md-2
-						b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='pembilangRekap.toString() || row.item.pembilang.jumlah.toString() || "0"' v-model='row.item.pembilang.jumlah')
-						.text-right(v-else) {{pembilangRekap || row.item.pembilang.jumlah || 0}}
+						b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='row.item.pembilang.jumlah.toString()' v-model='row.item.pembilang.jumlah')
+						.text-right(v-else) {{row.item.pembilang.jumlah}}
 			.list-group-item
 				b-row
 					.col-lg-2.col-md-3
@@ -24,19 +34,9 @@ b-card
 					.col
 						dd {{row.item.penyebut.name}}
 					.col-md-2
-						b-form-input.text-right(v-if="editing && !rincian"  type='number' :placeholder='penyebutRekap.toString() || row.item.penyebut.jumlah.toString() || "0"' v-model='row.item.penyebut.jumlah')
-						.text-right(v-else) {{penyebutRekap || row.item.penyebut.jumlah || 0}}
+						b-form-input.text-right(v-if="editing && !rincian && penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
+						.text-right(v-else) {{row.item.penyebut.jumlah}}
 	harian-detail(v-if='rincian' :row='row' :editing='editing' @rekapHarian='rekapHarian')
-	.container.mt-3
-		.list-group
-			.list-group-item
-				.row
-					.col.text-right Capaian
-					.col-md-2.col-sm-3 {{rekap}} %
-			.list-group-item
-				.row
-					.col.text-right Target
-					.col-md-2.col-sm-3 {{row.item.target}}
 
 </template>
 
@@ -56,6 +56,19 @@ export default {
 		penyebutRekap: 0,
 		arrRekap: []
 	}),
+	watch:{
+		pembilangRekap(val) {
+			this.row.item.pembilang.jumlah = val
+			this.row.item.penyebut.jumlah = this.penyebutRekap
+		},
+		penyebutRekap(val) {
+			this.row.item.pembilang.jumlah = this.pembilangRekap
+			this.row.item.penyebut.jumlah = val
+		},
+		rowItemRekapJumlah(val){
+			this.row.item.rekap.jumlah =  val
+		},
+	},
 	methods: {
 		rekapHarian(val){
 			this.pembilangRekap = val.pembilang
@@ -74,7 +87,7 @@ export default {
 			if (this.rekapSend.jumlah > 0 ) {
 				await this.$store.dispatch('data/sendRekap', {...this.rekapSend})
 			}
-			console.log(JSON.stringify(this.pembilangSend, null, 2))
+			//console.log(JSON.stringify(this.pembilangSend, null, 2))
 			if(this.pembilangSend.jumlah > 0) {
 				await this.$store.dispatch('data/sendCounter', {...this.pembilangSend})
 			}
@@ -89,19 +102,17 @@ export default {
 						await this.$store.dispatch('data/sendCounter', {...pembilangConvert})
 					}
 				}
-
 				if(day.penyebut){
 					let penyebutConvert = this.convertSend( day, this.row, 'penyebut')
 					if(penyebutConvert.jumlah > 0) {
 						await this.$store.dispatch('data/sendCounter', {...penyebutConvert})
 					}
-
 				}
-
+				return true
 			})
 			this.$nuxt.$loading.finish()
 			this.$emit('save', false)
-			this.$emit('updateMonth', this.row.item.month)
+			//this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
 			return {
@@ -115,14 +126,19 @@ export default {
 		},
 	},
 	computed: {
-		rekap() {
-			return this.pembilangRekap / this.penyebutRekap && this.pembilangRekap / this.penyebutRekap !== Infinity
-				? ((this.pembilangRekap / this.penyebutRekap) * 100).toFixed(1)
-				: this.row.item.pembilang.jumlah / this.row.item.penyebut.jumlah && this.row.item.pembilang.jumlah / this.row.item.penyebut.jumlah !== Infinity 
-				? ((this.row.item.pembilang.jumlah / this.row.item.penyebut.jumlah) * 100).toFixed(1)
-				:this.row.item.rekap
-				? this.row.item.rekap.jumlah
-				: 0;
+		penyebutEdit(){
+			return this.row.item.penyebut.name == Number(this.row.item.penyebut.name)
+		},
+		rowItemPembilangJumlah(){
+			return this.row.item.pembilang.jumlah
+		},
+		rowItemPenyebutJumlah(){
+			return this.row.item.penyebut.jumlah
+		},
+		rowItemRekapJumlah() {
+			return this.row.item.penyebut.jumlah > 0 
+			? 100*this.row.item.pembilang.jumlah/this.row.item.penyebut.jumlah 
+			: 0
 		},
 		pembilangSend(){
 			return {
@@ -141,7 +157,7 @@ export default {
 		rekapSend(){
 			return {
 				_id: this.row.item.rekap ? this.row.item.rekap._id : undefined,
-				jumlah: Number(this.rekap),
+				jumlah: Number(this.row.item.rekap.jumlah),
 				periode: this.row.item.month,
 				indicator: this.row.item._id
 			}

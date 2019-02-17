@@ -38,16 +38,16 @@ export default {
 	methods: {
 		inputPembilang(val) {
 			this.days[val.id] = val
-			this.pembilang = this.row.item.days.reduce((total, item) => total + Number(item.pembilang.jumlah), 0)
-			let penyebut = this.row.item.days.reduce((total, item) => total + Number(item.penyebut.jumlah), 0)
+			this.pembilang = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
+			let penyebut = this.row.item.days.reduce((total, day) => total + Number(day.penyebut.jumlah), 0)
 			if(penyebut > 0){
 				this.penyebut = penyebut
 			}
 		},
 		inputPenyebut(val) {
 			this.days[val.id] = val
-			this.pembilang = this.days.reduce((total, item) => total + Number(item.pembilang.jumlah), 0)
-			let penyebut = this.days.reduce((total, item) => total + Number(item.penyebut.jumlah), 0)
+			this.pembilang = this.row.item.days.reduce((total, day) => total + Number(day.pembilang.jumlah), 0)
+			let penyebut = this.row.item.days.reduce((total, day) => total + Number(day.penyebut.jumlah), 0)
 			if(penyebut > 0){
 				this.penyebut = penyebut
 			}
@@ -73,10 +73,10 @@ export default {
 		getArr() {
 			let arr = []
 			this.days.map( day => ( ['pembilang', 'penyebut'].map( (countername, id) => {
-				let obj = {
+				let obj = Object.assign({}, day, {
 					tanggal: this.$moment(day.tanggal, 'DD-MM-YYYY').toISOString(),
 					countername: day[countername]._id,
-				}
+				})
 				arr[arr.length] = obj
 			})))
 			return arr		
@@ -95,36 +95,8 @@ export default {
 			return ['hari', 'tanggal', 'pembilang', 'penyebut']
 		},
 		items() {
-			return this.allDays.filter( day => day.week === this.weeks[this.weekSelected])
+			return this.row.item.days.filter( day => day.week === this.weeks[this.weekSelected])
 		},
-		allDays(){
-			return this.row.item.days.map( dayObj => {
-				dayObj.pembilang = Object.assign({}, this.$store.getters['data/gettgl']({
-					name: this.row.item.pembilang.name,
-					tanggal: dayObj.tanggal
-				}), {
-					_id: this.row.item.pembilang._id,
-					name: this.row.item.pembilang.name,
-					type: this.row.item.pembilang.type,
-					jumlah: (() => {
-						let j = 0
-						let a = this.row.item.pembilang.counters.filter(counter=> !counter.isMonth && counter.tgl === dayObj.tanggal)
-						a.length ? a[0] ? j =a[0].jumlah : '' : ''
-						return j
-					})(),
-					counters: undefined,
-				}, 
-				)
-				dayObj.penyebut = Object.assign({}, this.row.item.penyebut, {
-					jumlah: (this.row.item.penyebut.name.includes('hari') || this.row.item.penyebut.name.includes('visit')) && this.$moment(dayObj.tanggal, 'DD-MM-YYYY').format('dddd') !== 'Minggu' ? 1 : 0,
-					counters: undefined
-				}, this.$store.getters['data/gettgl']({
-					name: this.row.item.penyebut.name,
-					tanggal: dayObj.tanggal
-				}))
-				return dayObj
-			})
-		}
 	}
 }
 </script>

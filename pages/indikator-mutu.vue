@@ -75,9 +75,7 @@ export default {
 	fetch: async ({store}) => await store.dispatch('data/fetch'),
 	mounted(){
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		this.$nextTick(async () => {
-			await this.updateMonth(this.month)
-		})
+		this.$nextTick(() => this.updateMonth(this.month))
 	},
 	methods: {
 		goBlnJalan() {
@@ -93,7 +91,7 @@ export default {
 			this.month = this.$moment(this.month, 'MMMM YYYY').add(1, 'month').format('MMMM YYYY')
 		},
 		async updateMonth(val) {
-			console.log(val)
+		//	console.log(val)
 			this.loaded = true
 			this.$nuxt.$loading.start()
 			await this.$store.dispatch('data/createdMutu')
@@ -197,8 +195,6 @@ export default {
 				from: this.from,
 				to: this.to,
 				month: this.month,
-				rekap: mutu.rekaps && mutu.rekaps.length ? mutu.rekaps.filter( rekap => rekap.periode === this.month )[0] : undefined,
-				rekaps: undefined,
 				days: this.days,
 				pembilang: Object.assign({}, mutu.pembilang, {
 					jumlah: 0
@@ -220,14 +216,72 @@ export default {
 					}), {
 						_id: mutu.penyebut._id
 					}
-				)
+				),
 			})).map( mutu => Object.assign({}, mutu, {
-				status: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'Tercapai' : 'Belum tercapai') : (mutu.rekap.jumlah <= mutu.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput',
-				variant: mutu.rekap ? (mutu.operator === '>=' ? (mutu.rekap.jumlah >= mutu.numtarget ? 'success' : 'danger') : (mutu.rekap.jumlah <= mutu.numtarget ? 'success' : 'danger')) : 'warning',
+				rekap: mutu.rekaps && mutu.rekaps.length 
+				? Object.assign({}, mutu.rekaps.filter( rekap => rekap.periode === this.month )[0]) 
+				: {
+					jumlah: 0
+				},
+				rekaps: undefined,
+			})).map( mutu => Object.assign({}, mutu, {
+				status: mutu.rekap 
+				? (mutu.operator === '>=' 
+					? (mutu.rekap.jumlah >= mutu.numtarget 
+						? 'Tercapai' 
+						: mutu.pembilang.jumlah > 0 
+							? 'Belum tercapai' 
+							: 'Belum diinput') 
+					: mutu.penyebut.jumlah > 0 
+						? mutu.rekap.jumlah <= mutu.numtarget 
+							? 'Tercapai' 
+							: 'Belum tercapai' 
+						: 'Belum diinput') 
+				: 'Belum diinput',
 				_showDetails: mutu._showDetails || false,
 				harianApplied: mutu.penyebut ? (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('pasien') || mutu.penyebut.name.includes('visite')) : false ,
 			})).map( mutu => Object.assign({}, mutu, {
-				days: mutu.harianApplied ? mutu.days : undefined
+				variant: (() => {
+					switch(mutu.status) {
+						case 'Tercapai':
+							return 'success' 
+						case 'Belum tercapai':
+							return 'danger'
+						default:
+							return 'warning'
+					}
+				})(),
+				days: !mutu.harianApplied ? undefined : mutu.days.map( dayObj => Object.assign({}, dayObj, {
+					pembilang: Object.assign({},  mutu.pembilang, /**this.$store.getters['data/gettgl']({
+						name: this.row.item.pembilang.name,
+						tanggal: dayObj.tanggal
+					}),  */{
+						//_id: this.row.item.pembilang._id,
+						//name: this.row.item.pembilang.name,
+						//type: this.row.item.pembilang.type,
+						jumlah: (() => {
+							let j = 0
+							let a = mutu.pembilang.counters.filter(counter=> !counter.isMonth && counter.tgl === dayObj.tanggal)
+							a.length ? a[0] ? j =a[0].jumlah : '' : ''
+							return j
+						})(),
+						counters: undefined,
+					}),
+					penyebut: Object.assign({}, mutu.penyebut, {
+						jumlah: (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('visit')) && this.$moment(dayObj.tanggal, 'DD-MM-YYYY').format('dddd') !== 'Minggu' ? 1 : 0,
+						counters: undefined
+					}, /** this.$store.getters['data/gettgl']({
+						name: this.row.item.penyebut.name,
+						tanggal: dayObj.tanggal
+					})*/)
+				})),
+			})).map( mutu => Object.assign({}, mutu, {
+				pembilang: Object.assign({}, mutu.pembilang, {
+					counters: undefined
+				}),
+				penyebut: Object.assign({}, mutu.penyebut, {
+					counters: undefined
+				}),
 			}))
 		}
 	}
