@@ -34,7 +34,7 @@ b-card
 					.col
 						dd {{row.item.penyebut.name}}
 					.col-md-2
-						b-form-input.text-right(v-if="editing && !rincian && penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
+						b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
 						.text-right(v-else) {{row.item.penyebut.jumlah}}
 	harian-detail(v-if='rincian' :row='row' :editing='editing' @rekapHarian='rekapHarian')
 
@@ -69,7 +69,7 @@ export default {
 		async simpan() {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 			this.$nuxt.$loading.start()
-			this.$emit('save', true)
+			//this.$emit('save')
 			this.row.item.status = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
 			this.row.item.variant = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'success' : 'danger') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'success' : 'danger')) : 'warning'
 			if (this.rekapSend.jumlah > 0 ) {
@@ -82,6 +82,7 @@ export default {
 			if(this.penyebutSend.jumlah > 0) {
 	 			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
 			}
+			//console.log('month done')
 			this.row.item.harianApplied && this.arrRekap.length ? await this.row.item.days.map( async day => {
 				if(day.pembilang){
 					let pembilangConvert = this.convertSend( day, this.row, 'pembilang')
@@ -98,12 +99,13 @@ export default {
 				}
 				return true
 			}) : null
+			//console.log('days done')
 			this.$nuxt.$loading.finish()
-			this.$emit('save', false)
-			//this.$emit('updateMonth', this.row.item.month)
+			///this.$emit('save')
+			this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
-			console.log(JSON.stringify(day, null, 2))
+			//console.log(JSON.stringify(day, null, 2))
 			return {
 				_id: day[type] ? day[type]._id : undefined,
 				jumlah: Number(day[type].jumlah) || 0,
@@ -117,7 +119,7 @@ export default {
 	},
 	computed: {
 		penyebutEdit(){
-			return this.row.item.penyebut.name == Number(this.row.item.penyebut.name)
+			return this.row.item.penyebut.name == Number(this.row.item.penyebut.name) || this.row.item.penyebut.name.includes('hari') || this.row.item.penyebut.name.includes('visit')
 		},
 		rowItemRekapJumlah() {
 			return this.row.item.penyebut.jumlah > 0 

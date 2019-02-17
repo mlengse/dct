@@ -103,9 +103,8 @@ export default {
 			this.totalRows = filteredItems.length
 			this.currentPage = 1
 		},
-		save(val){
-			console.log(val)
-			this.loaded = val
+		save(){
+			this.loaded = !this.loaded
 		},
 		showing(row) {
 			return row._showDetails
@@ -198,6 +197,7 @@ export default {
 				month: this.month,
 				days: this.days,
 				pembilang: Object.assign({}, mutu.pembilang, {
+					_id: undefined,
 					jumlah: 0
 				}, this.$store.getters['data/getbln']({
 					name: mutu.pembilang.name,
@@ -206,6 +206,7 @@ export default {
 					counternameId: mutu.pembilang._id
 				}),
 				penyebut: Object.assign({}, mutu.penyebut, {
+					_id: undefined,
 					jumlah: mutu.penyebut && mutu.penyebut.name == Number(mutu.penyebut.name) 
 					? Number(mutu.penyebut.name) 
 					: mutu.penyebut && mutu.penyebut.name.includes('hari') || mutu.penyebut && mutu.penyebut.name.includes('visit') 
