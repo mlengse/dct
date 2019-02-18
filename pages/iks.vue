@@ -14,10 +14,8 @@ section.container
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
 	b-button-toolbar
-		download-excel.mr-2(:data="items" :fields="json_fields" :name='iksId + ".xls"') 
-			b-btn(size='sm' variant="primary") Download IKS
-		download-excel.mr-2(:data="resume" :fields="resume_fields" name='resume_pispk.xls') 
-			b-btn(size='sm' variant="primary") Download Resume Pelaksanaan
+		download-excel.mr-2(:data="items" :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
+		download-excel.mr-2(:data="resume" :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
 	.row.mt-2
 	b-card
 		.list-group
@@ -71,12 +69,14 @@ import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/
 import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
 import bProgress from '~/node_modules/bootstrap-vue/es/components/progress/progress';
 //import bTable from '~/node_modules/bootstrap-vue/es/components/table/table';
+import DownloadExcel from '~/components/DownloadExcel.vue'
  
 export default {
 	components: {
 		bInputGroup,
 		bFormSelect,
 		bProgress,
+		DownloadExcel
 	//	bTable,
 	},
 	data: () => ({
