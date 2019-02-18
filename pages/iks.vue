@@ -150,7 +150,10 @@ export default {
 			return this.jmlkk.map( (e, id) => Object.assign( {}, e, {
 				no: id+1,
 				_key: `iks-MOJOSONGO-${e.rw}-${e.rt}`
-			})).map( e => Object.assign({}, e, this.$store.getters['iks/iks'](e._key))).map(e => Object.assign( {}, e, {
+			})).map( e => Object.assign({}, e, {
+				jml: 0,
+				selisih: 0
+			}, this.$store.getters['iks/iks'](e._key))).map(e => Object.assign( {}, e, {
 				selisih: e.jmlKK - e.jml
 			}))
 		},
