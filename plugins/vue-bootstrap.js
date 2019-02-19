@@ -11,7 +11,6 @@ import Modal from "~/node_modules/bootstrap-vue/es/components/modal";
 import Pagination from "~/node_modules/bootstrap-vue/es/components/pagination";
 import Table from "~/node_modules/bootstrap-vue/es/components/table";
 import FormInput from "~/node_modules/bootstrap-vue/es/components/form-input"
-import { Popover } from '~/node_modules/bootstrap-vue/es/components'
 
 [
   Alert,
@@ -24,5 +23,4 @@ import { Popover } from '~/node_modules/bootstrap-vue/es/components'
   Pagination,
   Table,
   FormInput,
-  Popover
 ].map(component => Vue.use(component))
