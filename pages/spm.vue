@@ -3,17 +3,17 @@ section.container
 	.row.mt-2
 		h3 Capaian Indikator SPM Puskesmas Sibela
 	.row.mt-2
-		.col-md-6
+		.col.mt-2
 			b-input-group(prepend='Bagian' size='sm')
 				b-form-select(v-model='bagianSelected' :options='bagian' size='sm')
-		.col-md-3
+		.col-md-3.mt-2
 			b-input-group(prepend='Bulan' size='sm')
 				b-form-select(v-model='bulanSelected' :options='bulan' size='sm')
-		.col-md-3
+		.col-md-3.mt-2
 			b-input-group(prepend='Tahun' size='sm')
 				b-form-select(v-model='tahunSelected' :options='tahun' size='sm')
-	b-button-toolbar.mt-2
-		download-excel.mr-2(:data="items" :fields='json_fields' :name='"spm-" + bulanSelected + "-" + tahunSelected + ".xlsx"' label='Download SPM') 
+		.col.mt-2
+			download-excel.mr-2(:data="items" :fields='json_fields' :name='"spm-" + bulanSelected + "-" + tahunSelected + ".xlsx"' label='Download SPM') 
 	.row.mt-2
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
