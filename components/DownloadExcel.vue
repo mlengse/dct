@@ -1,5 +1,5 @@
 <template lang="pug">
-b-btn(size='sm' variant="primary" @click='exportXLSX') {{label}}
+b-button(size='sm' variant="primary" @click='exportXLSX') {{label}}
 </template>
 
 <script>

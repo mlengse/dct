@@ -3,22 +3,23 @@ section.container
 	.row.mt-2
 		h3 Capaian Indikator SPM Puskesmas Sibela
 	.row.mt-2
-		.col-md-6.mt-2
+		.col-md-6
 			b-input-group(prepend='Bagian' size='sm')
 				b-form-select(v-model='bagianSelected' :options='bagian' size='sm')
-		.col-md-3.mt-2
+		.col-md-3
 			b-input-group(prepend='Bulan' size='sm')
 				b-form-select(v-model='bulanSelected' :options='bulan' size='sm')
-		.col-md-3.mt-2
+		.col-md-3
 			b-input-group(prepend='Tahun' size='sm')
 				b-form-select(v-model='tahunSelected' :options='tahun' size='sm')
-	.row.mt-2
-	b-button-toolbar
+	b-button-toolbar.mt-2
 		download-excel.mr-2(:data="items" :fields='json_fields' :name='"spm-" + bulanSelected + "-" + tahunSelected + ".xlsx"' label='Download SPM') 
 	.row.mt-2
+		.col-md-12
+			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 	.row.mt-2
+	.table-responsive
 		b-table(
-			responsive 
 			stacked='sm' 
 			striped 
 			hover 
@@ -28,11 +29,10 @@ section.container
 			:fields='fields' 
 			:items="items" 	
 			@filtered='onFiltered')
+			template(slot='hasil' slot-scope='row')
+				span(:class='["text", row.item.masalah ? "danger": "success"].join("-")') {{row.item.hasil}}
 	//.row.mt-2.fluid
 		pre {{items}}
-	.row
-		.col-md-12
-			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 </template>
 
 <script>
@@ -98,7 +98,7 @@ export default {
 			return this.bagianSelected
 		},
 		fields(){
-			let tt = ['no', 'bagian', 'indikator', 'target tahunan', 'target bulanan', 'pembilang', 'penyebut', 'hasil']
+			let tt = ['bagian', 'indikator', 'target tahunan', 'target bulanan', 'pembilang', 'penyebut', 'hasil']
 			let a = {}
 			tt.map( e =>{
 				a[e] = {
