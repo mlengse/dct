@@ -1,7 +1,7 @@
 <template lang="pug">
 section.container 
 	.row.mt-2
-		h3 Capaian Indikator SPM Puskesmas Sibela
+		h3 Capaian Indikator SPM
 	.row.mt-2
 		.col.mt-2
 			b-input-group(prepend='Bagian' size='sm')
@@ -19,18 +19,23 @@ section.container
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 	.row.mt-2
 	.table-responsive
-		b-table(
+		b-table#tabel(
 			stacked='sm' 
-			striped 
 			hover 
 			:current-page="currentPage" 
 			:per-page="perPage" 
 			:filter='filter' 
+			@filtered='onFiltered'
 			:fields='fields' 
 			:items="items" 	
-			@filtered='onFiltered')
+			@row-hovered='toggleRow'
+			@row-unhovered='toggleRow'
+		)
 			template(slot='hasil' slot-scope='row')
 				span(:class='["text", row.item.masalah ? "danger": "success"].join("-")') {{row.item.hasil}}
+			template(slot="row-details" slot-scope="row")
+				b-card
+					nuxt-link.btn.btn-primary.btn-sm(:to='{ path: "spm/details", query: { id: pastRow.kode , tahun: tahun} }') Lihat Detail
 	//.row.mt-2.fluid
 		pre {{items}}
 </template>
@@ -53,7 +58,9 @@ export default {
 		perPage: 10,
 		currentPage: 1,
 		totalRows: 0,
-
+		pastRow: {
+			_showDetails: false
+		}
 	}),
 	async mounted(){
 		this.bulanSelected = this.$moment().locale('id').add(-1, 'month').format('MMMM')
@@ -69,6 +76,11 @@ export default {
 		},
 	},
 	methods: {
+		toggleRow(row) {
+			row._showDetails = !row._showDetails
+			this.pastRow._showDetails = !this.pastRow._showDetails
+			this.pastRow = row
+		},
 		getFixed(numb) {
 			let num = Number(numb);
 			if(!numb) return '0';
@@ -124,12 +136,13 @@ export default {
 		},
 		items(){
 			return this.$store.getters['spm/spmList'].map( e => Object.assign({}, e, {
-    		'target tahunan': this.getFixed(e['target tahunan']),
-    		'target bulanan': this.getFixed(e['target bulanan']),
-    		'pembilang': this.getFixed(e.pembilang),
-    		'penyebut': this.getFixed(e.penyebut),
-    		'hasil': this.getFixed(e.hasil),
-    		'satuan': e.satuan == 'persen' || e.satuan == 'Persen' ? '%' : e.satuan
+				'target tahunan': this.getFixed(e['target tahunan']),
+				'target bulanan': this.getFixed(e['target bulanan']),
+				'pembilang': this.getFixed(e.pembilang),
+				'penyebut': this.getFixed(e.penyebut),
+				'hasil': this.getFixed(e.hasil),
+				'satuan': e.satuan == 'persen' || e.satuan == 'Persen' ? '%' : e.satuan,
+				_showDetails: false,
 			}))
 		}
 	}

@@ -72,8 +72,11 @@ export default {
 		modalInfo: { title: '', content: '' }
 
 	}),
-	fetch: async ({store}) => await store.dispatch('data/fetch'),
-	async created() {
+	fetch: async ({store}) => {
+		await store.dispatch('data/fetch')
+		await store.dispatch('data/createdMutu')
+	},
+	async mounted() {
 		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
 		this.loaded = true
 		await this.$store.dispatch('data/createdMutu')
