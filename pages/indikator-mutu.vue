@@ -37,9 +37,9 @@ b-container
 				template(slot='capaian' slot-scope='row')
 					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
-					//-b-button-group.mx-1(size='sm')
-					b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-					//-b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+					b-button-group.mx-1(size='sm')
+						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
 	.row
@@ -224,7 +224,9 @@ export default {
 				),
 			})).map( mutu => Object.assign({}, mutu, {
 				rekap: mutu.rekaps && mutu.rekaps.length 
-				? Object.assign({}, mutu.rekaps.filter( rekap => rekap.periode === this.month )[0]) 
+				? Object.assign({
+					jumlah: 0
+				}, mutu.rekaps.filter( rekap => rekap.periode === this.month )[0]) 
 				: {
 					jumlah: 0
 				},
