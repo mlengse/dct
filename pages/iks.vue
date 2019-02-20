@@ -57,7 +57,7 @@ section.container
 					.col-md-6
 						b-progress(:value="iks.tdksehat" :max="iks.jml" variant='danger')
 	.row.mt-2.fluid
-		b-table(responsive stacked='sm' striped hover :fields='fields' :items="items")
+		b-table(responsive :busy.sync='loaded' stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
 	//.row.mt-2.fluid
@@ -80,6 +80,7 @@ export default {
 	//	bTable,
 	},
 	data: () => ({
+		loaded: false,
 		kelSelected: 'MOJOSONGO',
 		rwSelected: 'Semua',
 		rtSelected: 'Semua',
