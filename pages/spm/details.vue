@@ -11,7 +11,7 @@ section.container
 					.col-md-3 {{i.key}}
 					.col {{i.desc}}
 	.row.mt-2 
-	b-table.mt-2(hover striped :items='indDet' :fields='fields')
+	b-table.mt-2(hover busy.sync='loaded' striped :items='indDet' :fields='fields')
 	//.row.mt-2 
 		pre {{indDet}}
 
@@ -20,6 +20,7 @@ section.container
 <script>
 export default {
 	data: () => ({
+		loaded: false,
 		id: '',
 		tahun: '',
 		detail: false,
@@ -28,11 +29,18 @@ export default {
 			label: 'Target Bulanan'
 		}, 'hasil'],
 	}),
-	async created(){
-		await this.$store.dispatch('spm/ind', this.$route.query.id)
-		await this.$store.dispatch('spm/indDet', this.$route.query.id)
-		this.id = this.$route.query.id
-		this.tahun = this.$route.query.tahun
+	async mounted(){
+		await this.$nextTick( async () => {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			await this.$store.dispatch('spm/ind', this.$route.query.id)
+			await this.$store.dispatch('spm/indDet', this.$route.query.id)
+			this.id = this.$route.query.id
+			this.tahun = this.$route.query.tahun
+			this.$nuxt.$loading.finish()
+			this.loaded = false
+    })
+
 	},
 	methods: {
 		showDetail(){

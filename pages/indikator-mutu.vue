@@ -39,7 +39,7 @@ b-container
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
 						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
 	.row
@@ -77,10 +77,15 @@ export default {
 		await store.dispatch('data/createdMutu')
 	},
 	async mounted() {
-		this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
-		this.loaded = true
-		await this.$store.dispatch('data/createdMutu')
-		this.loaded = false
+		await this.$nextTick( async () => {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			this.month = this.$moment().locale('id').add(-1, 'month').format('MMMM YYYY')
+			await this.$store.dispatch('data/createdMutu')
+			this.loaded = false
+			this.$nuxt.$loading.finish()
+    })
+
 	},
 	methods: {
 		goBlnJalan() {

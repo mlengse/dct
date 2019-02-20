@@ -27,6 +27,7 @@ section.container
 			:filter='filter' 
 			@filtered='onFiltered'
 			:fields='fields' 
+			:busy.sync='loaded' 
 			:items="items" 	
 			@row-hovered='toggleRow'
 			@row-unhovered='toggleRow'
@@ -52,6 +53,7 @@ export default {
 		DownloadExcel
 	},
 	data: () => ({
+		loaded: false,
 		bagianSelected: 'Semua',
 		bulanSelected: '',
 		tahunSelected: '',
@@ -65,7 +67,15 @@ export default {
 	async mounted(){
 		this.bulanSelected = this.$moment().locale('id').add(-1, 'month').format('MMMM')
 		this.tahunSelected = this.$moment().format('YYYY')
-		await this.$store.dispatch('spm/all', this.$moment().locale('id').add(-1, 'month').format('MM'))
+		await this.$nextTick( async () => {
+      this.$nuxt.$loading.start()
+			this.loaded = true
+			this.$nuxt.$loading.start()
+			await this.$store.dispatch('spm/all', this.$moment().locale('id').add(-1, 'month').format('MM'))
+			this.$nuxt.$loading.finish()
+			this.loaded = false
+      this.$nuxt.$loading.finish()
+    })
 	},
 	watch: {
 		async bulanSelected( val ){

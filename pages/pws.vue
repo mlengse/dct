@@ -120,8 +120,15 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
-	async created(){
-		await this.$store.dispatch('pws/all')
+	async mounted(){
+		await this.$nextTick( async () => {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			await this.$store.dispatch('pws/all')
+			this.loaded = false
+			this.$nuxt.$loading.finish()
+    })
+
 	},
 	fetch: async ({store}) => await store.dispatch('pws/all'),
 	computed: {

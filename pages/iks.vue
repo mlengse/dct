@@ -135,7 +135,14 @@ export default {
 		}
 	},
 	async mounted(){
-		await this.$store.dispatch('iks/all')
+		await this.$nextTick( async () => {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			await this.$store.dispatch('iks/all')
+			this.loaded = false
+			this.$nuxt.$loading.finish()
+    })
+
 	},
 	fetch: async ({store}) => await store.dispatch('iks/all'),
 	computed: {
