@@ -11,8 +11,10 @@ b-container
 					b-btn(disabled variant='outline-primary' ) {{month}}
 					b-btn(v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
 				b-button-group.mx-1
-					b-btn(v-if='blnHitung' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
-					b-btn(v-if='blnJalan' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
+					b-btn(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
+					b-btn(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
+				b-button-group.mx-1
+					download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
 	.row
 		.col-md-12
 			.form-group.mt-3
@@ -34,7 +36,7 @@ b-container
 				:filter='query'
 				@filtered='onFiltered'
 			)
-				template(slot='capaian' slot-scope='row')
+				template(slot='status' slot-scope='row')
 					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
@@ -52,15 +54,30 @@ b-container
 
 <script>
 import RowDetails from '~/components/RowDetails.vue'
+import DownloadExcel from '~/components/DownloadExcel.vue'
 
 import queryRekap from '../schema/queryRekap.graphql'
 import query from '../schema/query.graphql'
 
 export default {
 	components: {
-		RowDetails
+		RowDetails,
+		DownloadExcel
+
 	},
 	data: () => ({
+		json_fields:{
+			'Bagian': 'bagian',
+			'Indikator': 'indikator',
+			'Definisi Pembilang': 'pembilangname',
+			'Definisi Penyebut': 'penyebutname',
+			'Target': 'target',
+			'Capaian': 'capaian',
+			'Pembilang': 'pembilang',
+			'Penyebut': 'penyebut',
+			'Masalah': 'masalah',
+			'Rencana Tindak Lanjut': 'rtl'
+		},
 		month: '',
 		loaded: false,
 		sortBy: null,
@@ -111,8 +128,14 @@ export default {
 			this.totalRows = filteredItems.length
 			this.currentPage = 1
 		},
-		save(){
-			this.loaded = !this.loaded
+		async save({ rekap, pembilang, penyebut }){
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			await this.$store.dispatch('data/sendRekap', rekap)
+			await this.$store.dispatch('data/sendCounter', pembilang)
+			await this.$store.dispatch('data/sendCounter', penyebut)
+			this.loaded = false
+			this.$nuxt.$loading.finish()
 		},
 		showing(row) {
 			return row._showDetails
@@ -137,6 +160,23 @@ export default {
 		}
 	},
 	computed: {
+		dl_items(){
+			return this.items.map( e => Object.assign({}, {
+				bagian: e.bagian,
+				indikator: e.indikator,
+				target: e.target,
+				capaian: e.rekap.jumlah,
+				pembilang: e.pembilang.jumlah,
+				penyebut: e.penyebut.jumlah,
+				pembilangname: e.pembilang.name,
+				penyebutname: e.penyebut.name
+
+			}))
+		},
+		fields: () => ['bagian', 'indikator', 'status', 'action'].map(e => ({
+			key: e,
+			sortable: ['bagian', 'indikator', 'status'].indexOf(e) > -1
+		})),
 		prev() {
 			return this.loaded
 		},
@@ -152,10 +192,6 @@ export default {
 		blnHitung() {
 			return this.month !== this.$moment().subtract(1, 'month').format('MMMM YYYY')
 		},
-		fields: () => ['bagian', 'indikator', 'capaian', 'action'].map(e => ({
-			key: e,
-			sortable: ['bagian', 'indikator'].indexOf(e) > -1
-		})),
 		startOfMonth(){
 			return this.$moment(this.month, 'MMMM YYYY').startOf("month");
 		},
@@ -203,7 +239,7 @@ export default {
 				from: this.from,
 				to: this.to,
 				month: this.month,
-				days: this.days,
+				//days: this.days,
 				pembilang: Object.assign({}, mutu.pembilang, {
 					_id: undefined,
 					jumlah: 0
@@ -263,6 +299,7 @@ export default {
 							return 'warning'
 					}
 				})(),
+				/*
 				days: !mutu.harianApplied ? undefined : mutu.days.map( dayObj => Object.assign({}, dayObj, {
 					pembilang: Object.assign({},  mutu.pembilang, {
 						_id: undefined
@@ -288,6 +325,7 @@ export default {
 						tanggal: dayObj.tanggal
 					}))
 				})),
+				*/
 			})).map( mutu => Object.assign({}, mutu, {
 				pembilang: Object.assign({}, mutu.pembilang, {
 					counters: undefined

@@ -151,7 +151,7 @@ export const actions = {
 			}
 		} 
 		if( res ) {
-			console.log(JSON.stringify(res, null, 2))
+			//console.log(JSON.stringify(res, null, 2))
 			store.commit('counterMutate', res)
 		}
 		return
@@ -189,7 +189,7 @@ export const actions = {
 			}
 		} 
 		if( res ) {
-			console.log(JSON.stringify(res, null, 2))
+		//	console.log(JSON.stringify(res, null, 2))
 			store.commit('rekapMutate', res)
 		}
 		return

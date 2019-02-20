@@ -14,8 +14,10 @@ b-card
 		dl
 			.list-group-item
 				b-row(align-h='end')
-					b-button-group
-						//-b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
+					b-button-group.mx-1(size='sm')
+						//b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+						//b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
 						b-button(:disabled='loaded' size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
 						b-button(:disabled='loaded' size='sm' v-else variant='warning' @click.stop='toggleButton') edit
 			.list-group-item
@@ -36,22 +38,25 @@ b-card
 					.col-md-2
 						b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
 						.text-right(v-else) {{row.item.penyebut.jumlah}}
-	harian-detail(v-if='rincian' :row='row' :editing='editing' )
+	//harian-detail(v-if='rincian' :row='row' :editing='editing' )
+	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+		pre {{modalInfo.content}}
 
 </template>
 
 <script>
-import HarianDetail from '~/components/HarianDetail.vue'
+//import HarianDetail from '~/components/HarianDetail.vue'
 
 export default {
 	components: {
-		HarianDetail
+//		HarianDetail
 	},
 	props: ["row", 'loaded'],
 	data: () => ({
 		editing: false,
 		rincian: false,
 		rowRekap: null,
+		modalInfo: { title: '', content: '' }
 	}),
 	watch:{
 		rowItemRekapJumlah(val){
@@ -59,18 +64,27 @@ export default {
 		},
 	},
 	methods: {
+		resetModal() {
+			this.modalInfo.title = ''
+			this.modalInfo.content = ''
+		},
+		info(item, index, button) {
+			this.modalInfo.title = `Row index: ${index}`
+			this.modalInfo.content = JSON.stringify(item, null, 2)
+			this.$root.$emit('bv::show::modal', 'modalInfo', button)
+		},
 		toggleButton() {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
 		},
 		async simpan() {
 			this.isAuth ? this.editing = !this.editing : this.$store.commit('users/openLogin')
-			this.$nuxt.$loading.start()
-			this.$emit('save', true)
+			await this.$emit('save', {
+				rekap: {...this.rekapSend},
+				pembilang: {...this.pembilangSend},
+				penyebut: {...this.penyebutSend}
+			})
 			this.row.item.status = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
 			this.row.item.variant = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'success' : 'danger') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'success' : 'danger')) : 'warning'
-			await this.$store.dispatch('data/sendRekap', {...this.rekapSend})
-			await this.$store.dispatch('data/sendCounter', {...this.pembilangSend})
-			await this.$store.dispatch('data/sendCounter', {...this.penyebutSend})
 			
 			/**			this.row.item.harianApplied ? await this.row.item.days.map( async day => {
 				if(day.pembilang){
@@ -85,9 +99,7 @@ export default {
 			}) : null
  */
 
-			this.$nuxt.$loading.finish()
-			this.$emit('save', true)
-			this.$emit('updateMonth', this.row.item.month)
+			//this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
 			return {
