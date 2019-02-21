@@ -51,9 +51,9 @@ module.exports = {
 	css: [
 	//	'~/assets/css/style.css'
 
-		"@/node_modules/bootstrap/dist/css/bootstrap.css",
+	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
-		"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
+	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
 	],
 
 	env: {
