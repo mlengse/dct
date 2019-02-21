@@ -1,25 +1,24 @@
 <template lang="pug">
 b-container
-	.row
+	.row.mt-2
 		.col-md-12
 			h3 Indikator Mutu
 	.row
 		.col-md-12
-			b-button-toolbar(key-nav  aria-label="Toolbar with button groups")
-				b-button-group.mx-1
-					b-btn(:disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
-					b-btn(disabled variant='outline-primary' ) {{month}}
-					b-btn(v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
-				b-button-group.mx-1
-					b-btn(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
-					b-btn(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
-				b-button-group.mx-1
-					download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
-	.row
+			b-button-group.mt-2.mr-2
+				b-btn(size='sm' :disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
+				b-btn(size='sm' disabled variant='outline-primary' ) {{month}}
+				b-btn(size='sm' v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
+			b-button-group.mt-2.mr-2
+				b-btn(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
+				b-btn(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
+			b-button-group.mt-2.mr-2
+				download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
+	.row.mt-2
 		.col-md-12
-			.form-group.mt-3
+			.form-group.mt-2
 				input.form-control(v-model='query' type='text' placeholder='Search...')
-	.row
+	.row.mt-2
 		.col-md-12
 			b-table(
 				show-empty
@@ -44,7 +43,7 @@ b-container
 						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
-	.row
+	.row.mt-2
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
