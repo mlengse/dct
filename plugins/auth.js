@@ -9,18 +9,18 @@ export default async function ({
  // redirect
 }) {
 
-  return await import('firebase/app').then(firebase => {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig)
+  let firebase = await import('firebase/app')
+  await import('firebase/auth')
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig)
+  }
+  
+  return firebase.auth().onAuthStateChanged( user => {
+    if (user) {
+      // let curr = firebase.auth().currentUser
+      // console.log(JSON.stringify(curr) === JSON.stringify(user))
+      store.dispatch('users/setUser', JSON.parse(JSON.stringify(user)))
     }
-  
-    return firebase.auth().onAuthStateChanged( user => {
-      if (user) {
-       // let curr = firebase.auth().currentUser
-       // console.log(JSON.stringify(curr) === JSON.stringify(user))
-        store.commit('users/setUser', JSON.parse(JSON.stringify(user)))
-      }
-    })
-  
   })
+  
 }

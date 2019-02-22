@@ -7,33 +7,40 @@ button.btn.btn-primary.btn-sm(type='button' @click='exportXLSX') {{label}}
 
 export default {
   props: ['data', 'fields', 'name', 'label'],
+  data: () => ({
+    xlsx: null
+  }),
   methods:{
-    async exportXLSX(){
-      let vm = this
+    runProcedure(xlsx){
+      const { utils: {
+        json_to_sheet,
+        book_new,
+        book_append_sheet
+      }, writeFile } = xlsx
+
       var data = []
-      try{
-        await import('xlsx').then(({ utils: {
-          json_to_sheet,
-          book_new,
-          book_append_sheet
-        }, writeFile }) => { 
-          vm.data.map( e => {
-            let obj = {}
-            Object.keys(vm.fields).map( a =>{
-              obj[a] = e[vm.fields[a]]
-            })
-            data.push(obj)
-          })
-        // console.log(JSON.stringify(data, null, 2))
-          var WS = json_to_sheet(data);
-          var wb = book_new()
-          book_append_sheet(wb, WS, vm.name.split('.')[0])
-          writeFile(wb, vm.name)
-
+      this.data.map( e => {
+        let obj = {}
+        Object.keys(this.fields).map( a =>{
+          obj[a] = e[this.fields[a]]
         })
-
-      }catch(err){
-        throw err
+        data.push(obj)
+      })
+      // console.log(JSON.stringify(data, null, 2))
+      var WS = json_to_sheet(data);
+      var wb = book_new()
+      book_append_sheet(wb, WS, this.name.split('.')[0])
+      return writeFile(wb, this.name)
+    },
+    exportXLSX(){
+      if(!this.xlsx){
+        var vm = this
+        return import('xlsx').then( function(xlsx){
+          vm.xlsx=xlsx
+          return vm.runProcedure(xlsx)
+        })
+      }else {
+        return this.runProcedure(this.xlsx)
       }
     }
   }

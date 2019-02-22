@@ -27,20 +27,17 @@ export const actions = {
   //setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
   //  return bindFirebaseRef('account', firebase.database().ref(path))
   //}),
-  async strapiLogin({ state }){
+  async setUser({ commit }, user){
+    commit('setUser', user)
     let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
-   // console.log(JSON.stringify(auth, null, 2))
-    return state.commit('setAuth', auth)
-    //return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
+    return commit('setAuth', auth)
+
   },
-  async userLogout({ state }) {
-    return await import('firebase/app').then( firebase => {
-      import('firebase/auth').then( ({ auth }) => {
-        auth().signOut().then(() => {
-          state.commit('resetUser')
-        })
-      })
-    })
+  async userLogout({ commit }) {
+    let firebase = await import('firebase/app')
+    await import('firebase/auth')
+    await firebase.auth().signOut()
+    return commit('resetUser')
   },
 }
 
@@ -61,7 +58,6 @@ export const mutations = {
   },
   setUser(state, newUser) {
     state.user = newUser
-    return state.dispatch('strapiLogin')
   },
   resetUser(state) {
     state.user = null
