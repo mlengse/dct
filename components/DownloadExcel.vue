@@ -9,24 +9,27 @@ export default {
   props: ['data', 'fields', 'name', 'label'],
   methods:{
     exportXLSX(){
+      let vm = this
       var data = []
-      const { json_to_sheet, book_new, book_append_sheet, writeFile }  = () => import('xlsx').then(({ utils: {
+      import('xlsx').then(({ utils: {
         json_to_sheet,
         book_new,
         book_append_sheet
-      }, writeFile }) => ({ json_to_sheet, book_new, book_append_sheet, writeFile }))
-      this.data.map( e => {
-        let obj = {}
-        Object.keys(this.fields).map( a =>{
-        	obj[a] = e[this.fields[a]]
+      }, writeFile }) => { 
+        vm.data.map( e => {
+          let obj = {}
+          Object.keys(vm.fields).map( a =>{
+            obj[a] = e[vm.fields[a]]
+          })
+          data.push(obj)
         })
-        data.push(obj)
+      // console.log(JSON.stringify(data, null, 2))
+        var WS = json_to_sheet(data);
+        var wb = book_new()
+        book_append_sheet(wb, WS, vm.name.split('.')[0])
+        writeFile(wb, vm.name)
+
       })
-     // console.log(JSON.stringify(data, null, 2))
-      var WS = json_to_sheet(data);
-      var wb = book_new()
-      book_append_sheet(wb, WS, this.name.split('.')[0])
-      writeFile(wb, this.name)
     }
   }
 }
