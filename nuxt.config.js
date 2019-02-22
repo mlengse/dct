@@ -12,7 +12,7 @@ module.exports = {
 	},
 
 	build: {
-		//analyze: true,
+	//	analyze: true,
 
 		babel: {
 			plugins: [
@@ -107,7 +107,7 @@ module.exports = {
 
 	plugins: [
 		//'@/plugins/vue-buefy',
-		'@/plugins/vue-bootstrap',
+	//	'@/plugins/vue-bootstrap',
 		{
 			src: '~/plugins/auth',
 			ssr: false

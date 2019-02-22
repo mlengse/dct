@@ -22,12 +22,16 @@ b-card(noBody)
 <script>
 import bTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs.js';
 import bTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab.js';
+import BCard from '~/node_modules/bootstrap-vue/es/components/card/card';
+import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
 
 export default {
 	props: ['row', 'editing'],
 	components: {
 		bTabs,
-		bTab
+		bTab,
+		BCard,
+		BTable
 	},
 	data: () => ({
 		days: [],

@@ -1,17 +1,17 @@
 <template lang="pug">
-b-container
+section.container
 	.row.mt-2
 		.col-md-12
 			h3 Indikator Mutu
 	.row
 		.col-md-12
 			b-button-group.mt-2.mr-2
-				b-btn(size='sm' :disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
-				b-btn(size='sm' disabled variant='outline-primary' ) {{month}}
-				b-btn(size='sm' v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
+				b-button(size='sm' :disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
+				b-button(size='sm' disabled variant='outline-primary' ) {{month}}
+				b-button(size='sm' v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
 			b-button-group.mt-2.mr-2
-				b-btn(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
-				b-btn(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
+				b-button(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
+				b-button(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
 			b-button-group.mt-2.mr-2
 				download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
 	.row.mt-2
@@ -39,7 +39,7 @@ b-container
 					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
 					b-button-group.mx-1(size='sm')
-						b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+						b-button( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
 						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
@@ -52,8 +52,15 @@ b-container
 </template>
 
 <script>
+
 import RowDetails from '~/components/RowDetails.vue'
 import DownloadExcel from '~/components/DownloadExcel.vue'
+import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
+import BButtonGroup from '~/node_modules/bootstrap-vue/es/components/button-group/button-group'
+import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
+import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
+import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
 
 import queryRekap from '../schema/queryRekap.graphql'
 import query from '../schema/query.graphql'
@@ -61,8 +68,15 @@ import query from '../schema/query.graphql'
 export default {
 	components: {
 		RowDetails,
-		DownloadExcel
-
+		DownloadExcel,
+		BButton,
+		BButtonGroup,
+		BTable,
+		BPagination,
+		'b-modal': BModal
+	},
+	directives: {
+		'b-modal': vBModal
 	},
 	data: () => ({
 		json_fields:{
@@ -89,7 +103,7 @@ export default {
 
 	}),
 	fetch: async ({store}) => {
-		await store.dispatch('data/fetch')
+		await store.dispatch('data/fetch'),
 		await store.dispatch('data/createdMutu')
 	},
 	async mounted() {

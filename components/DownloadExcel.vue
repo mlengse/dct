@@ -3,8 +3,13 @@ b-button(size='sm' variant="primary" @click='exportXLSX') {{label}}
 </template>
 
 <script>
-import XLSX from 'xlsx'
+import { utils, writeFile } from 'xlsx'
+import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
+
 export default {
+  components:{
+    BButton
+  },
   props: ['data', 'fields', 'name', 'label'],
   methods:{
     exportXLSX(){
@@ -17,10 +22,10 @@ export default {
         data.push(obj)
       })
      // console.log(JSON.stringify(data, null, 2))
-      var WS = XLSX.utils.json_to_sheet(data);
-      var wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, WS, this.name.split('.')[0])
-      XLSX.writeFile(wb, this.name)
+      var WS = utils.json_to_sheet(data);
+      var wb = utils.book_new()
+      utils.book_append_sheet(wb, WS, this.name.split('.')[0])
+      writeFile(wb, this.name)
     }
   }
 }

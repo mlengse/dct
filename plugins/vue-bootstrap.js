@@ -1,6 +1,5 @@
 import Vue from "vue";
 //import { Alert, Table, Modal, Card, Button, ButtonGroup, ButtonToolbar, Pagination } from '~/node_modules/bootstrap-vue/es/components'
-
 import Alert from "~/node_modules/bootstrap-vue/es/components/alert";
 import Button from "~/node_modules/bootstrap-vue/es/components/button";
 import ButtonGroup from "~/node_modules/bootstrap-vue/es/components/button-group";

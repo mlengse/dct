@@ -18,7 +18,16 @@ section.container
 </template>
 
 <script>
+import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
+import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
+import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
+
 export default {
+	components: {
+		BButton,
+		BCard,
+		BTable
+	},
 	data: () => ({
 		loaded: false,
 		id: '',
@@ -33,8 +42,10 @@ export default {
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
-			await this.$store.dispatch('spm/ind', this.$route.query.id)
-			await this.$store.dispatch('spm/indDet', this.$route.query.id)
+			await Promise.all([
+				this.$store.dispatch('spm/ind', this.$route.query.id),
+				this.$store.dispatch('spm/indDet', this.$route.query.id)
+			])
 			this.id = this.$route.query.id
 			this.tahun = this.$route.query.tahun
 			this.$nuxt.$loading.finish()

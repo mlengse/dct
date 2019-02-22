@@ -46,10 +46,27 @@ b-card
 
 <script>
 //import HarianDetail from '~/components/HarianDetail.vue'
+import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
+import BRow from '~/node_modules/bootstrap-vue/es/components/layout/row'
+import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
+import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
+import BButtonGroup from '~/node_modules/bootstrap-vue/es/components/button-group/button-group'
+import BFormInput from '~/node_modules/bootstrap-vue/es/components/form-input/form-input'
 
 export default {
 	components: {
+		BCard,
+		BRow,
+		BButtonGroup,
+		BButton,
+		BFormInput,
+		'b-modal': BModal
+
 //		HarianDetail
+	},
+	directives: {
+		'b-modal': vBModal
 	},
 	props: ["row", 'loaded'],
 	data: () => ({

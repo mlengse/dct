@@ -1,13 +1,13 @@
 <template lang="pug">
 div
 	nav.navbar.navbar-expand-lg.navbar-light.bg-light(role="navigation" aria-label="main navigation")
-		b-container
+		section.container
 			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
 			.navbar-right 
 				//b-button-group(v-if='user')
-				b-btn(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email || user.phoneNumber}}
+				b-button(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email || user.phoneNumber}}
 					//b-btn(variant='outline-danger' @click='gotologout') Keluar
-				b-btn(v-else variant='outline-success' size='sm' @click='openLogin') Masuk
+				b-button(v-else variant='outline-success' size='sm' @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)
 		account
 	b-modal#login(hide-header hide-footer v-model="loginShow")
@@ -18,10 +18,18 @@ div
 <script>
 import Login from '~/components/Login.vue'
 import Account from '~/components/Account.vue'
+import BButton from '~/node_modules/bootstrap-vue/es/components/button/button.js'
+import BModal from "~/node_modules/bootstrap-vue/es/components/modal/modal.js";
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 export default {
 	components: {
 		Login,
-		Account
+		Account,
+		BButton,
+		'b-modal': BModal
+	},
+	directives: {
+		'b-modal': vBModal
 	},
 	data: () => ({
 		loginShow: false
