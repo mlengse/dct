@@ -1,5 +1,5 @@
 <template lang="pug">
-b-card(noBody)
+.card
 	b-tabs(small card v-model='weekSelected')
 		b-tab(v-for='(week, id) in weeks' :title='`Minggu ke-${week}`' :key='`mg-${id}`')
 			b-table(stacked='sm' bordered outlined small hover fixed responsive :items='items' :fields='fields')
@@ -22,7 +22,6 @@ b-card(noBody)
 <script>
 import bTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs.js';
 import bTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab.js';
-import BCard from '~/node_modules/bootstrap-vue/es/components/card/card';
 import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
 
 export default {
@@ -30,7 +29,6 @@ export default {
 	components: {
 		bTabs,
 		bTab,
-		BCard,
 		BTable
 	},
 	data: () => ({

@@ -1,15 +1,11 @@
 <template lang="pug">
-b-button(size='sm' variant="primary" @click='exportXLSX') {{label}}
+button.btn.btn-primary.btn-sm(type='button' @click='exportXLSX') {{label}}
 </template>
 
 <script>
 import { utils, writeFile } from 'xlsx'
-import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
 
 export default {
-  components:{
-    BButton
-  },
   props: ['data', 'fields', 'name', 'label'],
   methods:{
     exportXLSX(){

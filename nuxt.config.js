@@ -12,7 +12,7 @@ module.exports = {
 	},
 
 	build: {
-	//	analyze: true,
+		analyze: true,
 
 		babel: {
 			plugins: [

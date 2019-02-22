@@ -35,8 +35,9 @@ section.container
 			template(slot='hasil' slot-scope='row')
 				span(:class='["text", row.item.masalah ? "danger": "success"].join("-")') {{row.item.hasil}}
 			template(slot="row-details" slot-scope="row")
-				b-card
-					nuxt-link.btn.btn-primary.btn-sm(:to='{ path: "spm/details", query: { id: pastRow.kode , tahun: tahun} }') Lihat Detail
+				.card
+					.card-body
+						nuxt-link.btn.btn-primary.btn-sm(:to='{ path: "spm/details", query: { id: pastRow.kode , tahun: tahun} }') Lihat Detail
 	//.row.mt-2.fluid
 		pre {{items}}
 </template>
@@ -46,7 +47,6 @@ import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/p
 import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
 import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
 import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
-import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
 
 import DownloadExcel from '~/components/DownloadExcel.vue'
  
@@ -57,7 +57,6 @@ export default {
 		DownloadExcel,
 		BPagination,
 		BTable,
-		BCard
 	},
 	data: () => ({
 		loaded: false,

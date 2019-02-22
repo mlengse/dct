@@ -5,9 +5,9 @@ div
 			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
 			.navbar-right 
 				//b-button-group(v-if='user')
-				b-button(v-if='user' variant='outline-primary' size='sm' v-b-modal.pre) {{user.email || user.phoneNumber}}
+				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal.pre) {{user.email || user.phoneNumber}}
 					//b-btn(variant='outline-danger' @click='gotologout') Keluar
-				b-button(v-else variant='outline-success' size='sm' @click='openLogin') Masuk
+				button.btn.btn-outline-success.btn-sm(v-else @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)
 		account
 	b-modal#login(hide-header hide-footer v-model="loginShow")
@@ -18,14 +18,12 @@ div
 <script>
 import Login from '~/components/Login.vue'
 import Account from '~/components/Account.vue'
-import BButton from '~/node_modules/bootstrap-vue/es/components/button/button.js'
 import BModal from "~/node_modules/bootstrap-vue/es/components/modal/modal.js";
 import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 export default {
 	components: {
 		Login,
 		Account,
-		BButton,
 		'b-modal': BModal
 	},
 	directives: {

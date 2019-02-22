@@ -1,65 +1,58 @@
 <template lang="pug">
-b-card
-	.container.mt-3
-		.list-group
-			.list-group-item
-				.row
-					.col.text-right Capaian
-					.col-md-2.col-sm-3 {{row.item.rekap.jumlah.toFixed()}} %
-			.list-group-item
-				.row
-					.col.text-right Target
-					.col-md-2.col-sm-3 {{row.item.target}}
-	.container.mt-3
-		dl
-			.list-group-item
-				b-row(align-h='end')
-					b-button-group.mx-1(size='sm')
-						//b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
-						//b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
-						b-button(:disabled='loaded' size='sm' v-if='editing' variant='success' @click.stop='simpan') simpan
-						b-button(:disabled='loaded' size='sm' v-else variant='warning' @click.stop='toggleButton') edit
-			.list-group-item
-				.row
-					.col-lg-2.col-md-3
-						dt.text-right Pembilang
-					.col
-						dd {{row.item.pembilang.name}}
-					.col-md-2
-						b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='row.item.pembilang.jumlah.toString()' v-model='row.item.pembilang.jumlah')
-						.text-right(v-else) {{row.item.pembilang.jumlah}}
-			.list-group-item
-				b-row
-					.col-lg-2.col-md-3
-						dt.text-right Penyebut
-					.col
-						dd {{row.item.penyebut.name}}
-					.col-md-2
-						b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
-						.text-right(v-else) {{row.item.penyebut.jumlah}}
-	//harian-detail(v-if='rincian' :row='row' :editing='editing' )
-	b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
-		pre {{modalInfo.content}}
+.card
+	.card-body
+		.container.mt-3
+			.list-group
+				.list-group-item
+					.row
+						.col.text-right Capaian
+						.col-md-2.col-sm-3 {{row.item.rekap.jumlah.toFixed()}} %
+				.list-group-item
+					.row
+						.col.text-right Target
+						.col-md-2.col-sm-3 {{row.item.target}}
+		.container.mt-3
+			dl
+				.list-group-item
+					.row.justify-content-end
+						.btn-group.mx-1(size='sm')
+							//b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+							//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
+							//b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
+							button.btn.btn-sm.btn-success(type='button' :disabled='loaded' v-if='editing' @click.stop='simpan') simpan
+							button.btn.btn-sm.btn-warning(type='button' :disabled='loaded' v-else @click.stop='toggleButton') edit
+				.list-group-item
+					.row
+						.col-lg-2.col-md-3
+							dt.text-right Pembilang
+						.col
+							dd {{row.item.pembilang.name}}
+						.col-md-2
+							b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='row.item.pembilang.jumlah.toString()' v-model='row.item.pembilang.jumlah')
+							.text-right(v-else) {{row.item.pembilang.jumlah}}
+				.list-group-item
+					b-row
+						.col-lg-2.col-md-3
+							dt.text-right Penyebut
+						.col
+							dd {{row.item.penyebut.name}}
+						.col-md-2
+							b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
+							.text-right(v-else) {{row.item.penyebut.jumlah}}
+		//harian-detail(v-if='rincian' :row='row' :editing='editing' )
+		b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
+			pre {{modalInfo.content}}
 
 </template>
 
 <script>
 //import HarianDetail from '~/components/HarianDetail.vue'
-import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
-import BRow from '~/node_modules/bootstrap-vue/es/components/layout/row'
-import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
 import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
 import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
-import BButtonGroup from '~/node_modules/bootstrap-vue/es/components/button-group/button-group'
 import BFormInput from '~/node_modules/bootstrap-vue/es/components/form-input/form-input'
 
 export default {
 	components: {
-		BCard,
-		BRow,
-		BButtonGroup,
-		BButton,
 		BFormInput,
 		'b-modal': BModal
 

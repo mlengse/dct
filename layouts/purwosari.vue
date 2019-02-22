@@ -5,9 +5,3 @@ div
 			nuxt-link.navbar-brand( to='/' exact) Puskesmas Purwosari
 	nuxt
 </template>
-
-<script>
-export default {
-}
-</script>
-

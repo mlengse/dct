@@ -5,14 +5,14 @@ section.container
 			h3 Indikator Mutu
 	.row
 		.col-md-12
-			b-button-group.mt-2.mr-2
-				b-button(size='sm' :disabled='prev' variant='primary' @click='prevMonth') &lsaquo;
-				b-button(size='sm' disabled variant='outline-primary' ) {{month}}
-				b-button(size='sm' v-if='!sameOrAfter' :disabled='next' variant='primary' @click='nextMonth') &rsaquo;
-			b-button-group.mt-2.mr-2
-				b-button(v-if='blnHitung' size='sm' :disabled='loaded' variant='primary' @click='goBlnHitung') bulan hitung
-				b-button(v-if='blnJalan' size='sm' :disabled='loaded' variant='primary' @click='goBlnJalan') bulan berjalan
-			b-button-group.mt-2.mr-2
+			.btn-group.mt-2.mr-2
+				button.btn.btn-sm.btn-primary(type='button' :disabled='prev' @click='prevMonth') &lsaquo;
+				button.btn.btn-sm.btn-outline-primary(type='button' disabled ) {{month}}
+				button.btn.btn-sm.btn-primary(type='button' v-if='!sameOrAfter' :disabled='next' @click='nextMonth') &rsaquo;
+			.btn-group.mt-2.mr-2
+				button.btn.btn-sm.btn-primary(type='button' v-if='blnHitung' :disabled='loaded' @click='goBlnHitung') bulan hitung
+				button.btn.btn-sm.btn-primary(type='button' v-if='blnJalan' :disabled='loaded' @click='goBlnJalan') bulan berjalan
+			.btn-group.mt-2.mr-2
 				download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
 	.row.mt-2
 		.col-md-12
@@ -38,8 +38,8 @@ section.container
 				template(slot='status' slot-scope='row')
 					span.badge(:class='["badge", row.item.variant].join("-")') {{row.item.status}}
 				template(slot="action" slot-scope="row")
-					b-button-group.mx-1(size='sm')
-						b-button( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
+					.btn-group.mx-1(size='sm')
+						button.btn.btn-sm.btn-outline-primary(type='button' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
 						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
@@ -55,8 +55,6 @@ section.container
 
 import RowDetails from '~/components/RowDetails.vue'
 import DownloadExcel from '~/components/DownloadExcel.vue'
-import BButton from '~/node_modules/bootstrap-vue/es/components/button/button'
-import BButtonGroup from '~/node_modules/bootstrap-vue/es/components/button-group/button-group'
 import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
 import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
 import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
@@ -69,8 +67,6 @@ export default {
 	components: {
 		RowDetails,
 		DownloadExcel,
-		BButton,
-		BButtonGroup,
 		BTable,
 		BPagination,
 		'b-modal': BModal
