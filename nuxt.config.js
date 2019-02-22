@@ -12,7 +12,7 @@ module.exports = {
 	},
 
 	build: {
-		analyze: true,
+		//analyze: true,
 
 		babel: {
 			plugins: [
@@ -22,7 +22,6 @@ module.exports = {
 						'alias': {
 							'react': 'nervjs',
 							'react-dom': 'nervjs',
-							"./dist/cpexcel.js": ""
 						}
 					}
 				],
@@ -34,13 +33,13 @@ module.exports = {
 		 ** Run ESLint on save
 		 */
 		extend(config, { isDev, isClient }) {
-
+      config.resolve.alias['./dist/cpexcel.js'] = ''
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
 					test: /\.(js|vue|graphql)$/,
 					loader: "eslint-loader",
-					//exclude: /(node_modules)/
+					exclude: /(node_modules)/,
 				});
 			}
 		},
