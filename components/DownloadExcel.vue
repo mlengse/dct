@@ -1,5 +1,5 @@
 <template lang="pug">
-button.btn.btn-primary.btn-sm(type='button' :disable='loaded || false' @click='exportXLSX') {{label}}
+button.btn.btn-primary.btn-sm(type='button' :disabled='loaded || false' @click='exportXLSX') {{label}}
 </template>
 
 <script>
