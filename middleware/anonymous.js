@@ -1,11 +1,11 @@
-import firebase from 'firebase/app'
-
-export default function ({
+export default async function ({
   isServer,
   store,
   redirect
 }) {
-  if (!isServer && (store.getters['users/isAuthenticated'] && firebase.auth().currentUser)) {
-    return redirect('/account')
-  }
+  return await import('firebase/app').then( firebase => {
+    if (!isServer && (store.getters['users/isAuthenticated'] && firebase.auth().currentUser)) {
+      return redirect('/account')
+    }
+  })
 }

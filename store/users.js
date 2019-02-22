@@ -1,9 +1,3 @@
-import firebase from '~/node_modules/firebase/app'
-//import '~/node_modules/firebase/database'
-import '~/node_modules/firebase/auth'
-
-//import { firebaseAction } from 'vuexfire'
-
 import Strapi from 'strapi-sdk-javascript'
 
 //const apiUrl = 'http://192.168.1.77:1337'
@@ -36,15 +30,17 @@ export const actions = {
   async strapiLogin({ state }){
     let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
    // console.log(JSON.stringify(auth, null, 2))
-    return this.commit('users/setAuth', auth)
+    return state.commit('setAuth', auth)
     //return this.dispatch('users/setAccountRef', `accounts/${state.user.uid}`)
   },
-  userLogout() {
-    return firebase.auth()
-      .signOut()
-      .then(() => {
-        this.commit('users/resetUser')
+  async userLogout({ state }) {
+    return await import('firebase/app').then( firebase => {
+      import('firebase/auth').then( ({ auth }) => {
+        auth().signOut().then(() => {
+          state.commit('resetUser')
+        })
       })
+    })
   },
 }
 
@@ -65,7 +61,7 @@ export const mutations = {
   },
   setUser(state, newUser) {
     state.user = newUser
-    return this.dispatch('users/strapiLogin')
+    return state.dispatch('strapiLogin')
   },
   resetUser(state) {
     state.user = null

@@ -1,11 +1,13 @@
-import firebase from 'firebase/app'
 
-export default function ({
+export default async function ({
   isServer,
   redirect
 }) {
-  // the server can never be authed for a single account
-  if (isServer && !firebase.apps.length) {
-    redirect('/account/login')
-  }
+  await import('firebase/app').then( firebase => {
+    // the server can never be authed for a single account
+    if (isServer && !firebase.apps.length) {
+      redirect('/account/login')
+    }
+
+  })
 }
