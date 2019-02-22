@@ -21,7 +21,8 @@ module.exports = {
 						'root': ['.'],
 						'alias': {
 							'react': 'nervjs',
-							'react-dom': 'nervjs'
+							'react-dom': 'nervjs',
+							"./dist/cpexcel.js": ""
 						}
 					}
 				],
@@ -39,7 +40,7 @@ module.exports = {
 					enforce: "pre",
 					test: /\.(js|vue|graphql)$/,
 					loader: "eslint-loader",
-					exclude: /(node_modules)/
+					//exclude: /(node_modules)/
 				});
 			}
 		},
