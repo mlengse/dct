@@ -14,8 +14,8 @@ section.container
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
 	.btn-toolbar
-		download-excel.mr-2(:data="items" :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
-		download-excel.mr-2(:data="resume" :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
+		download-excel.mr-2(:data="items" :loaded='loaded' :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
+		download-excel.mr-2(:data="resume" :loaded='loaded' :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
 	.row.mt-2
 	.card
 		.card-body

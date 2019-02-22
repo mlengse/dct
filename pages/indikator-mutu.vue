@@ -13,7 +13,7 @@ section.container
 				button.btn.btn-sm.btn-primary(type='button' v-if='blnHitung' :disabled='loaded' @click='goBlnHitung') bulan hitung
 				button.btn.btn-sm.btn-primary(type='button' v-if='blnJalan' :disabled='loaded' @click='goBlnJalan') bulan berjalan
 			.btn-group.mt-2.mr-2
-				download-excel(:data="dl_items" :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
+				download-excel(:data="dl_items" :loaded='loaded' :fields='json_fields' :name='"indikator-mutu-" + month + ".xlsx"' label='Download Indikator') 
 	.row.mt-2
 		.col-md-12
 			.form-group.mt-2
