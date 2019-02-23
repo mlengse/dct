@@ -3,45 +3,35 @@ button.btn.btn-primary.btn-sm(type='button' :disabled='loaded || false' @click='
 </template>
 
 <script>
-
-
+import { saveAs } from 'file-saver';
 export default {
   props: ['data', 'fields', 'name', 'label', 'loaded'],
-  data: () => ({
-    xlsx: null,
-    wb: null,
-    ws: null
-  }),
-  async mounted(){
-    const xlsx = await import('xlsx')
-    this.xlsx = xlsx
-  },
-  methods:{
-    exportXLSX(){
-      if(!this.wb){
-        this.wb = this.xlsx.utils.book_new()
+  methods: {
+    async exportXLSX() {
+      if (process.browser) {
+        const { Workbook } = await import('exceljs/dist/es5/exceljs.browser');
+        //console.log(JSON.stringify(this.fields, null, 2))
+        var workbook = new Workbook(); //creating workbook
+        var sheet = workbook.addWorksheet(this.name.split('.xlsx').join('')); //creating worksheet    
+        sheet.addRow().values = Object.keys(this.fields)
+        var vm = this
+        this.data.forEach(function (item) {
+          //console.log(JSON.stringify(item, null, 2))
+          var valueArray = [];
+          Object.keys(vm.fields).map(header => {
+            valueArray.push(item[vm.fields[header]])
+          }) // forming an array of values of single json in an array
+          //console.log(valueArray)
+          sheet.addRow().values = valueArray; // add the array as a row in sheet
+        })
+        workbook.xlsx.writeBuffer().then(data => {
+          //console.log(data)
+          const blob = new Blob([data], { type: "application/octet-stream" });
+          saveAs(blob, this.name);
+        });
       }
-      if(!this.ws){
-        this.ws = this.xlsx.utils.json_to_sheet(this.items);
-      }
-      this.xlsx.utils.book_append_sheet(this.wb, this.ws, this.name.split('.')[0])
-      this.xlsx.writeFile(this.wb, this.name)
-      this.ws = null
-      this.wb = null
     }
   },
-  computed: {
-    items(){
-      var data = []
-      this.data.map( e => {
-        let obj = {}
-        Object.keys(this.fields).map( a =>{
-          obj[a] = e[this.fields[a]]
-        })
-        data.push(obj)
-      })
-      return data
-    },
-  }
 }
+
 </script>

@@ -33,7 +33,7 @@ module.exports = {
 		 ** Run ESLint on save
 		 */
 		extend(config, { isDev, isClient }) {
-      config.resolve.alias['./dist/cpexcel.js'] = ''
+			config.resolve.alias['./dist/cpexcel.js'] = ''
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
@@ -42,19 +42,26 @@ module.exports = {
 					exclude: /(node_modules)/,
 				});
 			}
+			if(isClient) {
+				config.node = {
+					fs: 'empty'
+				}
+
+			}
+
 		},
 
 		extractCSS: true,
 		
 	},
 	
-	css: [
+	//css: [
 	//	'~/assets/css/style.css'
 
 	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
 	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
-	],
+	//],
 
 	env: {
 		API_URL: process.env.API_URL,
@@ -119,6 +126,11 @@ module.exports = {
 		//'@/plugins/vue-react',
 		//'@/plugins/firebase'
 	],
+
+	//purgeCSS: {
+	//	enabled: true
+		// your settings here
+	//},
 	server:{
 		host: '0.0.0.0',
 		port: 6060
