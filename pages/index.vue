@@ -9,10 +9,10 @@ section.container
 			.card.mt-2(v-for='menu in filteredList' :key='menu.id')
 				.card-body
 					.row
-						.col-md-4.col-lg-3
+						.col-sm-5.col-md-4.col-lg-3
 							img.card-img-top(v-if='menu.cover' :src='menu.cover')
 						.col
-							h5.card-title {{ menu.nama }}
+							h5.mt-2.card-title {{ menu.nama }}
 							p.card-text {{ menu.deskripsi }}
 							a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
 							nuxt-link.btn.btn-primary(v-else :to="menu.nama.toLowerCase().split(' ').join('-')" tag='a') Lihat menu
