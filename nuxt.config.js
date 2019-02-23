@@ -108,7 +108,7 @@ module.exports = {
 		'@nuxtjs/axios',
 	//	'@nuxtjs/toast',
 		"@nuxtjs/dotenv",
-		['@nuxtjs/pwa', { icon: false }],
+		['@nuxtjs/pwa'],
 		['@nuxtjs/moment', { locales: ['id'] }]
 	],
 

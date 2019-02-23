@@ -6,14 +6,16 @@ section.container
 				input.form-control(v-model='query' type='text' placeholder='Search...')
 	.row
 		.col-md-12
-			ul.card-columns.list-unstyled
-				li.card(v-for='menu in filteredList' :key='menu.id')
-					img.card-img-top(v-if='menu.cover' :src='menu.cover')
-					.card-body
-						h5.card-title {{ menu.nama }}
-						p.card-text {{ menu.deskripsi }}
-						a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
-						nuxt-link.btn.btn-primary(v-else :to="menu.nama.toLowerCase().split(' ').join('-')" tag='a') Lihat menu
+			.card.mt-2(v-for='menu in filteredList' :key='menu.id')
+				.card-body
+					.row
+						.col-md-4.col-lg-3
+							img.card-img-top(v-if='menu.cover' :src='menu.cover')
+						.col
+							h5.card-title {{ menu.nama }}
+							p.card-text {{ menu.deskripsi }}
+							a.btn.btn-primary(v-if='menu.url' :href="menu.url") Lihat menu
+							nuxt-link.btn.btn-primary(v-else :to="menu.nama.toLowerCase().split(' ').join('-')" tag='a') Lihat menu
 				p(v-if='!filteredList.length') No results :(
 
 </template>
@@ -49,7 +51,7 @@ export default {
 			return this.menus.filter( menu => menu.nama.toLowerCase().includes(this.query.toLowerCase()))
 		},
 		menus() {
-			return this.$store.getters['menus/list']
+			return this.$store.getters['menus/list'].filter( menu => ['Indikator Mutu', 'SPM', 'IKS'].indexOf(menu.nama) >= 0)
 		}
 	},
 	fetch: async ({ store }) => {
