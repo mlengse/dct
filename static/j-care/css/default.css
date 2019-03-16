@@ -256,44 +256,41 @@ table.registration tr:hover{
 	padding : 0;
 	display : block;
 }
-.kiri{
-	width : 100px;
-	height : 95px;
-	min-height : 95px;
-	margin : 10px auto;
-	background : transparent url('../img/logobaru.jpg') top center no-repeat;
-	float : left;
-}
 .tengah{
 	display : block;
 	float : left;
-	height : 95px;
-	min-height : 95px;
-	margin : 20px auto 0 auto;
-	__width : 780px;
-	width : 79.5%;
-}
-.tengah h1{
-	font-size : 0px;
-	color : #990000;
-	background : transparent url('../img/title.png') top center no-repeat;
-	height : 40px;
 	min-height : 40px;
+	margin : 20px auto;
+	width : 70vw;
 }
 .tengah h2{
 	font : bold 20px/ 24px verdana, geneva, sans-serif;
 	color : #eee;
 	display : block;
+	float: center;
 	text-transform : uppercase;
 	text-align : center;
 }
-.kanan{
-	width : 100px;
-	height : 95px;
+.kiri{
+	width: 12vw;
+	min-width : 73px;
+	height: auto;
 	min-height : 95px;
 	margin : 10px auto;
-	background : transparent url(../img/kota.jpg) top center no-repeat;
-	float : right;
+	background : transparent url('../img/logobaru.jpg') top center no-repeat;
+	float : left;
+}
+@media only screen and (min-width: 700px) {
+	.kanan{
+		width: 12vw;
+		min-width : 63px;
+		height: auto;
+		min-height : 95px;
+		margin : 10px auto;
+		background : transparent url(../img/kota.jpg) top center no-repeat;
+		float : right;
+	}
+
 }
 .head2{
 	background : #eee;

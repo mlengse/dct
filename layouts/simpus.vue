@@ -1,19 +1,20 @@
 <template lang='pug'>
 #container
 	#header
-		.head1.clearfix
+		.head1.clearfix 
 			.kiri
 			.tengah
-				h1 SISTEM INFORMASI MANAJEMEN PUSKESMAS
+				h2 Sistem Informasi Manajemen Puskesmas Sibela
 			.kanan
-	nuxt
+	#content
+		nuxt
 	#footer
-		p Program ini dikembangkan oleh 
+		p Based on app by 
 			a TIM SIMPUS
 </template>
 <script>
 export default {
-		head: () => ({
+	head: () => ({
 		link: [
 			{
 				rel: "stylesheet",
