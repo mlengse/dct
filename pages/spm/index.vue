@@ -76,7 +76,6 @@ export default {
 		await this.$nextTick( async () => {
       this.$nuxt.$loading.start()
 			this.loaded = true
-			this.$nuxt.$loading.start()
 			await this.$store.dispatch('spm/all', this.$moment().locale('id').add(-1, 'month').format('MM'))
 			this.$nuxt.$loading.finish()
 			this.loaded = false

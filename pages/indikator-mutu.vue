@@ -99,8 +99,8 @@ export default {
 
 	}),
 	fetch: async ({store}) => {
-		await store.dispatch('data/fetch'),
-		await store.dispatch('data/createdMutu')
+		await store.dispatch('data/fetch')
+	//	await store.dispatch('data/createdMutu')
 	},
 	async mounted() {
 		await this.$nextTick( async () => {
