@@ -104,7 +104,7 @@ export default {
 			store.dispatch('data/createdMutu')
 		])
 	},
-	async mounted() {
+	async beforeMount() {
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true

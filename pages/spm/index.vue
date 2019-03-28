@@ -70,7 +70,7 @@ export default {
 			_showDetails: false
 		}
 	}),
-	async mounted(){
+	async beforeMount(){
 		this.bulanSelected = this.$moment().locale('id').add(-1, 'month').format('MMMM')
 		this.tahunSelected = this.$moment().format('YYYY')
 		await this.$nextTick( async () => {

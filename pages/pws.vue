@@ -124,7 +124,7 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
-	async mounted(){
+	async beforeMount(){
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
