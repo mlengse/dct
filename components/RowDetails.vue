@@ -31,7 +31,7 @@
 							b-form-input.text-right(v-if='editing && !rincian' type='number' :placeholder='row.item.pembilang.jumlah.toString()' v-model='row.item.pembilang.jumlah')
 							.text-right(v-else) {{row.item.pembilang.jumlah}}
 				.list-group-item
-					b-row
+					.row
 						.col-lg-2.col-md-3
 							dt.text-right Penyebut
 						.col
