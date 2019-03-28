@@ -78,35 +78,43 @@ export const mutations = {
 		if (state.counter[counter._id].isMonth) {
 			state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]
 		} else {
-			console.log(JSON.stringify(state.counter[counter._id], null, 2))
+			//console.log(JSON.stringify(state.counter[counter._id], null, 2))
 			state.tgl[`${state.counter[counter._id].name} ${state.counter[counter._id].tgl}`] = state.counter[counter._id]
 		}
 	},
 	counternameCountersMutate( state, countername){
-		state[countername.countertype.name][countername._id] = Object.assign({}, state[countername.countertype.name][countername._id],{
-			counters: countername.counters.map( counter =>{
-				state.counter[counter._id] = Object.assign({}, state.counter[counter._id], counter, {
-					name: state[countername.countertype.name][countername._id].name,
-					type: countername.countertype.name,
-					tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
-					bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'),
-					isMonth: !!!Number(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HHmmssss'))
-				})
-				
-				if (state.counter[counter._id].isMonth) {
-					state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]
-				} else {
-					state.tgl[`${state.counter[counter._id].name} ${state.counter[counter._id].tgl}`] = state.counter[counter._id]
-				}
-				return counter._id
+		let counters = countername.counters.map(counter => {
+			state.counter[counter._id] = Object.assign({}, state.counter[counter._id], counter, {
+				name: state[countername.countertype.name][countername._id].name,
+				type: countername.countertype.name,
+				tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
+				bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'),
+				isMonth: !!!Number(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HHmmssss'))
 			})
+
+			if (state.counter[counter._id].isMonth) {
+				state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]
+			} else {
+				state.tgl[`${state.counter[counter._id].name} ${state.counter[counter._id].tgl}`] = state.counter[counter._id]
+			}
+			return counter._id
+		})
+		//console.log(JSON.stringify(countername, null, 2))
+		state[countername.countertype.name][countername._id] = Object.assign({}, state[countername.countertype.name][countername._id],{
+			counters
 		})
 	},
 	counternameRekapsMutate(state, indicator) {
-		state.indicator[indicator._id].rekaps = indicator.rekaps.map( rekap => {
-			state.rekap[rekap._id] = rekap
-			return rekap._id
-		})
+		state.indicator[indicator._id] = Object.assign(
+			{},
+			state.indicator[indicator._id],
+			{
+				rekaps: indicator.rekaps.map(rekap => {
+					state.rekap[rekap._id] = rekap
+					return rekap._id
+				})
+			}
+		);
 	},
 	indicatorMutate(state, indicator) {
 		if (state.indicatorList.indexOf(indicator._id) < 0) {
