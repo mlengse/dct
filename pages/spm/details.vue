@@ -35,7 +35,7 @@ export default {
 			label: 'Target Bulanan'
 		}, 'hasil'],
 	}),
-	async beforeMount(){
+	async created(){
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
@@ -57,9 +57,11 @@ export default {
 	},
 	computed: {
 		indDet(){
-			return this.$store.state.spm.indDet.map(e=>Object.assign({}, JSON.parse(e), {
-				bulan: this.$moment(JSON.parse(e).bulan, 'MM').format('MMMM')
-			}))
+			return this.$store.getters['spm/indDet'](this.id).map(e=>Object.assign({}, JSON.parse(e), {
+				bulan: this.$moment(JSON.parse(e).bulan, 'MM').format('MMMM'),
+				targetbulanan: Math.floor(Number(JSON.parse(e).targetbulanan) * 100) /100,
+				hasil: Math.floor(Number(JSON.parse(e).hasil) * 100) / 100
+			})).filter(e => this.$moment(e.bulan, 'MMMM').isBefore(this.$moment(this.$moment().format('MMMM'), 'MMMM')))
 		},
 		ind(){
 			return this.$store.getters['spm/ind'](this.id)

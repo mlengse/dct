@@ -32,6 +32,7 @@ export const getters = {
   spmList: ({ spmList, spm }) => spmList.map(spmId => spm[spmId]),
   spm: ({ spm }) => spmId => spm[spmId],
   ind: ({ind}) => indId => ind[indId],
+  indDet: ({ indDet }) => defkey => indDet.filter(e => JSON.parse(e).defkey === defkey),
   bagian: ({ spmList, spm }) => [ 'Semua', ...[...new Set(spmList.map(spmId => spm[spmId].bagian))].sort()],
 }
 
