@@ -84,13 +84,31 @@ export const mutations = {
 	},
 	counternameCountersMutate( state, countername){
 		let counters = countername.counters.map(counter => {
-			state.counter[counter._id] = Object.assign({}, state.counter[counter._id], counter, {
-				name: state[countername.countertype.name][countername._id].name,
-				type: countername.countertype.name,
-				tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format('DD-MM-YYYY'),
-				bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format('MMMM YYYY'),
-				isMonth: !!!Number(this.$moment(counter.waktu, this.$moment.ISO_8601).format('HHmmssss'))
-			})
+			state.counter[counter._id] = Object.assign(
+				{},
+				state.counter[counter._id],
+				counter,
+				{
+					name:
+						state[countername.countertype.name] &&
+						state[countername.countertype.name][countername._id] &&
+						state[countername.countertype.name][countername._id].name ?
+						state[countername.countertype.name][countername._id].name :
+						'',
+					type: countername.countertype.name,
+					tgl: this.$moment(counter.waktu, this.$moment.ISO_8601).format(
+						"DD-MM-YYYY"
+					),
+					bln: this.$moment(counter.waktu, this.$moment.ISO_8601).format(
+						"MMMM YYYY"
+					),
+					isMonth: !!!Number(
+						this.$moment(counter.waktu, this.$moment.ISO_8601).format(
+							"HHmmssss"
+						)
+					)
+				}
+			);
 
 			if (state.counter[counter._id].isMonth) {
 				state.bln[`${state.counter[counter._id].name} ${state.counter[counter._id].bln}`] = state.counter[counter._id]

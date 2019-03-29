@@ -35,7 +35,7 @@ export default {
 			label: 'Target Bulanan'
 		}, 'hasil'],
 	}),
-	async created(){
+	async beforeMount(){
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
