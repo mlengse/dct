@@ -61,8 +61,9 @@ section.container
 		b-table(responsive :busy.sync='loaded' stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
-	//.row.mt-2.fluid
-		pre {{resume}}
+			template(slot='ind', slot-scope='row') 
+				p {{ row.item.ind }} 
+				button.btn.btn-primary.btn-sm(v-if='["jiwa", "tb"].filter(e=> e === row.item.key).length' @click='byName(JSON.parse(JSON.stringify(row.item)))') by name
 
 </template>
 <script>
@@ -127,7 +128,9 @@ export default {
 				return 'danger'
 			}
 		},
-		hover: (row) => console.log(row.key)
+		byName(a){
+			this.$store.getters['users/isAuthenticated'] ? this.$router.push({ path: `/iks/${a.key}`}) : this.$store.commit('users/openLogin')
+		}
 	},
 	watch: {
 		kelSelected(val){
@@ -144,7 +147,7 @@ export default {
 			await this.$store.dispatch('iks/all')
 			this.loaded = false
 			this.$nuxt.$loading.finish()
-    })
+		})
 
 	},
 	fetch: async ({store}) => await store.dispatch('iks/all'),
@@ -257,46 +260,3 @@ export default {
 @import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
 @import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
 </style>
-
-<!--style lang="scss">
-@import "~/node_modules/bootstrap/scss/_functions.scss";
-$sizes: ();
-
-@import "~/node_modules/bootstrap/scss/_variables.scss";
-@import "~/node_modules/bootstrap/scss/_mixins.scss";
-@import "~/node_modules/bootstrap/scss/_root.scss";
-@import "~/node_modules/bootstrap/scss/_reboot.scss";
-@import "~/node_modules/bootstrap/scss/_type.scss";
-//@import "~/node_modules/bootstrap/scss/_images.scss";
-//@import "~/node_modules/bootstrap/scss/_code.scss";
-@import "~/node_modules/bootstrap/scss/_grid.scss";
-@import "~/node_modules/bootstrap/scss/_tables.scss";
-@import "~/node_modules/bootstrap/scss/_forms.scss";
-//@import "~/node_modules/bootstrap/scss/_buttons.scss";
-//@import "~/node_modules/bootstrap/scss/_transitions.scss";
-//@import "~/node_modules/bootstrap/scss/_dropdown.scss";
-//@import "~/node_modules/bootstrap/scss/_button-group.scss";
-@import "~/node_modules/bootstrap/scss/_input-group.scss";
-//@import "~/node_modules/bootstrap/scss/_custom-forms.scss";
-//@import "~/node_modules/bootstrap/scss/_nav.scss";
-//@import "~/node_modules/bootstrap/scss/_navbar.scss";
-@import "~/node_modules/bootstrap/scss/_card.scss";
-//@import "~/node_modules/bootstrap/scss/_breadcrumb.scss";
-//@import "~/node_modules/bootstrap/scss/_pagination.scss";
-@import "~/node_modules/bootstrap/scss/_badge.scss";
-//@import "~/node_modules/bootstrap/scss/_jumbotron.scss";
-//@import "~/node_modules/bootstrap/scss/_alert.scss";
-@import "~/node_modules/bootstrap/scss/_progress.scss";
-//@import "~/node_modules/bootstrap/scss/_media.scss";
-@import "~/node_modules/bootstrap/scss/_list-group.scss";
-//@import "~/node_modules/bootstrap/scss/_close.scss";
-//@import "~/node_modules/bootstrap/scss/_toasts.scss";
-//@import "~/node_modules/bootstrap/scss/_modal.scss";
-//@import "~/node_modules/bootstrap/scss/_tooltip.scss";
-//@import "~/node_modules/bootstrap/scss/_popover.scss";
-//@import "~/node_modules/bootstrap/scss/_carousel.scss";
-//@import "~/node_modules/bootstrap/scss/_spinners.scss";
-@import "~/node_modules/bootstrap/scss/_utilities.scss";
-//@import "~/node_modules/bootstrap/scss/_print.scss";
-
-</style--!>

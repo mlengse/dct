@@ -6,7 +6,6 @@ if (!firebaseConfig) {
 
 export default async function ({
   store,
- // redirect
 }) {
 
   let firebase = await import('firebase/app')
@@ -17,8 +16,6 @@ export default async function ({
   
   return firebase.auth().onAuthStateChanged( user => {
     if (user) {
-      // let curr = firebase.auth().currentUser
-      // console.log(JSON.stringify(curr) === JSON.stringify(user))
       store.dispatch('users/setUser', JSON.parse(JSON.stringify(user)))
     }
   })

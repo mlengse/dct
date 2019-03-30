@@ -5,20 +5,12 @@
 </template>
 
 <script>
-//import LoginForm from '~/components/account/LoginForm.vue'
-//import firebase from '~/node_modules/firebase/app'
-//import '~/node_modules/firebase/auth'
-//const { auth } = firebase
 
 export default {
 	middleware: 'anonymous',
 	watch: {
-		// firebase is sometimes slow so we need to account for
-		// the user getting authenticated late in the game...
 		user (to, from) {
 			this.$emit('close')
-			//this.$router.push('/')
-			//this.$router.go(-2)
 		},
 	},
 	computed: {
@@ -58,7 +50,6 @@ export default {
               whitelistedCountries: ['ID', '+62']
             },
           ],
-          //signInSuccessUrl: '/',
           tosUrl: '/tos',
           privacyPolicyUrl: '/privacy-policy',
           callbacks: {
@@ -81,8 +72,6 @@ export default {
         throw err
       }
 
-//      let firebaseui = require('~/assets/firebaseui')
-      //let firebaseui = require('~/node_modules/firebaseui/dist/npm')
     }
   }
 }

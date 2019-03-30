@@ -5,6 +5,8 @@ export default async function ({
 }) {
   let firebase = await import('firebase/app')
   if (!isServer && (store.getters['users/isAuthenticated'] && firebase.auth().currentUser)) {
-    return redirect('/account')
+    //return redirect('/account')
+  } else {
+    return redirect('/')
   }
 }

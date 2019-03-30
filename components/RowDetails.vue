@@ -16,9 +16,6 @@
 				.list-group-item
 					.row.justify-content-end
 						.btn-group.mx-1(size='sm')
-							//b-btn( size='sm' variant='outline-primary' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-							//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
-							//b-button(:disabled='loaded' size='sm' v-if='row.item.harianApplied' variant='primary' @click.stop='rinci') {{rincishow}} harian
 							button.btn.btn-sm.btn-success(type='button' :disabled='loaded' v-if='editing' @click.stop='simpan') simpan
 							button.btn.btn-sm.btn-warning(type='button' :disabled='loaded' v-else @click.stop='toggleButton') edit
 				.list-group-item
@@ -39,14 +36,12 @@
 						.col-md-2
 							b-form-input.text-right(v-if="editing && !rincian && !penyebutEdit"  type='number' :placeholder='row.item.penyebut.jumlah.toString()' v-model='row.item.penyebut.jumlah')
 							.text-right(v-else) {{row.item.penyebut.jumlah}}
-		//harian-detail(v-if='rincian' :row='row' :editing='editing' )
 		b-modal#modalInfo(@hide='resetModal' :title='modalInfo.title' ok-only)
 			pre {{modalInfo.content}}
 
 </template>
 
 <script>
-//import HarianDetail from '~/components/HarianDetail.vue'
 import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
 import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
 import BFormInput from '~/node_modules/bootstrap-vue/es/components/form-input/form-input'
@@ -55,8 +50,6 @@ export default {
 	components: {
 		BFormInput,
 		'b-modal': BModal
-
-//		HarianDetail
 	},
 	directives: {
 		'b-modal': vBModal
@@ -96,20 +89,6 @@ export default {
 			this.row.item.status = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'Tercapai' : 'Belum tercapai')) : 'Belum diinput'
 			this.row.item.variant = this.row.item.rekap ? (this.row.item.operator === '>=' ? (this.row.item.rekap.jumlah >= this.row.item.numtarget ? 'success' : 'danger') : (this.row.item.rekap.jumlah <= this.row.item.numtarget ? 'success' : 'danger')) : 'warning'
 			
-			/**			this.row.item.harianApplied ? await this.row.item.days.map( async day => {
-				if(day.pembilang){
-					let pembilangConvert = this.convertSend( day, this.row, 'pembilang')
-					await this.$store.dispatch('data/sendCounter', {...pembilangConvert})
-				}
-				if(day.penyebut){
-					let penyebutConvert = this.convertSend( day, this.row, 'penyebut')
-					await this.$store.dispatch('data/sendCounter', {...penyebutConvert})
-				}
-				return true
-			}) : null
- */
-
-			//this.$emit('updateMonth', this.row.item.month)
 		},
 		convertSend(day, row, type){
 			return {

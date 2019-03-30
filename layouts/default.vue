@@ -4,9 +4,7 @@ div
 		section.container
 			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
 			.navbar-right 
-				//b-button-group(v-if='user')
-				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal.pre) {{user.email || user.phoneNumber}}
-					//b-btn(variant='outline-danger' @click='gotologout') Keluar
+				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal.pre) {{user.email || user.phoneNumber }}
 				button.btn.btn-outline-success.btn-sm(v-else @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)
 		account
@@ -53,7 +51,7 @@ export default {
 			return this.$store.getters['users/login']
 		},
 		user(){
-			return this.$store.state.users.user //getters['users/user']
+			return this.$store.state.users.user
 		}
 	}
 }

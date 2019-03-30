@@ -34,5 +34,17 @@ export const actions = {
       },
     })
     store.commit('add', data)
+  },
+  async tb(store, token){
+    let { data } = await this.$axios.get(
+			`${process.env.API_SIBELA}/gql`,
+			{},
+			{
+				headers: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${token}`
+				}
+			}
+		);
   }
 }

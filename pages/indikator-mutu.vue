@@ -40,7 +40,6 @@ section.container
 				template(slot="action" slot-scope="row")
 					.btn-group.mx-1(size='sm')
 						button.btn.btn-sm.btn-outline-primary(type='button' @click.stop="row.toggleDetails" v-text='`${row.detailsShowing ? "Tutup":"Buka"} Input`')
-						//b-btn( size='sm' variant='outline-primary' @click.stop="info(row.item, row.index, $event.target)" ) Info
 				template(slot="row-details" slot-scope="row")
 					row-details(:row='row' :month='month' :loaded='loaded' @save='save' @updateMonth='updateMonth')
 	.row.mt-2
@@ -250,7 +249,6 @@ export default {
 				from: this.from,
 				to: this.to,
 				month: this.month,
-				//days: this.days,
 				pembilang: Object.assign({}, mutu.pembilang, {
 					_id: undefined,
 					jumlah: 0
@@ -310,33 +308,6 @@ export default {
 							return 'warning'
 					}
 				})(),
-				/*
-				days: !mutu.harianApplied ? undefined : mutu.days.map( dayObj => Object.assign({}, dayObj, {
-					pembilang: Object.assign({},  mutu.pembilang, {
-						_id: undefined
-					}, this.$store.getters['data/gettgl']({
-						name: mutu.pembilang.name,
-						tanggal: dayObj.tanggal
-					}),  {
-						jumlah: (() => {
-							let j = 0
-							let a = mutu.pembilang.counters.filter(counter=> !counter.isMonth && counter.tgl === dayObj.tanggal)
-							a.length ? a[0] ? j =a[0].jumlah : '' : ''
-							return j
-						})(),
-						counters: undefined,
-					}),
-					penyebut: Object.assign({}, mutu.penyebut, {
-						_id: undefined
-					}, {
-						jumlah: (mutu.penyebut.name.includes('hari') || mutu.penyebut.name.includes('visit')) && this.$moment(dayObj.tanggal, 'DD-MM-YYYY').format('dddd') !== 'Minggu' ? 1 : 0,
-						counters: undefined
-					}, this.$store.getters['data/gettgl']({
-						name: mutu.penyebut.name,
-						tanggal: dayObj.tanggal
-					}))
-				})),
-				*/
 			})).map( mutu => Object.assign({}, mutu, {
 				pembilang: Object.assign({}, mutu.pembilang, {
 					counters: undefined

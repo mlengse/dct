@@ -1,7 +1,5 @@
 import Strapi from 'strapi-sdk-javascript'
 
-
-
 const apiUrl = process.env.apiUrl 
 
 const strapi = new Strapi(apiUrl)
@@ -20,13 +18,11 @@ export const getters = {
   isAuthenticated: ({ user }) => !!user,
   user: ({user}) => user,
   account: ({ account }) => account,
-  token: ({token}) => token
+  token: ({token}) => token,
+  idToken: ({user: { stsTokenManager: { accessToken }}}) => accessToken 
 }
 
 export const actions = {
-  //setAccountRef: firebaseAction(({ bindFirebaseRef }, path) => {
-  //  return bindFirebaseRef('account', firebase.database().ref(path))
-  //}),
   async setUser({ commit }, user){
     commit('setUser', user)
     let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
