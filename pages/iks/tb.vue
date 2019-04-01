@@ -16,7 +16,7 @@ export default {
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
-			await this.$store.dispatch('iks/tb', this.$store.getters['users/idToken'])
+			await this.$store.dispatch('iks/tb')
 			this.loaded = false
 			this.$nuxt.$loading.finish()
 		})

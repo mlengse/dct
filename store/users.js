@@ -19,7 +19,7 @@ export const getters = {
   user: ({user}) => user,
   account: ({ account }) => account,
   token: ({token}) => token,
-  idToken: ({user: { stsTokenManager: { accessToken }}}) => accessToken 
+  idToken: ({ user }) => user.stsTokenManager.accessToken 
 }
 
 export const actions = {

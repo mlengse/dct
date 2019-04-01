@@ -35,16 +35,26 @@ export const actions = {
     })
     store.commit('add', data)
   },
-  async tb(store, token){
-    let { data } = await this.$axios.get(
-			`${process.env.API_SIBELA}/gql`,
-			{},
-			{
+  async tb(store){
+    try{
+      let firebase = await import('firebase/app')
+      await import('firebase/auth')
+
+      let token = await firebase.auth().currentUser.getIdToken(/* forceRefresh */ true)
+
+      // Send token to your backend via HTTPS
+      let { data } = await this.$axios({
+				method: "get",
+				url: `${process.env.API_SIBELA}/gql`,
 				headers: {
           "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${token}`
-				}
-			}
-		);
+          token
+        },
+			})
+    
+    }catch(err){
+      console.log(err)
+    }
+
   }
 }
