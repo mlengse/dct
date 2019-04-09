@@ -2,7 +2,7 @@
 div
 	nav.navbar.navbar-expand-lg.navbar-light.bg-light(role="navigation" aria-label="main navigation")
 		section.container
-			nuxt-link.navbar-brand( to='/' exact) Puskesmas Sibela
+			nuxt-link.navbar-brand( to='/') Puskesmas Sibela
 			.navbar-right 
 				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal.pre) {{user.email || user.phoneNumber }}
 				button.btn.btn-outline-success.btn-sm(v-else @click='openLogin') Masuk

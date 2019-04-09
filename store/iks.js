@@ -45,7 +45,7 @@ export const actions = {
       // Send token to your backend via HTTPS
       let { data } = await this.$axios({
 				method: "get",
-				url: `${process.env.API_SIBELA}/gql`,
+				url: `${process.env.API_SIBELA}/graphql`,
 				headers: {
           "Access-Control-Allow-Origin": "*",
           token
