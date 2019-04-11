@@ -30,7 +30,7 @@ section.container
 <script>
 import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
 import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
-
+import getPosyanduGql from '~/apollo/queries/getPosyandu.gql'
 export default {
 	components: {
 		BTable,
@@ -54,6 +54,15 @@ export default {
 			},
 		},
 	}),
+	apollo: {
+		items: {
+			query: getPosyanduGql,
+			update({getPosyandu}){
+				return getPosyandu
+			}
+		}
+	},
+	/*
 	async beforeMount(){
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
@@ -63,12 +72,13 @@ export default {
 			this.$nuxt.$loading.finish()
 		})
 	},
-
+	
 	computed: {
 		items() {
 			return []
 		}
 	},
+	*/
 	watch: {
 		items(val) {
 			this.totalRows = val.length

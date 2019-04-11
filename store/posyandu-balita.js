@@ -3,6 +3,7 @@ export const state = () => ({
   posyandu: {},
 })
 
+
 export const mutations = {
   add({ posyandu, posyanduList }, res) {
     res
@@ -15,11 +16,29 @@ export const mutations = {
 
 export const actions = {
   async all(store) {
-    let { data } = await this.$axios.get(`${process.env.API_SIBELA}/graphql`, {}, {
+    let client = this.$apollo.getClient()
+    console.log(this.$apollo)
+    const query = `
+    query {
+      getPosyandu {
+        name
+        rw
+      }
+    }
+    `
+    let { data } = client.query({
+      query
+    })
+    console.log(data)
+
+/**
+ *     let { data } = await this.$axios.get(`${process.env.API_SIBELA}/graphql`, {}, {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
     })
+
+ */
     store.commit('add', data)
   },
 }

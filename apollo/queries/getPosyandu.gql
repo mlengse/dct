@@ -1,0 +1,6 @@
+query {
+  getPosyandu {
+    name
+    rw
+  }
+}

@@ -5,3 +5,4 @@ node_modules
 .else
 package-lock.json
 static/sw.js
+.vscode
