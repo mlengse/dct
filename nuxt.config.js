@@ -11,9 +11,9 @@ module.exports = {
 		//includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)
 		//authenticationType: 'Basic', // optional, default: 'Bearer'
 		// optional
-		errorHandler(error) {
-			console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
-		},
+		//errorHandler(error) {
+		//	console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
+		//},
 		// required
 		clientConfigs: {
 			default: {
@@ -78,7 +78,8 @@ module.exports = {
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
-					test: /\.(js|vue|graphql)$/,
+					test: /\.(js|vue)$/,
+					//test: /\.(js|vue|graphql)$/,
 					loader: "eslint-loader",
 					exclude: /(node_modules)/,
 				});
@@ -96,13 +97,13 @@ module.exports = {
 		
 	},
 	
-	//css: [
+	css: [
 	//	'~/assets/css/style.css'
 
-	//	"@/node_modules/bootstrap/dist/css/bootstrap.css",
+		"@/node_modules/bootstrap/dist/css/bootstrap.css",
 	//	'@/node_modules/buefy/dist/buefy.css',
-	//	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
-	//],
+		"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css"
+	],
 
 	env: {
 		API_URL: process.env.API_URL,
