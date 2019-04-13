@@ -1,0 +1,6 @@
+query getPosy($id: String!){
+  posyandu(_key: $id) {
+    name
+    rw
+  }
+}

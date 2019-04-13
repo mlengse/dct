@@ -1,5 +1,5 @@
 query {
-  getPosyandu {
+  getPosyanduList {
     name
     rw
   }

@@ -11,6 +11,8 @@ section.container
 			small
 			responsive 
 			hover 
+			selectable
+			select-mode='single'
 			stacked='sm' 
 			:busy.sync='loaded' 
 			:items="items"
@@ -21,6 +23,7 @@ section.container
 			:sort-by.sync="sortBy" 
 			:sort-desc.sync="sortDesc" 
 			@filtered='onFiltered'
+			@row-selected='rowSelected'
 		)
 	.row.mt-2
 		.col-md-12
@@ -51,49 +54,43 @@ export default {
 			},
 			rw: {
 				label: 'RW',
+				sortable: true
 			},
 		},
 	}),
 	apollo: {
 		items: {
 			query: getPosyanduGql,
-			update({getPosyandu}){
-				return getPosyandu
+			update({getPosyanduList}){
+				return getPosyanduList.map( posy => Object.assign(
+					{}, 
+					posy, 
+					{
+						name: this.lowerCase(posy.name)
+					}
+				))
 			}
 		}
 	},
-	/*
-	async beforeMount(){
-		await this.$nextTick( async () => {
-			this.$nuxt.$loading.start()
-			this.loaded = true
-			await this.$store.dispatch('posyandu-balita/all')
-			this.loaded = false
-			this.$nuxt.$loading.finish()
-		})
-	},
-	
-	computed: {
-		items() {
-			return []
-		}
-	},
-	*/
 	watch: {
 		items(val) {
 			this.totalRows = val.length
 		},
 	},
 	methods: {
+		lowerCase(string) {
+			return string.split(' ').map(e=> {
+				return e.charAt(0) + e.slice(1).toLowerCase();
+			}).join(' ')
+		},
 		onFiltered(filteredItems) {
 			this.totalRows = filteredItems.length
 			this.currentPage = 1
 		},
+		rowSelected(items){
+			this.$router.push(`/posyandu-balita/${items[0].rw.toLowerCase().split(' ').join('-')}`)
+		}
 	},
 }
 </script>
 
-<!--style>
-@import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
-@import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
-</style--!>

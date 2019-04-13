@@ -38,8 +38,6 @@ section.container
 				.card
 					.card-body
 						nuxt-link.btn.btn-primary.btn-sm(:to='{ path: "spm/details", query: { id: pastRow.kode , tahun: tahun} }') Lihat Detail
-	//.row.mt-2.fluid
-		pre {{items}}
 </template>
 
 <script>
@@ -163,9 +161,3 @@ export default {
 	}
 }
 </script>
-
-
-<!--style>
-@import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
-@import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
-</style--!>

@@ -42,7 +42,6 @@ query {
 `;
 
 export default {
-//	layout: 'front',
 	data: () => ({
 		query: ''
 	}),
@@ -68,31 +67,3 @@ export default {
 	},
 }
 </script>
-
-<!--style>
-@import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
-@import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
-</style--!>
-
-
-<!--style lang="scss">
-@import "~/node_modules/bootstrap/scss/_functions.scss";
-$sizes: ();
-
-@import "~/node_modules/bootstrap/scss/_variables.scss";
-@import "~/node_modules/bootstrap/scss/_mixins.scss";
-@import "~/node_modules/bootstrap/scss/_root.scss";
-@import "~/node_modules/bootstrap/scss/_reboot.scss";
-@import "~/node_modules/bootstrap/scss/_type.scss";
-@import "~/node_modules/bootstrap/scss/_images.scss";
-@import "~/node_modules/bootstrap/scss/_grid.scss";
-@import "~/node_modules/bootstrap/scss/_forms.scss";
-@import "~/node_modules/bootstrap/scss/_buttons.scss";
-@import "~/node_modules/bootstrap/scss/_transitions.scss";
-//@import "~/node_modules/bootstrap/scss/_navbar.scss";
-@import "~/node_modules/bootstrap/scss/_card.scss";
-@import "~/node_modules/bootstrap/scss/_media.scss";
-//@import "~/node_modules/bootstrap/scss/_close.scss";
-//@import "~/node_modules/bootstrap/scss/_modal.scss";
-@import "~/node_modules/bootstrap/scss/_utilities.scss";
-</style--!>
