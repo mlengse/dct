@@ -62,13 +62,7 @@ export default {
 		items: {
 			query: getPosyanduGql,
 			update({getPosyanduList}){
-				return getPosyanduList.map( posy => Object.assign(
-					{}, 
-					posy, 
-					{
-						name: this.lowerCase(posy.name)
-					}
-				))
+				return getPosyanduList
 			}
 		}
 	},
