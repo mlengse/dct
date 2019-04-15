@@ -1,0 +1,10 @@
+query getBalita($posy: String!) {
+	balita(posy: $posy) {
+    name
+    jk
+    gakin
+    tl
+    ortu
+    rt
+	}
+}
