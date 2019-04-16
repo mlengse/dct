@@ -38,20 +38,13 @@ section.container
 </template>
 
 <script>
-import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
-import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
-
-import DownloadExcel from '~/components/DownloadExcel.vue'
- 
 export default {
 	components: {
-		bInputGroup,
-		bFormSelect,
-		DownloadExcel,
-		BPagination,
-		BTable,
+		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
+		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
+		DownloadExcel: () => import('~/components/DownloadExcel.vue'),
+		BPagination: () => import('~/node_modules/bootstrap-vue/es/components/pagination/pagination'),
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
 	data: () => ({
 		loaded: false,

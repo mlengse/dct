@@ -51,27 +51,19 @@ section.container
 </template>
 
 <script>
-
-import RowDetails from '~/components/RowDetails.vue'
-import DownloadExcel from '~/components/DownloadExcel.vue'
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
-import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
-import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
-
 import queryRekap from '../schema/queryRekap.graphql'
 import query from '../schema/query.graphql'
 
 export default {
 	components: {
-		RowDetails,
-		DownloadExcel,
-		BTable,
-		BPagination,
-		'b-modal': BModal
+		RowDetails: () => import('~/components/RowDetails.vue'),
+		DownloadExcel: () => import('~/components/DownloadExcel.vue'),
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
+		BPagination: () => import('~/node_modules/bootstrap-vue/es/components/pagination/pagination'),
+		'b-modal': () => import('~/node_modules/bootstrap-vue/es/components/modal/modal')
 	},
 	directives: {
-		'b-modal': vBModal
+		'b-modal': () => import('~/node_modules/bootstrap-vue/es/directives/modal/modal')
 	},
 	data: () => ({
 		json_fields:{

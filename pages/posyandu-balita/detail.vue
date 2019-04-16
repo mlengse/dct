@@ -41,22 +41,16 @@ section.container
 			b-tab.mt-2(title='Grafik')
 </template>
 <script>
-import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
-import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
-import BTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs'
-import BTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab'
 import posyById from '~/apollo/queries/getPosyanduById.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
 export default {
 	components: {
-		bInputGroup,
-		bFormSelect,
-		BCard,
-		BTabs,
-		BTab,
-		BTable,
+		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
+		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
+		BCard: () => import('~/node_modules/bootstrap-vue/es/components/card/card'),
+		BTabs: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tabs'),
+		BTab: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tab'),
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
 	data: () => ({
 		posyandu: {

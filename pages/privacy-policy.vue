@@ -30,26 +30,3 @@ section.container
 
 </template>
 
-<script>
-export default {
-};
-</script>
-
-<!--style>
-@import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
-@import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
-</style--!>
-
-<!--style lang="scss">
-@import "~/node_modules/bootstrap/scss/_functions.scss";
-$sizes: ();
-
-@import "~/node_modules/bootstrap/scss/_variables.scss";
-@import "~/node_modules/bootstrap/scss/_mixins.scss";
-@import "~/node_modules/bootstrap/scss/_root.scss";
-@import "~/node_modules/bootstrap/scss/_reboot.scss";
-@import "~/node_modules/bootstrap/scss/_type.scss";
-@import "~/node_modules/bootstrap/scss/_grid.scss";
-@import "~/node_modules/bootstrap/scss/_utilities.scss";
-
-</style--!>

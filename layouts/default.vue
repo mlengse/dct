@@ -14,18 +14,14 @@ div
 </template>
 
 <script>
-import Login from '~/components/Login.vue'
-import Account from '~/components/Account.vue'
-import BModal from "~/node_modules/bootstrap-vue/es/components/modal/modal.js";
-import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 export default {
 	components: {
-		Login,
-		Account,
-		'b-modal': BModal
+		Login: () => import('~/components/Login.vue'),
+		Account: () => import('~/components/Account.vue'),
+		'b-modal': () => import("~/node_modules/bootstrap-vue/es/components/modal/modal.js")
 	},
 	directives: {
-		'b-modal': vBModal
+		'b-modal': () => import('~/node_modules/bootstrap-vue/es/directives/modal/modal.js')
 	},
 	data: () => ({
 		loginShow: false

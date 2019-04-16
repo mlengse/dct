@@ -3,13 +3,14 @@ button.btn.btn-primary.btn-sm(type='button' :disabled='loaded || false' @click='
 </template>
 
 <script>
-import { saveAs } from 'file-saver';
+const fileSaver = () => import('file-saver');
+const exceljs = () => import('exceljs/dist/es5/exceljs.browser')
 export default {
   props: ['data', 'fields', 'name', 'label', 'loaded'],
   methods: {
     async exportXLSX() {
       if (process.browser) {
-        const { Workbook } = await import('exceljs/dist/es5/exceljs.browser');
+        const { Workbook } = exceljs;
         //console.log(JSON.stringify(this.fields, null, 2))
         var workbook = new Workbook(); //creating workbook
         var sheet = workbook.addWorksheet(this.name.split('.xlsx').join('')); //creating worksheet    
@@ -24,11 +25,11 @@ export default {
           //console.log(valueArray)
           sheet.addRow().values = valueArray; // add the array as a row in sheet
         })
-        workbook.xlsx.writeBuffer().then(data => {
-          //console.log(data)
-          const blob = new Blob([data], { type: "application/octet-stream" });
-          saveAs(blob, this.name);
-        });
+        let data = await workbook.xlsx.writeBuffer()
+        //console.log(data)
+        let blob = new Blob([data], { type: "application/octet-stream" });
+        const { saveAs } = fileSaver
+        saveAs(blob, this.name);
       }
     }
   },

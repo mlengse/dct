@@ -67,20 +67,13 @@ section.container
 
 </template>
 <script>
-import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
-import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
-import bProgress from '~/node_modules/bootstrap-vue/es/components/progress/progress';
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-
-import DownloadExcel from '~/components/DownloadExcel.vue'
- 
 export default {
 	components: {
-		bInputGroup,
-		bFormSelect,
-		bProgress,
-		DownloadExcel,
-		BTable,
+		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
+		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
+		bProgress: () => import('~/node_modules/bootstrap-vue/es/components/progress/progress'),
+		DownloadExcel: () => import('~/components/DownloadExcel.vue'),
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
 	data: () => ({
 		loaded: false,

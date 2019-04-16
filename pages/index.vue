@@ -21,26 +21,6 @@ section.container
 </template>
 
 <script>
-import Strapi from 'strapi-sdk-javascript'
-
-const apiUrl = process.env.apiUrl
-
-const strapi = new Strapi(apiUrl)
-
-const query = `
-query {
-	menus {
-		_id
-		nama
-		deskripsi
-		url
-		cover {
-			url
-		}
-	}
-}
-`;
-
 export default {
 	data: () => ({
 		query: ''
@@ -50,19 +30,8 @@ export default {
 			return this.menus.filter( menu => menu.nama.toLowerCase().includes(this.query.toLowerCase()))
 		},
 		menus() {
-			return this.$store.getters['menus/list'].filter( menu => ['Indikator Mutu', 'SPM', 'IKS', 'Posyandu Balita'].indexOf(menu.nama) >= 0)
+			return this.$store.getters['list'].filter( menu => ['Indikator Mutu', 'SPM', 'IKS', 'Posyandu Balita'].indexOf(menu.nama) >= 0)
 		}
-	},
-	fetch: async ({ store }) => {
-		store.commit('menus/emptyList')
-		const { data: { menus } } = await strapi.request('post', '/graphql', {
-			data: {
-				query
-			}
-		})
-		menus.forEach(menu => {
-			store.commit('menus/add', menu)
-		})
 	},
 }
 </script>

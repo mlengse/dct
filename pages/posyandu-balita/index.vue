@@ -31,13 +31,11 @@ section.container
 </template>
 
 <script>
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
 import getPosyanduGql from '~/apollo/queries/getPosyandu.gql'
 export default {
 	components: {
-		BTable,
-		BPagination
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
+		BPagination: () => import('~/node_modules/bootstrap-vue/es/components/pagination/pagination')
 	},
 	data: () => ({
 		loaded: false,

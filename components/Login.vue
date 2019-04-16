@@ -18,16 +18,12 @@ export default {
 			return this.$store.getters['users/user']
 		}
 	},
-  async mounted() {
+  async beforeMount() {
     let vm = this
     if(process.browser){
       try{
-        let [ firebaseui, firebase ] = await Promise.all([
-          import('firebaseui'),
-          import('firebase/app')
-        ])
+        const { auth } = await import('firebase/app')
         await import('firebase/auth')
-        const {auth} = firebase
         const authProviders = {
           Google: auth.GoogleAuthProvider.PROVIDER_ID,
           Facebook: auth.FacebookAuthProvider.PROVIDER_ID,
@@ -35,6 +31,8 @@ export default {
           Email: auth.EmailAuthProvider.PROVIDER_ID,
           Phone: auth.PhoneAuthProvider.PROVIDER_ID,
         }
+
+        const firebaseui = await import('firebaseui')
 
         let ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth())
         const config = {

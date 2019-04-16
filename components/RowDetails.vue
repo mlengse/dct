@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import BModal from '~/node_modules/bootstrap-vue/es/components/modal/modal'
-import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal'
-import BFormInput from '~/node_modules/bootstrap-vue/es/components/form-input/form-input'
+const BModal = () => import('~/node_modules/bootstrap-vue/es/components/modal/modal')
+const vBModal = () => import('~/node_modules/bootstrap-vue/es/directives/modal/modal')
+const BFormInput = () => import('~/node_modules/bootstrap-vue/es/components/form-input/form-input')
 
 export default {
 	components: {

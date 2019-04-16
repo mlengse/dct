@@ -19,11 +19,9 @@ section.container
 </template>
 
 <script>
-import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-
 export default {
 	components: {
-		BTable
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table')
 	},
 	data: () => ({
 		loaded: false,
