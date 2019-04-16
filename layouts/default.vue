@@ -4,7 +4,7 @@ div
 		section.container
 			nuxt-link.navbar-brand( to='/') Puskesmas Sibela
 			.navbar-right 
-				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal.pre) {{user.email || user.phoneNumber }}
+				button.btn.btn-outline-primary.btn-sm(type='button' v-if='user' v-b-modal="'pre'") {{user.email || user.phoneNumber }}
 				button.btn.btn-outline-success.btn-sm(v-else @click='openLogin') Masuk
 	b-modal#pre(hide-header hide-footer)
 		account
@@ -14,6 +14,7 @@ div
 </template>
 
 <script>
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 export default {
 	components: {
 		Login: () => import('~/components/Login.vue'),
@@ -21,7 +22,7 @@ export default {
 		'b-modal': () => import("~/node_modules/bootstrap-vue/es/components/modal/modal.js")
 	},
 	directives: {
-		'b-modal': () => import('~/node_modules/bootstrap-vue/es/directives/modal/modal.js')
+		'b-modal': vBModal
 	},
 	data: () => ({
 		loginShow: false
@@ -47,7 +48,7 @@ export default {
 			return this.$store.getters['users/login']
 		},
 		user(){
-			return this.$store.state.users.user
+			return this.$store.getters['users/user']
 		}
 	}
 }

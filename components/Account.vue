@@ -16,10 +16,10 @@ section.container
 export default {
 	computed: {
 		user() {
-			return this.$store.state.users.user
+			return this.$store.getters['users/user']
 		},
 		account() {
-			return this.$store.state.users.account
+			return this.$store.getters['users/account']
 		},
 		imageAlt () {
 			return `Profile image for ${this.user.displayName}`
