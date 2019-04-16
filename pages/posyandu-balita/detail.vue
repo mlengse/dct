@@ -13,39 +13,37 @@ section.container
 						h5 Bulan penimbangan: {{blnSelected}} {{tahun}}
 					.card-body
 						.row
-							b-input-group(prepend='Tanggal' size='sm')
-								.btn.btn-sm.btn-outline-dark(slot='prepend') {{tglSelected}}
-								b-input-group-text(slot='prepend' size='sm') Bulan
-								b-form-select(v-model='blnSelected' :options='blns' size='sm')
-								b-input-group-text(slot='append' size='sm') Tahun
-								button.btn.btn-sm.btn-primary(slot='append' type='button' @click='changeYear(-1)') &lsaquo;
-								.btn.btn-sm.btn-outline-dark.disabled(slot='append') {{tahun}}
-								button.btn.btn-sm.btn-primary(slot='append' type='button' @click='changeYear(1)') &rsaquo;
-						b-table.mt-2(
-							small
-							responsive 
-							hover 
-							selectable
-							select-mode='single'
-							stacked='sm' 
-							:items="balitaList"
-							:fields='fields'
-						)
-							template(slot='name' slot-scope='data') {{ lowerCase(data.item.name) }}
-							template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
-							template(slot='umur' slot-scope='data') {{ `${data.item.thn ? `${data.item.thn} thn ` : ''}${data.item.bln ? `${data.item.bln} bln ` : ''}${data.item.hr ? `${data.item.hr} hr` : ''}` }}
+							.col-sm.mt-2
+								b-input-group(prepend='Tanggal' size='sm')
+									b-form-select(v-model='tglSelected' :options='tgls' size='sm')
+							.col-sm.mt-2
+								b-input-group(prepend='Bulan' size='sm')
+									b-form-select(v-model='blnSelected' :options='blns' size='sm')
+							.col-sm.mt-2
+								b-input-group(prepend='Tahun' size='sm')
+									b-form-select(v-model='tahun' :options='thns' size='sm')
+						.row.mt-4
+							b-table(
+								small
+								responsive 
+								hover 
+								selectable
+								select-mode='single'
+								stacked='sm' 
+								:items="balitaList"
+								:fields='fields'
+							)
+								template(slot='name' slot-scope='data') {{ lowerCase(data.item.name) }}
+								template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
+								template(slot='umur' slot-scope='data') {{ `${data.item.thn ? `${data.item.thn} thn ` : ''}${data.item.bln ? `${data.item.bln} bln ` : ''}${data.item.hr ? `${data.item.hr} hr` : ''}` }}
 
 			b-tab.mt-2(title='Rekap')
 			b-tab.mt-2(title='Grafik')
 </template>
 <script>
-import bInputGroupText from '~/node_modules/bootstrap-vue/es/components/input-group/input-group-text';
 import bInputGroup from '~/node_modules/bootstrap-vue/es/components/input-group/input-group';
 import bFormSelect from '~/node_modules/bootstrap-vue/es/components/form-select/form-select';
-//import bFormInput from '~/node_modules/bootstrap-vue/es/components/form-input/form-input';
-
 import BTable from '~/node_modules/bootstrap-vue/es/components/table/table'
-import BPagination from '~/node_modules/bootstrap-vue/es/components/pagination/pagination'
 import BCard from '~/node_modules/bootstrap-vue/es/components/card/card'
 import BTabs from '~/node_modules/bootstrap-vue/es/components/tabs/tabs'
 import BTab from '~/node_modules/bootstrap-vue/es/components/tabs/tab'
@@ -53,15 +51,12 @@ import posyById from '~/apollo/queries/getPosyanduById.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
 export default {
 	components: {
-		bInputGroupText,
 		bInputGroup,
 		bFormSelect,
-	//	bFormInput,
 		BCard,
 		BTabs,
 		BTab,
 		BTable,
-		BPagination
 	},
 	data: () => ({
 		posyandu: {
@@ -74,12 +69,11 @@ export default {
 		blnSelected: null,
 		tahun: null,
 		fields: {
-			//rt: {
-			//	sortable: true,
-			//	label: 'RT'
-			//},
 			name: {
 				label: 'Nama',
+			},
+			tl: {
+				label: 'TL',
 			},
 			umur: {
 				label: 'Umur',
@@ -96,19 +90,23 @@ export default {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
 		this.blnSelected = this.blns[this.bulan]
-		this.tglSelected = this.$moment().date()
+		this.tglSelected = this.$moment().date().toString()
+	},
+	watch: {
+		blnSelected() {
+			if(this.tgls.indexOf(this.tglSelected) < 0 ){
+				this.tglSelected = 1
+			}
+		}
 	},
 	methods: {
-		changeYear(val){
-			this.tahun = this.$moment(this.tahun, 'YYYY').add(val, 'y').format('YYYY')
-		},
 		lowerCase(string) {
 			return string.split(' ').map(e=> {
 				return e.charAt(0) + e.slice(1).toLowerCase();
 			}).join(' ')
 		},
 		umur(val){
-			let duration = this.$moment.duration(this.$moment( `${this.$moment().format('D')}-${this.$moment(this.blns.indexOf(this.blnSelected)+1, 'M').format('M')}-${this.tahun}`, 'D-M-YYYY' ).diff(this.$moment(val.tl, 'x')));
+			let duration = this.$moment.duration(this.$moment( `${this.tglSelected}-${this.blnSelected}-${this.tahun}`, 'D-MMMM-YYYY' ).diff(this.$moment(val.tl, 'x')));
 			return {
 				thn: duration.years(),
 				bln: duration.months(),
@@ -124,8 +122,22 @@ export default {
 				return ''
 			}
 		},
+		thns() {
+			return [ this.$moment(this.tahun, 'YYYY').add(-1, 'y').format('YYYY'), this.tahun, this.$moment(this.tahun, 'YYYY').add(1, 'y').format('YYYY')]
+		},
 		blns(){
 			return this.$moment.months()
+		},
+		tgls(){
+			let tgls = []
+      let start = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').startOf('month')
+      let end = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').endOf('month')
+      while( start <= end){
+        let dateNow = start.date()
+        tgls[tgls.length] = dateNow.toString()
+        start = start.add(1, 'd')
+      }
+			return tgls
 		},
 		balitaList(){
 			return this.balita && this.balita.map(e=> Object.assign({}, e, {
