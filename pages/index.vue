@@ -54,13 +54,12 @@ export default {
 		}
 	},
 	fetch: async ({ store }) => {
+		store.commit('menus/emptyList')
 		const { data: { menus } } = await strapi.request('post', '/graphql', {
 			data: {
 				query
 			}
 		})
-
-		store.commit('menus/emptyList')
 		menus.forEach(menu => {
 			store.commit('menus/add', menu)
 		})

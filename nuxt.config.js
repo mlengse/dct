@@ -77,6 +77,12 @@ module.exports = {
 		 */
 		extend(config, { isDev, isClient }) {
 			config.resolve.alias['./dist/cpexcel.js'] = ''
+			if(isClient) {
+				config.node = {
+					fs: 'empty'
+				}
+
+			}
 			if (isDev && isClient) {
 				config.module.rules.push({
 					enforce: "pre",
@@ -85,12 +91,6 @@ module.exports = {
 					loader: "eslint-loader",
 					exclude: /(node_modules)/,
 				});
-			}
-			if(isClient) {
-				config.node = {
-					fs: 'empty'
-				}
-
 			}
 
 		},
