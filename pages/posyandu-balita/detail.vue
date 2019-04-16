@@ -4,7 +4,7 @@ section.container
 		nuxt-link(to="/posyandu-balita")
 			h3 Posyandu Balita 
 	.row
-		h5(v-if = "posyandu.name !== ''" ) {{ posyandu.name }} RW {{ posyandu.rw }}
+		h5(v-if = "posyandu && posyandu.name !== ''" ) {{ posyandu.name }} RW {{ posyandu.rw }}
 	b-card.row.mt-2(no-body)
 		b-tabs(card)
 			b-tab.mt-2(title='Input')
@@ -59,21 +59,17 @@ export default {
 			//},
 			name: {
 				label: 'Nama',
-				sortable: true,
 			},
 			tl: {
-				sortable: true,
 				label: 'Tgl Lahir',
 			},
 			umur: {
 				label: 'Umur',
 			},
 			jk: {
-				sortable: true,
 				label: 'JK'
 			},
 			ortu: {
-				sortable: true,
 				label: 'Orang Tua'
 			},
 		}
@@ -98,7 +94,7 @@ export default {
 	},
 	computed: {
 		_key() {
-			return `posy-${this.$route.params.id.toUpperCase()}`
+			return `posy-${this.$route.query.id.toUpperCase()}`
 		},
 		blns(){
 			return this.$moment.months()

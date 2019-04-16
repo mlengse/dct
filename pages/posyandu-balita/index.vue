@@ -50,11 +50,9 @@ export default {
  		fields:{
 			name: {
 				label: 'Nama',
-				sortable: true
 			},
 			rw: {
 				label: 'RW',
-				sortable: true
 			},
 		},
 	}),
@@ -82,7 +80,7 @@ export default {
 			this.currentPage = 1
 		},
 		rowSelected(items){
-			this.$router.push(`/posyandu-balita/${items[0].rw.toLowerCase().split(' ').join('-')}`)
+			this.$router.push(`/posyandu-balita/detail?id=${items[0].rw.toLowerCase().split(' ').join('-')}`)
 		}
 	},
 }

@@ -185,7 +185,7 @@ export default {
 		},
 		fields: () => ['bagian', 'indikator', 'status', 'action'].map(e => ({
 			key: e,
-			sortable: ['bagian', 'indikator', 'status'].indexOf(e) > -1
+		//	sortable: ['bagian', 'indikator', 'status'].indexOf(e) > -1
 		})),
 		prev() {
 			return this.loaded

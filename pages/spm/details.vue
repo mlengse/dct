@@ -2,6 +2,8 @@
 section.container 
 	.row.mt-2
 		h3 Detail Indikator SPM 
+	.row.mt-2 
+	b-table.mt-2(hover :busy.sync='loaded' striped :items='indDet' :fields='fields')
 	.row.mt-2
 		button.btn.btn-sm.btn-primary(type='button' :disabled='loaded' @click='showDetail') {{ detail ? 'tutup' : 'buka'}} detail
 	.card.mt-2(v-show='detail')
@@ -11,8 +13,6 @@ section.container
 					.row
 						.col-md-3 {{i.key}}
 						.col {{i.desc}}
-	.row.mt-2 
-	b-table.mt-2(hover :busy.sync='loaded' striped :items='indDet' :fields='fields')
 	//.row.mt-2 
 		pre {{indDet}}
 

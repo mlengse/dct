@@ -22,6 +22,9 @@ section.container
 		b-table#tabel(
 			stacked='sm' 
 			hover 
+			selectable
+			select-mode='single'
+			@row-selected='rowSelected'
 			:current-page="currentPage" 
 			:per-page="perPage" 
 			:filter='filter' 
@@ -29,15 +32,9 @@ section.container
 			:fields='fields' 
 			:busy.sync='loaded' 
 			:items="items" 	
-			@row-hovered='toggleRow'
-			@row-unhovered='toggleRow'
 		)
 			template(slot='hasil' slot-scope='row')
 				span(:class='["text", row.item.masalah ? "danger": "success"].join("-")') {{row.item.hasil}}
-			template(slot="row-details" slot-scope="row")
-				.card
-					.card-body
-						nuxt-link.btn.btn-primary.btn-sm(:to='{ path: "spm/details", query: { id: pastRow.kode , tahun: tahun} }') Lihat Detail
 </template>
 
 <script>
@@ -89,10 +86,8 @@ export default {
 		},
 	},
 	methods: {
-		toggleRow(row) {
-			row._showDetails = !row._showDetails
-			this.pastRow._showDetails = !this.pastRow._showDetails
-			this.pastRow = row
+		rowSelected(item){
+			this.$router.push({ path: "spm/details", query: { id: item[0].kode , tahun: this.tahun} })
 		},
 		getFixed(numb) {
 			let num = Number(numb);
@@ -127,7 +122,6 @@ export default {
 			let a = {}
 			tt.map( e =>{
 				a[e] = {
-					sortable: true
 				}
 			})
 			return a

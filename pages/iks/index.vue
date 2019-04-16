@@ -90,22 +90,18 @@ export default {
 		fields:{
 			no: {
 				label: 'No',
-				sortable: true
 			},
 			ind: {
 				label: 'Indikator',
 			},
 			y: {
 				label: 'Σ Keluarga Bernilai Y',
-				sortable: true
 			},
 			penyebut: {
 				label: 'Σ Keluarga yang Diukur',
-				sortable: true
 			},
 			iks: {
 				label: 'IKS',
-				sortable: true
 			}
 
 		},
