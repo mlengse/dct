@@ -100,6 +100,7 @@ export default {
 			}
 
 		},
+		iks: null,
 		resume_fields: {
 			"No": "no",
 			"RW": 'rw',
@@ -119,6 +120,7 @@ export default {
 			},
 			update({getIKS}){
     		this.$store.commit('iks/add', getIKS)
+				return getIKS
 			}
 		}
 	},
@@ -143,8 +145,16 @@ export default {
 		},
 		rwSelected(val){
 			this.rtSelected = 'Semua'
-		}
+		},
+		iksQuery(val){
+			if(val){
+				this.iks = Object.assign({}, this.iks, this.$store.getters['iks/iks'](this.iksId))
+			}
+		},
 	},
+	created(){
+		this.iks = Object.assign({}, this.kkInd[this.iksId])
+	}
 	/*
 	async beforeMount(){
 		await this.$nextTick( async () => {
@@ -213,19 +223,6 @@ export default {
 		},
 		iksId(){
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
-		},
-		iksiks(){
-			return this.$store.getters['iks/iks'](this.iksId)
-		},
-		iks(){
-			if(this.iksiks) {
-				return Object.assign({}, 
-					this.iksiks,
-					this.kkInd[this.iksId]
-				)
-			}			
-			return Object.assign({}, 
-				this.kkInd[this.iksId])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
