@@ -154,7 +154,7 @@ export default {
 	},
 	created(){
 		this.iks = Object.assign({}, this.kkInd[this.iksId])
-	}
+	},
 	/*
 	async beforeMount(){
 		await this.$nextTick( async () => {
