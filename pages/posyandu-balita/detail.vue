@@ -151,6 +151,7 @@ export default {
 		},
 		balita: {
 			query: getBalitaByPosy,
+			prefetch: true,
 			variables() {
 				return {
 					posy: this._key

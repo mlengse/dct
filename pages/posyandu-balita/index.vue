@@ -57,6 +57,7 @@ export default {
 	apollo: {
 		items: {
 			query: getPosyanduGql,
+			prefetch: true,
 			update({getPosyanduList}){
 				return getPosyanduList
 			}
