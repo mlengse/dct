@@ -120,10 +120,8 @@ export default {
 		iksQuery: {
 			query: getIKSgql,
 			//prefetch: true,
-			variables() {
-				return {
-					pusk: 'purwosari'
-				}
+			variables: {
+				pusk: 'purwosari'
 			},
 			update({getIKS}){
     		this.$store.commit('pws/add', getIKS)
