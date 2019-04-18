@@ -6,10 +6,10 @@ section.container
 		.col-md-6.mt-2
 			b-input-group(prepend='Kelurahan' size='sm')
 				b-form-select(v-model='kelSelected' :options='kel' size='sm')
-		.col-md-3.mt-2
+		.col-md-3.mt-2(v-if='kelSelected !== "Semua"')
 			b-input-group(prepend='RW' size='sm')
 				b-form-select(v-model='rwSelected' :options='rw' size='sm')
-		.col-md-3.mt-2
+		.col-md-3.mt-2(v-if='rwSelected !== "Semua"')
 			b-input-group(prepend='RT' size='sm')
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
 	.row.mt-2
@@ -30,7 +30,7 @@ section.container
 						.col Jumlah Terindeks
 						.col {{iks.jml}}
 						.col-md-6
-							b-progress(:value="iks.jml" :max="iks.jml")
+							b-progress(:value="iks.jml" :max="iks.jmlKK")
 				.list-group-item
 					.row
 						.col Sehat
@@ -50,15 +50,24 @@ section.container
 						.col-md-6
 							b-progress(:value="iks.tdksehat" :max="iks.jml" variant='danger')
 	.row.mt-2.fluid
-		b-table(responsive stacked='sm' striped hover :busy.sync='loaded' :fields='fields' :items="items")
+		b-table(responsive :busy.sync='loaded' stacked='sm' striped hover :fields='fields' :items="items")
 			template(slot='iks', slot-scope='row') 
 				span(:class='`text-${getAttr(row.item.iks)}`') {{row.item.iks ? row.item.iks.toFixed(3) : 0 }}
+			template(slot='ind', slot-scope='row') 
+				p {{ row.item.ind }} 
 
 </template>
-
 <script>
 import getIKSgql from '~/apollo/queries/getIKS.gql'
+
 export default {
+	layout: 'purwosari',
+	head(){
+		return {
+			title: "Puskesmas Purwosari",
+		}
+	},
+
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
 		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
@@ -66,13 +75,9 @@ export default {
 		DownloadExcel: () => import('~/components/DownloadExcel.vue'),
 		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
-	layout: 'purwosari',
-	head(){
-		return {
-			title: "Puskesmas Purwosari",
-		}
-	},
 	data: () => ({
+		indikator: ['kb', 'salinFaskes', 'imun', 'ab', 'jamban', 'rokok', 'asi', 'tumbuh', 'tb', 'ht', 'jkn', 'jiwa'],
+		nilai: ['y', 'penyebut', 'iks'],
 		loaded: false,
 		kelSelected: 'PURWOSARI',
 		rwSelected: 'Semua',
@@ -93,9 +98,25 @@ export default {
 			iks: {
 				label: 'IKS',
 			}
-
 		},
 	}),
+
+	apollo: {
+		iksQuery: {
+			query: getIKSgql,
+			prefetch: true,
+			variables: {
+				pusk: 'purwosari'
+			},
+			update({getIKS}){
+				getIKS.map((e, i) => this.indikator.map(o => this.nilai.map(f => {
+					if (f == 'penyebut' && e[o][f] == 0) getIKS[i][o]['iks'] = null
+				})))
+				return getIKS
+			}
+		}
+	},
+
 	methods:{
 		getAttr(params){
 			if(params > 0.8) {
@@ -107,28 +128,20 @@ export default {
 			}
 		},
 	},
+
 	watch: {
 		kelSelected(val){
 			this.rwSelected = 'Semua'
 		},
 		rwSelected(val){
 			this.rtSelected = 'Semua'
-		}
-	},
-	
-	apollo: {
-		iksQuery: {
-			query: getIKSgql,
-			//prefetch: true,
-			variables: {
-				pusk: 'purwosari'
-			},
-			update({getIKS}){
-    		this.$store.commit('pws/add', getIKS)
+		},
+		iksQuery(val){
+			if(val){
+				this.ik = Object.assign({}, this.iks, this.iksQuery.filter(e=> e._key == this.iksId)[0])
 			}
-		}
+		},
 	},
-
 	computed: {
 		json_fields(){
 			let a = {}
@@ -137,28 +150,20 @@ export default {
 			})
 			return a
 		},
-
 		kel(){
-			return this.$store.getters['pws/kel']
+			return [...new Set(this.iksQuery.map(({kel}) => kel))].sort()
 		},
 		rw(){
-			return this.$store.getters['pws/rw']({kel: this.kelSelected})
+			return [...new Set(this.iksQuery.filter(({kel}) => kel === this.kelSelected).map(({rw})=>rw).sort((a, b) => a - b))]
 		},
 		rt(){
-			return this.$store.getters['pws/rt']({
-				kel: this.kelSelected,
-				rw: this.rwSelected
-			})
+			return [...new Set(this.iksQuery.filter(({kel, rw}) => kel === this.kelSelected && rw === this.rwSelected).map(({rt})=> rt).sort((a, b) => a - b))] 
 		},
 		iksId(){
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
 		iks(){
-			if(this.iksId){
-				return Object.assign({}, 
-				this.$store.getters['pws/iks'](this.iksId))
-
-			}
+			return Object.assign({}, this.ik, this.iksQuery.filter(({_key}) => _key === this.iksId)[0])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
@@ -203,3 +208,4 @@ export default {
 	}
 }
 </script>
+
