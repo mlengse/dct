@@ -149,11 +149,15 @@ export default {
 		iksQuery(val){
 			if(val){
 				this.ik = Object.assign({}, this.iks, this.$store.getters['iks/iks'](this.iksId))
+				this.$nuxt.$loading.finish()
+				this.loaded=false
 			}
 		},
 	},
 	created(){
+		this.$nuxt.$loading.start()
 		this.ik = Object.assign({}, this.kkInd[this.iksId])
+		this.loaded=true
 	},
 	/*
 	async beforeMount(){
@@ -225,7 +229,7 @@ export default {
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
 		iks(){
-			return Object.assign({}, this.ik, this.$store.getters['iks/iks'](this.iksId))
+			return Object.assign({}, this.ik, this.$store.getters['iks/iks'](this.iksId), this.kkInd[this.iksId])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
