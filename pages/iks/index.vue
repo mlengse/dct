@@ -214,10 +214,18 @@ export default {
 		iksId(){
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
+		iksiks(){
+			return this.$store.getters['iks/iks'](this.iksId)
+		},
 		iks(){
+			if(this.iksiks) {
+				return Object.assign({}, 
+					this.iksiks,
+					this.kkInd[this.iksId]
+				)
+			}			
 			return Object.assign({}, 
-			this.$store.getters['iks/iks'](this.iksId), 
-			this.kkInd[this.iksId])
+				this.kkInd[this.iksId])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
