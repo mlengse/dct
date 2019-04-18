@@ -119,7 +119,7 @@ export default {
 	apollo: {
 		iksQuery: {
 			query: getIKSgql,
-			prefetch: true,
+			//prefetch: true,
 			variables() {
 				return {
 					pusk: 'purwosari'
@@ -156,8 +156,11 @@ export default {
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
 		iks(){
-			return Object.assign({}, 
-			this.$store.getters['pws/iks'](this.iksId))
+			if(this.iksId){
+				return Object.assign({}, 
+				this.$store.getters['pws/iks'](this.iksId))
+
+			}
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {

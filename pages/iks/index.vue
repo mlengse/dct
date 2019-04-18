@@ -113,11 +113,9 @@ export default {
 	apollo: {
 		iksQuery: {
 			query: getIKSgql,
-			prefetch: true,
-			variables() {
-				return {
-					pusk: 'sibela'
-				}
+			//prefetch: true,
+			variables: {
+				pusk: 'sibela'
 			},
 			update({getIKS}){
     		this.$store.commit('iks/add', getIKS)
