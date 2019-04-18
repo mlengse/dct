@@ -118,7 +118,6 @@ export default {
 	apollo: {
 		iksQuery: {
 			query: getIKSgql,
-			prefetch: true,
 			variables: {
 				pusk: 'sibela'
 			},
@@ -199,7 +198,10 @@ export default {
 			return a
 		},
 		kel(){
-			return [...new Set(this.iksQuery.map(({kel}) => kel))].sort()
+			if(Array.isArray(this.iksQuery)) {
+				return [...new Set(this.iksQuery.map(({kel}) => kel))].sort()
+			}
+			return []
 		},
 		rw(){
 			if(this.kelSelected === 'MOJOSONGO'){

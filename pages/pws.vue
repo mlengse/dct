@@ -104,7 +104,6 @@ export default {
 	apollo: {
 		iksQuery: {
 			query: getIKSgql,
-			prefetch: true,
 			variables: {
 				pusk: 'purwosari'
 			},
