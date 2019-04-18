@@ -1,0 +1,108 @@
+query getIKS($pusk: String!) {
+	getIKS(pusk: $pusk) {
+		_key
+		kel
+		rw
+		rt
+		jml
+		sehat
+		tdksehat
+		prasehat
+		kb {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		salinFaskes {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		imun {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		asi {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		tumbuh {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		tb {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		ht {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		jiwa {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		rokok {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		jkn {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		ab {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+		jamban {
+			all
+			iks
+			n
+			penyebut
+			t
+			y
+		}
+	}
+}

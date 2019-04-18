@@ -67,6 +67,8 @@ section.container
 
 </template>
 <script>
+import getIKSgql from '~/apollo/queries/getIKS.gql'
+
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
@@ -107,6 +109,22 @@ export default {
 			'Jumlah Kesenjangan': 'selisih'
 		}
 	}),
+
+	apollo: {
+		iksQuery: {
+			query: getIKSgql,
+			prefetch: true,
+			variables() {
+				return {
+					pusk: 'sibela'
+				}
+			},
+			update({getIKS}){
+    		this.$store.commit('iks/add', getIKS)
+			}
+		}
+	},
+
 	methods:{
 		getAttr(params){
 			if(params > 0.8) {
@@ -129,6 +147,7 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
+	/*
 	async beforeMount(){
 		await this.$nextTick( async () => {
 			this.$nuxt.$loading.start()
@@ -140,6 +159,7 @@ export default {
 
 	},
 	fetch: async ({store}) => await store.dispatch('iks/all'),
+	*/
 	computed: {
 		json_fields(){
 			let a = {}

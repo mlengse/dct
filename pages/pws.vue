@@ -57,6 +57,7 @@ section.container
 </template>
 
 <script>
+import getIKSgql from '~/apollo/queries/getIKS.gql'
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
@@ -79,22 +80,18 @@ export default {
 		fields:{
 			no: {
 				label: 'No',
-				//sortable: true
 			},
 			ind: {
 				label: 'Indikator',
 			},
 			y: {
 				label: 'Σ Keluarga Bernilai Y',
-				//sortable: true
 			},
 			penyebut: {
 				label: 'Σ Keluarga yang Diukur',
-				//sortable: true
 			},
 			iks: {
 				label: 'IKS',
-				//sortable: true
 			}
 
 		},
@@ -118,17 +115,22 @@ export default {
 			this.rtSelected = 'Semua'
 		}
 	},
-	async beforeMount(){
-		await this.$nextTick( async () => {
-			this.$nuxt.$loading.start()
-			this.loaded = true
-			await this.$store.dispatch('pws/all')
-			this.loaded = false
-			this.$nuxt.$loading.finish()
-    })
-
+	
+	apollo: {
+		iksQuery: {
+			query: getIKSgql,
+			prefetch: true,
+			variables() {
+				return {
+					pusk: 'purwosari'
+				}
+			},
+			update({getIKS}){
+    		this.$store.commit('pws/add', getIKS)
+			}
+		}
 	},
-	fetch: async ({store}) => await store.dispatch('pws/all'),
+
 	computed: {
 		json_fields(){
 			let a = {}
@@ -200,8 +202,3 @@ export default {
 	}
 }
 </script>
-
-<!--style>
-@import	"@/node_modules/bootstrap/dist/css/bootstrap.css";
-@import	"@/node_modules/bootstrap-vue/dist/bootstrap-vue.css";
-</style--!>
