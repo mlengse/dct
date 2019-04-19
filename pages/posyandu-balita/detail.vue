@@ -31,6 +31,7 @@ section.container
 								select-mode='single'
 								stacked='sm' 
 								:items="balitaList"
+								:busy.sync='loaded' 
 								:fields='fields'
 							)
 								template(slot='name' slot-scope='data') {{ lowerCase(data.item.name) }}
@@ -57,6 +58,8 @@ export default {
 			name: '',
 			rw: ''
 		},
+		loaded: false,
+		balita: [],
 		inputPenimbangan: false,
 		tglSelected: null,
 		bulan: null,
@@ -110,11 +113,7 @@ export default {
 	},
 	computed: {
 		_key() {
-			if(this.$route.query.id){
-				return `posy-${this.$route.query.id.toUpperCase()}`
-			} else {
-				return ''
-			}
+			return `posy-${this.$route.query.id.toUpperCase()}`
 		},
 		thns() {
 			return [ this.$moment(this.tahun, 'YYYY').add(-1, 'y').format('YYYY'), this.tahun, this.$moment(this.tahun, 'YYYY').add(1, 'y').format('YYYY')]
@@ -139,27 +138,30 @@ export default {
 			},this.umur(e))).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		}
 	},
-	apollo: {
-		posyandu: {
-			query: posyById,
-			variables() {
-				return {
-					id: this._key
+	mounted() {
+		this.$nextTick(() => {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			this.$apollo.query({
+				query: posyById,
+				variables: {
+					id: `${this._key}`
 				}
-			},
-			update: ({ posyandu }) => posyandu
-		},
-		balita: {
-			query: getBalitaByPosy,
-			prefetch: true,
-			variables() {
-				return {
-					posy: this._key
-				}
-			},
-			update: ({ balita }) => balita
-		},
+			}).then(({data: {posyandu}}) => {
+				this.posyandu = posyandu
+				this.$apollo.query({
+					query: getBalitaByPosy,
+					prefetch: true,
+					variables: {
+						posy: `${this._key}`
+					}
+				}).then(({data: { balita }}) => {
+					this.balita = balita
+					this.loaded = false
+					this.$nuxt.$loading.finish()
+				})
+			})
+		})
 	}
-
 }
 </script>

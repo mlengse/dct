@@ -12,12 +12,10 @@ section.container
 		.col-md-3.mt-2(v-if='rwSelected !== "Semua"')
 			b-input-group(prepend='RT' size='sm')
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
-	.row.mt-2
-	.btn-toolbar
+	.btn-toolbar.mt-2
 		download-excel.mr-2(:data="items" :loaded='loaded' :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
 		download-excel.mr-2(v-if='kelSelected === "MOJOSONGO"' :data="resume" :loaded='loaded' :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
-	.row.mt-2
-	.card
+	no-ssr.card.mt-2
 		.card-body
 			.list-group
 				.list-group-item
@@ -78,10 +76,11 @@ export default {
 		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
 	data: () => ({
-		indikator: ['kb', 'salinFaskes', 'imun', 'ab', 'jamban', 'rokok', 'asi', 'tumbuh', 'tb', 'ht', 'jkn', 'jiwa'],
+		indikator: [ "kb", "salinFaskes", "imun", "asi", "tumbuh", "tb", "ht", "jiwa", "rokok", "jkn", "ab",  "jamban",],
 		nilai: ['y', 'penyebut', 'iks'],
   	jmlkk: [{"rw":1,"rt":1,"jmlKK":146},{"rw":1,"rt":2,"jmlKK":68},{"rw":1,"rt":3,"jmlKK":132},{"rw":1,"rt":4,"jmlKK":142},{"rw":1,"rt":"Semua","jmlKK":488},{"rw":2,"rt":1,"jmlKK":60},{"rw":2,"rt":2,"jmlKK":45},{"rw":2,"rt":3,"jmlKK":86},{"rw":2,"rt":4,"jmlKK":121},{"rw":2,"rt":5,"jmlKK":154},{"rw":2,"rt":"Semua","jmlKK":466},{"rw":3,"rt":1,"jmlKK":66},{"rw":3,"rt":2,"jmlKK":82},{"rw":3,"rt":3,"jmlKK":137},{"rw":3,"rt":4,"jmlKK":85},{"rw":3,"rt":5,"jmlKK":130},{"rw":3,"rt":6,"jmlKK":72},{"rw":3,"rt":"Semua","jmlKK":572},{"rw":4,"rt":1,"jmlKK":78},{"rw":4,"rt":2,"jmlKK":176},{"rw":4,"rt":3,"jmlKK":181},{"rw":4,"rt":4,"jmlKK":186},{"rw":4,"rt":5,"jmlKK":60},{"rw":4,"rt":"Semua","jmlKK":681},{"rw":5,"rt":1,"jmlKK":85},{"rw":5,"rt":2,"jmlKK":101},{"rw":5,"rt":3,"jmlKK":78},{"rw":5,"rt":4,"jmlKK":142},{"rw":5,"rt":"Semua","jmlKK":406},{"rw":6,"rt":1,"jmlKK":63},{"rw":6,"rt":2,"jmlKK":184},{"rw":6,"rt":3,"jmlKK":170},{"rw":6,"rt":4,"jmlKK":71},{"rw":6,"rt":5,"jmlKK":14},{"rw":6,"rt":6,"jmlKK":57},{"rw":6,"rt":7,"jmlKK":62},{"rw":6,"rt":"Semua","jmlKK":621},{"rw":7,"rt":1,"jmlKK":225},{"rw":7,"rt":2,"jmlKK":72},{"rw":7,"rt":3,"jmlKK":325},{"rw":7,"rt":4,"jmlKK":300},{"rw":7,"rt":5,"jmlKK":185},{"rw":7,"rt":6,"jmlKK":140},{"rw":7,"rt":7,"jmlKK":57},{"rw":7,"rt":8,"jmlKK":38},{"rw":7,"rt":9,"jmlKK":205},{"rw":7,"rt":"Semua","jmlKK":1547},{"rw":8,"rt":1,"jmlKK":52},{"rw":8,"rt":2,"jmlKK":73},{"rw":8,"rt":3,"jmlKK":78},{"rw":8,"rt":4,"jmlKK":59},{"rw":8,"rt":5,"jmlKK":109},{"rw":8,"rt":6,"jmlKK":72},{"rw":8,"rt":7,"jmlKK":61},{"rw":8,"rt":"Semua","jmlKK":504},{"rw":9,"rt":1,"jmlKK":48},{"rw":9,"rt":2,"jmlKK":70},{"rw":9,"rt":3,"jmlKK":72},{"rw":9,"rt":4,"jmlKK":184},{"rw":9,"rt":5,"jmlKK":201},{"rw":9,"rt":6,"jmlKK":107},{"rw":9,"rt":7,"jmlKK":58},{"rw":9,"rt":8,"jmlKK":158},{"rw":9,"rt":9,"jmlKK":35},{"rw":9,"rt":"Semua","jmlKK":933},{"rw":10,"rt":1,"jmlKK":43},{"rw":10,"rt":2,"jmlKK":76},{"rw":10,"rt":3,"jmlKK":47},{"rw":10,"rt":"Semua","jmlKK":166},{"rw":11,"rt":1,"jmlKK":111},{"rw":11,"rt":2,"jmlKK":74},{"rw":11,"rt":3,"jmlKK":169},{"rw":11,"rt":4,"jmlKK":69},{"rw":11,"rt":5,"jmlKK":102},{"rw":11,"rt":6,"jmlKK":89},{"rw":11,"rt":"Semua","jmlKK":614},{"rw":12,"rt":1,"jmlKK":133},{"rw":12,"rt":2,"jmlKK":99},{"rw":12,"rt":3,"jmlKK":86},{"rw":12,"rt":4,"jmlKK":104},{"rw":12,"rt":5,"jmlKK":153},{"rw":12,"rt":6,"jmlKK":208},{"rw":12,"rt":7,"jmlKK":50},{"rw":12,"rt":8,"jmlKK":106},{"rw":12,"rt":9,"jmlKK":41},{"rw":12,"rt":"Semua","jmlKK":980},{"rw":13,"rt":1,"jmlKK":76},{"rw":13,"rt":2,"jmlKK":44},{"rw":13,"rt":3,"jmlKK":68},{"rw":13,"rt":4,"jmlKK":39},{"rw":13,"rt":5,"jmlKK":49},{"rw":13,"rt":"Semua","jmlKK":276},{"rw":14,"rt":1,"jmlKK":70},{"rw":14,"rt":2,"jmlKK":95},{"rw":14,"rt":3,"jmlKK":52},{"rw":14,"rt":4,"jmlKK":55},{"rw":14,"rt":"Semua","jmlKK":272},{"rw":15,"rt":1,"jmlKK":51},{"rw":15,"rt":2,"jmlKK":64},{"rw":15,"rt":3,"jmlKK":61},{"rw":15,"rt":4,"jmlKK":34},{"rw":15,"rt":"Semua","jmlKK":210},{"rw":16,"rt":1,"jmlKK":62},{"rw":16,"rt":2,"jmlKK":61},{"rw":16,"rt":3,"jmlKK":78},{"rw":16,"rt":4,"jmlKK":57},{"rw":16,"rt":5,"jmlKK":80},{"rw":16,"rt":"Semua","jmlKK":338},{"rw":17,"rt":1,"jmlKK":89},{"rw":17,"rt":2,"jmlKK":71},{"rw":17,"rt":3,"jmlKK":58},{"rw":17,"rt":4,"jmlKK":54},{"rw":17,"rt":"Semua","jmlKK":272},{"rw":18,"rt":1,"jmlKK":64},{"rw":18,"rt":2,"jmlKK":54},{"rw":18,"rt":3,"jmlKK":34},{"rw":18,"rt":4,"jmlKK":60},{"rw":18,"rt":5,"jmlKK":65},{"rw":18,"rt":"Semua","jmlKK":277},{"rw":19,"rt":1,"jmlKK":86},{"rw":19,"rt":2,"jmlKK":57},{"rw":19,"rt":3,"jmlKK":62},{"rw":19,"rt":4,"jmlKK":72},{"rw":19,"rt":5,"jmlKK":109},{"rw":19,"rt":"Semua","jmlKK":386},{"rw":20,"rt":1,"jmlKK":""},{"rw":20,"rt":2,"jmlKK":55},{"rw":20,"rt":3,"jmlKK":70},{"rw":20,"rt":4,"jmlKK":77},{"rw":20,"rt":"Semua","jmlKK":202},{"rw":21,"rt":1,"jmlKK":78},{"rw":21,"rt":2,"jmlKK":67},{"rw":21,"rt":3,"jmlKK":67},{"rw":21,"rt":4,"jmlKK":51},{"rw":21,"rt":"Semua","jmlKK":263},{"rw":22,"rt":1,"jmlKK":53},{"rw":22,"rt":2,"jmlKK":43},{"rw":22,"rt":3,"jmlKK":70},{"rw":22,"rt":4,"jmlKK":59},{"rw":22,"rt":"Semua","jmlKK":225},{"rw":23,"rt":1,"jmlKK":39},{"rw":23,"rt":2,"jmlKK":60},{"rw":23,"rt":3,"jmlKK":66},{"rw":23,"rt":4,"jmlKK":62},{"rw":23,"rt":5,"jmlKK":65},{"rw":23,"rt":"Semua","jmlKK":292},{"rw":24,"rt":1,"jmlKK":36},{"rw":24,"rt":2,"jmlKK":78},{"rw":24,"rt":3,"jmlKK":64},{"rw":24,"rt":4,"jmlKK":60},{"rw":24,"rt":"Semua","jmlKK":238},{"rw":25,"rt":1,"jmlKK":49},{"rw":25,"rt":2,"jmlKK":49},{"rw":25,"rt":3,"jmlKK":60},{"rw":25,"rt":4,"jmlKK":55},{"rw":25,"rt":5,"jmlKK":62},{"rw":25,"rt":6,"jmlKK":20},{"rw":25,"rt":"Semua","jmlKK":295},{"rw":26,"rt":1,"jmlKK":55},{"rw":26,"rt":2,"jmlKK":71},{"rw":26,"rt":3,"jmlKK":51},{"rw":26,"rt":4,"jmlKK":91},{"rw":26,"rt":5,"jmlKK":59},{"rw":26,"rt":6,"jmlKK":43},{"rw":26,"rt":"Semua","jmlKK":370},{"rw":27,"rt":1,"jmlKK":96},{"rw":27,"rt":2,"jmlKK":115},{"rw":27,"rt":3,"jmlKK":113},{"rw":27,"rt":4,"jmlKK":41},{"rw":27,"rt":5,"jmlKK":36},{"rw":27,"rt":6,"jmlKK":58},{"rw":27,"rt":"Semua","jmlKK":459},{"rw":28,"rt":1,"jmlKK":45},{"rw":28,"rt":2,"jmlKK":28},{"rw":28,"rt":3,"jmlKK":41},{"rw":28,"rt":4,"jmlKK":38},{"rw":28,"rt":5,"jmlKK":70},{"rw":28,"rt":6,"jmlKK":59},{"rw":28,"rt":"Semua","jmlKK":281},{"rw":29,"rt":1,"jmlKK":158},{"rw":29,"rt":2,"jmlKK":104},{"rw":29,"rt":3,"jmlKK":73},{"rw":29,"rt":"Semua","jmlKK":335},{"rw":30,"rt":1,"jmlKK":158},{"rw":30,"rt":2,"jmlKK":82},{"rw":30,"rt":3,"jmlKK":57},{"rw":30,"rt":4,"jmlKK":79},{"rw":30,"rt":"Semua","jmlKK":376},{"rw":31,"rt":1,"jmlKK":135},{"rw":31,"rt":2,"jmlKK":71},{"rw":31,"rt":3,"jmlKK":40},{"rw":31,"rt":4,"jmlKK":67},{"rw":31,"rt":5,"jmlKK":100},{"rw":31,"rt":"Semua","jmlKK":413},{"rw":32,"rt":1,"jmlKK":130},{"rw":32,"rt":2,"jmlKK":160},{"rw":32,"rt":3,"jmlKK":63},{"rw":32,"rt":4,"jmlKK":56},{"rw":32,"rt":5,"jmlKK":58},{"rw":32,"rt":6,"jmlKK":22},{"rw":32,"rt":"Semua","jmlKK":489},{"rw":33,"rt":1,"jmlKK":47},{"rw":33,"rt":2,"jmlKK":46},{"rw":33,"rt":3,"jmlKK":46},{"rw":33,"rt":4,"jmlKK":47},{"rw":33,"rt":"Semua","jmlKK":186},{"rw":34,"rt":1,"jmlKK":165},{"rw":34,"rt":2,"jmlKK":88},{"rw":34,"rt":3,"jmlKK":166},{"rw":34,"rt":"Semua","jmlKK":419},{"rw":35,"rt":1,"jmlKK":84},{"rw":35,"rt":2,"jmlKK":93},{"rw":35,"rt":3,"jmlKK":66},{"rw":35,"rt":4,"jmlKK":84},{"rw":35,"rt":"Semua","jmlKK":327},{"rw":36,"rt":1,"jmlKK":86},{"rw":36,"rt":2,"jmlKK":61},{"rw":36,"rt":3,"jmlKK":61},{"rw":36,"rt":"Semua","jmlKK":208},{"rw":37,"rt":1,"jmlKK":82},{"rw":37,"rt":2,"jmlKK":66},{"rw":37,"rt":3,"jmlKK":116},{"rw":37,"rt":"Semua","jmlKK":264},{"rw":38,"rt":1,"jmlKK":0},{"rw":38,"rt":2,"jmlKK":0},{"rw":38,"rt":3,"jmlKK":0},{"rw":38,"rt":"Semua","jmlKK":0},{"rw":39,"rt":1,"jmlKK":0},{"rw":39,"rt":2,"jmlKK":0},{"rw":39,"rt":3,"jmlKK":0},{"rw":39,"rt":"Semua","jmlKK":0},{"rw":"Semua","rt":"Semua","jmlKK":15651}],
 		loaded: false,
+		iksQuery: [],
 		kelSelected: 'MOJOSONGO',
 		rwSelected: 'Semua',
 		rtSelected: 'Semua',
@@ -102,9 +101,6 @@ export default {
 				label: 'IKS',
 			}
 		},
-		ik: {
-			jmlkk: 0
-		},
 		resume_fields: {
 			"No": "no",
 			"RW": 'rw',
@@ -114,20 +110,24 @@ export default {
 			'Jumlah Kesenjangan': 'selisih'
 		}
 	}),
-
-	apollo: {
-		iksQuery: {
-			query: getIKSgql,
-			variables: {
-				pusk: 'sibela'
-			},
-			update({getIKS}){
+	mounted (){
+		this.$nextTick(()=>{
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			this.$apollo.query({
+				query: getIKSgql,
+				variables: {
+					pusk: 'sibela'
+				}
+			}).then( ({ data: { getIKS } }) => {
 				getIKS.map((e, i) => this.indikator.map(o => this.nilai.map(f => {
 					if (f == 'penyebut' && e[o][f] == 0) getIKS[i][o]['iks'] = null
 				})))
-				return getIKS
-			}
-		}
+				this.iksQuery = getIKS
+				this.loaded = false
+				this.$nuxt.$loading.finish()
+			})
+		})
 	},
 
 	methods:{
@@ -141,7 +141,7 @@ export default {
 			}
 		},
 		byName(a){
-			this.$store.getters['users/isAuthenticated'] ? this.$router.push({ path: `/iks/${a.key}`}) : this.$store.commit('users/openLogin')
+			this.$store.getters['users/isAuthenticated'] ? this.$router.push({ path: `/iks/details?id=${a.key}`}) : this.$store.commit('users/openLogin')
 		}
 	},
 
@@ -152,12 +152,8 @@ export default {
 		rwSelected(val){
 			this.rtSelected = 'Semua'
 		},
-		iksQuery(val){
-			if(val){
-				this.ik = Object.assign({}, this.iks, this.iksQuery.filter(e=> e._key == this.iksId)[0])
-			}
-		},
 	},
+
 	computed: {
 		json_fields(){
 			let a = {}
@@ -201,7 +197,7 @@ export default {
 			if(Array.isArray(this.iksQuery)) {
 				return [...new Set(this.iksQuery.map(({kel}) => kel))].sort()
 			}
-			return []
+			return [ 'MOJOSONGO', 'Semua' ]
 		},
 		rw(){
 			if(this.kelSelected === 'MOJOSONGO'){
@@ -222,7 +218,7 @@ export default {
 			return `iks-${this.kelSelected.split(' ').join('_')}-${this.rwSelected}-${this.rtSelected}`
 		},
 		iks(){
-			return Object.assign({}, this.ik, this.iksQuery.filter(({_key}) => _key === this.iksId)[0], this.kkInd[this.iksId])
+			return Object.assign({}, this.iksQuery.filter(({_key}) => _key === this.iksId)[0], this.kkInd[this.iksId])
 		},
 		iksTotal(){
 			if(isFinite(this.iks.jml)) {
@@ -253,11 +249,10 @@ export default {
 			}
 		},
 		template(){
-			let a = [ "kb", "salinFaskes", "imun", "asi", "tumbuh", "tb", "ht", "jiwa", "rokok", "jkn", "ab",  "jamban",]
 			return [ 'Keluarga mengikuti program Keluarga Berencana (KB)', 'Ibu melakukan persalinan di fasilitas kesehatan',	'Bayi mendapat imunisasi dasar lengkap', 'Bayi mendapat air susu ibu (ASI) eksklusif', 'Balita mendapatkan pematauan pertumbuhan', 'Penderita tuberkulosis paru mendapatkan pengobatan sesuai standar', 'Penderita hipertensi melakukan pengobatan secara teratur', 'Penderita gangguan jiwa mendapatkan pengobatan dan tidak ditelantarkan', 'Anggota keluarga tidak ada yang merokok', 'Keluarga sudah menjadi anggota Jaminan Kesehatan Nasional (JKN)', 'Keluarga mempunyai akses sarana air bersih', 'Keluarga mempunyai akses atau menggunakan jamban sehat'].map( (ind, i) => ({
 				no: i+1,
 				ind: ind,
-				key: a[i],
+				key: this.indikator[i],
 				iks: 0
 			}))
 		},

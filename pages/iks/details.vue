@@ -1,14 +1,17 @@
 <template lang="pug">
 section.container 
 	.row.mt-2
-		h3 Penderita Gangguan Jiwa (PIS-PK)
+		h3 {{ $route.query.id }}
 	.row.mt-2.fluid
 		b-table(responsive :busy.sync='loaded' stacked='sm' striped hover :fields='fields' :items="items")
 
 </template>
 <script>
 export default {
-  middleware: 'anonymous',
+  components: {
+		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
+  },
+  //middleware: 'anonymous',
   data: () => ({
 		loaded: false,
     fields: {}

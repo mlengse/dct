@@ -6,26 +6,27 @@ section.container
 		.col-md-12
 			.form-group.mt-3
 				input.form-control(v-model='query' type='text' placeholder='Search...')
-	.row.mt-2.fluid
-		b-table(
-			small
-			responsive 
-			hover 
-			selectable
-			select-mode='single'
-			stacked='sm' 
-			:busy.sync='loaded' 
-			:items="items"
-			:fields='fields' 
-			:filter='query'
-			:current-page="currentPage" 
-			:per-page="perPage" 
-			:sort-by.sync="sortBy" 
-			:sort-desc.sync="sortDesc" 
-			@filtered='onFiltered'
-			@row-selected='rowSelected'
-		)
-	.row.mt-2
+	no-ssr
+		.row.mt-2.fluid
+			b-table(
+				small
+				responsive 
+				hover 
+				selectable
+				select-mode='single'
+				stacked='sm' 
+				:busy.sync='loaded' 
+				:items="items"
+				:fields='fields' 
+				:filter='query'
+				:current-page="currentPage" 
+				:per-page="perPage" 
+				:sort-by.sync="sortBy" 
+				:sort-desc.sync="sortDesc" 
+				@filtered='onFiltered'
+				@row-selected='rowSelected'
+			)
+		.row.mt-2
 		.col-md-12
 			b-pagination(:total-rows="totalRows" :per-page="perPage" v-model="currentPage")
 </template>
@@ -53,15 +54,21 @@ export default {
 				label: 'RW',
 			},
 		},
+		items: []
 	}),
-	apollo: {
-		items: {
-			query: getPosyanduGql,
-			prefetch: true,
-			update({getPosyanduList}){
-				return getPosyanduList
-			}
-		}
+	mounted() {
+		this.$nextTick(()=>{
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			this.$apollo.query({
+				query: getPosyanduGql,
+				prefetch: true,
+			}).then(({data: { getPosyanduList }}) => {
+				this.items = getPosyanduList
+				this.loaded = false
+				this.$nuxt.$loading.finish()
+			})
+		})
 	},
 	watch: {
 		items(val) {
