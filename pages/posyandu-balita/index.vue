@@ -25,24 +25,22 @@ export default {
 	},
 	
 	data: () => ({
-		loaded: false,
 		query: '',
 		items: []
-
 	}),
 
 	mounted() {
-		this.$nextTick(()=>{
+		this.$nextTick(async ()=>{
 			this.$nuxt.$loading.start()
-			this.loaded = true
-			this.$apollo.query({
+			await this.$apollo.query({
 				query: getPosyanduGql,
 				prefetch: true,
 			}).then(({data: { getPosyanduList }}) => {
 				this.items = getPosyanduList
-				this.loaded = false
-				this.$nuxt.$loading.finish()
+				return
 			})
+			this.$nuxt.$loading.finish()
+
 		})
 	},
 

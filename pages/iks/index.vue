@@ -111,23 +111,25 @@ export default {
 		}
 	}),
 	mounted (){
-		this.$nextTick(()=>{
+		this.$nextTick( async ()=>{
 			this.$nuxt.$loading.start()
 			this.loaded = true
-			this.$apollo.query({
+			await this.$apollo.query({
 				query: getIKSgql,
 				prefetch: true,
 				variables: {
 					pusk: 'sibela'
 				}
-			}).then( ({ data: { getIKS } }) => {
+			})
+			.then( ({ data: { getIKS } }) => {
 				getIKS.map((e, i) => this.indikator.map(o => this.nilai.map(f => {
 					if (f == 'penyebut' && e[o][f] == 0) getIKS[i][o]['iks'] = null
 				})))
 				this.iksQuery = getIKS
-				this.loaded = false
-				this.$nuxt.$loading.finish()
+				return
 			})
+			this.loaded = false
+			this.$nuxt.$loading.finish()
 		})
 	},
 

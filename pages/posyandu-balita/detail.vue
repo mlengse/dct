@@ -137,10 +137,10 @@ export default {
 		this.bulan = this.$moment().month()
 		this.blnSelected = this.blns[this.bulan]
 		this.tglSelected = this.$moment().date().toString()
-		this.$nextTick(() => {
+		this.$nextTick(async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
-			this.$apollo.query({
+			await this.$apollo.query({
 				query: posyById,
 				prefetch: true,
 				variables: {
@@ -148,18 +148,20 @@ export default {
 				}
 			}).then(({data: {posyandu}}) => {
 				this.posyandu = posyandu
-				this.$apollo.query({
-					query: getBalitaByPosy,
-					prefetch: true,
-					variables: {
-						posy: `${this._key}`
-					}
-				}).then(({data: { balita }}) => {
-					this.balita = balita
-					this.loaded = false
-					this.$nuxt.$loading.finish()
-				})
+				return
 			})
+			await this.$apollo.query({
+				query: getBalitaByPosy,
+				prefetch: true,
+				variables: {
+					posy: `${this._key}`
+				}
+			}).then(({data: { balita }}) => {
+				this.balita = balita
+				return
+			})
+			this.loaded = false
+			this.$nuxt.$loading.finish()
 		})
 	}
 }
