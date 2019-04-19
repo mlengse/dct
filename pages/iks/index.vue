@@ -1,7 +1,7 @@
 <template lang="pug">
 section.container 
 	.row.mt-2
-		h3 Indeks Keluarga Sehat Wilayah
+		h3.col Indeks Keluarga Sehat Wilayah
 	.row.mt-2
 		.col-md-6.mt-2
 			b-input-group(prepend='Kelurahan' size='sm')
@@ -12,9 +12,9 @@ section.container
 		.col-md-3.mt-2(v-if='rwSelected !== "Semua"')
 			b-input-group(prepend='RT' size='sm')
 				b-form-select(v-model='rtSelected' :options='rt' size='sm')
-	.btn-toolbar.mt-2
-		download-excel.mr-2(:data="items" :loaded='loaded' :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
-		download-excel.mr-2(v-if='kelSelected === "MOJOSONGO"' :data="resume" :loaded='loaded' :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
+	.btn-toolbar
+		download-excel.mr-2.mt-2(:data="items" :loaded='loaded' :fields="json_fields" :name='iksId + ".xlsx"' label='Download IKS') 
+		download-excel.mr-2.mt-2(v-if='kelSelected === "MOJOSONGO"' :data="resume" :loaded='loaded' :fields="resume_fields" name='resume_pispk.xlsx' label='Download Resume Pelaksanaan') 
 	no-ssr.card.mt-2
 		.card-body
 			.list-group

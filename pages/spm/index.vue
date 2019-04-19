@@ -1,7 +1,7 @@
 <template lang="pug">
 section.container 
 	.row.mt-2
-		h3 Capaian Indikator SPM
+		h3.col Capaian Indikator SPM
 	.row.mt-2
 		.col.mt-2
 			b-input-group(prepend='Bagian' size='sm')

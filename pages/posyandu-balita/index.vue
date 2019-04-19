@@ -1,17 +1,17 @@
 <template lang="pug">
 section.container
 	.row.mt-2
-		h3 Posyandu Balita
+		h3.col Posyandu Balita
 	.row.mt-2
 		.col-md-12
 			.form-group.mt-3
 				input.form-control(v-model='query' type='text' placeholder='Search...')
 	no-ssr
-		.row.mt-2
-			.col
+		.row
+			.col.mt-2
 				b-list-group
 					b-list-group-item(v-for='menu in odd' :key='menu._key' button @click='click(menu)') {{ menu.name }} RW {{ menu.rw }}
-			.col
+			.col.mt-2
 				b-list-group
 					b-list-group-item(v-for='menu in even' :key='menu._key' button @click='click(menu)') {{ menu.name }} RW {{ menu.rw }}
 </template>

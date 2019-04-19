@@ -2,9 +2,9 @@
 section.container
 	.row.mt-2
 		nuxt-link(to="/posyandu-balita")
-			h3 Posyandu Balita 
+			h3.col Posyandu Balita 
 	.row
-		h5(v-if = "posyandu && posyandu.name !== ''" ) {{ posyandu.name }} RW {{ posyandu.rw }}
+		h5.col(v-if = "posyandu && posyandu.name !== ''" ) {{ posyandu.name }} RW {{ posyandu.rw }}
 	b-card.row.mt-2(no-body)
 		b-tabs(card)
 			b-tab.mt-2(title='Input')
