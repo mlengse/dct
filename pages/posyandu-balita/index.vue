@@ -29,8 +29,8 @@ export default {
 		items: []
 	}),
 
-	mounted() {
-		this.$nextTick(async ()=>{
+	async mounted() {
+		await this.$nextTick(async ()=>{
 			this.$nuxt.$loading.start()
 			await this.$apollo.query({
 				query: getPosyanduGql,

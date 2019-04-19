@@ -110,8 +110,8 @@ export default {
 			'Jumlah Kesenjangan': 'selisih'
 		}
 	}),
-	mounted (){
-		this.$nextTick( async ()=>{
+	async mounted (){
+		await this.$nextTick( async ()=>{
 			this.$nuxt.$loading.start()
 			this.loaded = true
 			await this.$apollo.query({

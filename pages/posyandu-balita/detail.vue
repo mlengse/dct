@@ -35,7 +35,8 @@ section.container
 								:fields='fields'
 							)
 								template(slot='name' slot-scope='data') {{ lowerCase(data.item.name) }}
-								template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
+								//template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
+								template(slot='jk' slot-scope='data') {{ `${data.item.jk === 'L' ? 'Laki-laki' : 'Perempuan'} `}}
 								template(slot='umur' slot-scope='data') {{ `${data.item.thn ? `${data.item.thn} thn ` : ''}${data.item.bln ? `${data.item.bln} bln ` : ''}${data.item.hr ? `${data.item.hr} hr` : ''}` }}
 
 			b-tab.mt-2(title='Rekap')
@@ -69,9 +70,9 @@ export default {
 			name: {
 				label: 'Nama',
 			},
-			tl: {
-				label: 'TL',
-			},
+			//tl: {
+			//	label: 'TL',
+			//},
 			umur: {
 				label: 'Umur',
 			},
@@ -132,12 +133,12 @@ export default {
 			},this.umur(e))).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		}
 	},
-	mounted() {
+	async mounted() {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
 		this.blnSelected = this.blns[this.bulan]
 		this.tglSelected = this.$moment().date().toString()
-		this.$nextTick(async () => {
+		await this.$nextTick(async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
 			await this.$apollo.query({
