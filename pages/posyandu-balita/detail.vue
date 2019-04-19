@@ -83,12 +83,6 @@ export default {
 			}
 		}
 	}),
-	created(){
-		this.tahun = this.$moment().year()
-		this.bulan = this.$moment().month()
-		this.blnSelected = this.blns[this.bulan]
-		this.tglSelected = this.$moment().date().toString()
-	},
 	watch: {
 		blnSelected() {
 			if(this.tgls.indexOf(this.tglSelected) < 0 ){
@@ -139,11 +133,16 @@ export default {
 		}
 	},
 	mounted() {
+		this.tahun = this.$moment().year()
+		this.bulan = this.$moment().month()
+		this.blnSelected = this.blns[this.bulan]
+		this.tglSelected = this.$moment().date().toString()
 		this.$nextTick(() => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
 			this.$apollo.query({
 				query: posyById,
+				prefetch: true,
 				variables: {
 					id: `${this._key}`
 				}

@@ -30,7 +30,7 @@ export default {
 			return this.menus.filter( menu => menu.nama.toLowerCase().includes(this.query.toLowerCase()))
 		},
 		menus() {
-			return this.$store.getters['list'].filter( menu => ['Indikator Mutu', 'SPM', 'IKS', 'Posyandu Balita'].indexOf(menu.nama) >= 0)
+			return this.$store.getters['list']
 		}
 	},
 }

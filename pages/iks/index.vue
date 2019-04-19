@@ -116,6 +116,7 @@ export default {
 			this.loaded = true
 			this.$apollo.query({
 				query: getIKSgql,
+				prefetch: true,
 				variables: {
 					pusk: 'sibela'
 				}
