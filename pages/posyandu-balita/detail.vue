@@ -119,17 +119,7 @@ export default {
 					posy: `${this.posyandu._key}`
 				}
 			})
-			this.balita = balita.map(e => {
-				let bb = e.penimbangan.filter(a => {
-					if(a){
-						return a.tgl === `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
-					}
-				})
-				if (bb.length) {
-					e.bb = bb[0].bb
-				}
-				return e
-			})
+			this.balita = balita
 /*			
 			balita.map(async e => {
 				let { data: { balitaBB }} = await this.$apollo.query({
@@ -158,6 +148,9 @@ export default {
 	},
 
 	computed: {
+		tglx(){
+			return `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
+		},
 		posyandu(){
 			return {
 				_key: this.$route.query._key,
@@ -192,9 +185,22 @@ export default {
 			return tgls
 		},
 		balitaList(){
-			return this.balita && this.balita.map(e=> Object.assign({}, e, {
-				//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
-			},this.umur(e))).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
+			return this.balita && this.balita.map(e=> {
+				let bb = e.penimbangan.filter(a => {
+					if(a){
+						return a.tgl === this.tglx
+					}
+				})
+				if (bb.length) {
+					e.bb = bb[0].bb
+				} else {
+					e.bb = 0
+				}
+
+				return Object.assign({}, e, {
+					//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
+				}, this.umur(e) ) 
+			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		},
 		balitaWithBB() {
 			return this.balitaList.filter(e => e.bb && e.bb > 0)
@@ -227,7 +233,7 @@ export default {
 							variables: {
 								balita: _key,
 								bb,
-								tgl: `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
+								tgl: this.tglx
 							},
 							update: (store, { data: {mutateBalita: {bb}} }) => {
 								this.balita = this.balita.map( balita => {
