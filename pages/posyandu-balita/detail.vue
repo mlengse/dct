@@ -44,7 +44,6 @@ section.container
 								:fields='fields'
 							)
 								template(slot='name' slot-scope='{ item: {name}}') {{ lowerCase(name) }}
-								//template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
 								template(slot='jk' slot-scope='{ item: { jk } }') {{ `${jk === 'L' ? 'Laki-laki' : 'Perempuan'} `}}
 								template(slot='umur' slot-scope='{ item: { thn, bln, hr }}') {{ `${thn ? `${thn} thn ` : ''}${bln ? `${bln} bln ` : ''}${hr ? `${hr} hr` : ''}` }}
 								template(slot='bb' slot-scope='{ item }')
@@ -89,9 +88,6 @@ export default {
 			name: {
 				label: 'Nama',
 			},
-			//tl: {
-			//	label: 'TL',
-			//},
 			umur: {
 				label: 'Umur',
 			},
@@ -104,54 +100,11 @@ export default {
 		}
 	}),
 
-	async mounted() {
+	mounted() {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
 		this.blnSelected = this.blns[this.bulan]
 		this.tglSelected = this.$moment().date().toString()
-		await this.$nextTick(async () => {
-			this.$nuxt.$loading.start()
-			this.loaded = true
-			let { data: { balita }} = await this.$apollo.query({
-				query: getBalitaByPosy,
-				prefetch: true,
-				variables: {
-					posy: `${this.posyandu._key}`
-				}
-			})
-			this.balitaList = balita.map( e=> {
-				let bb = e.penimbangan.filter(a => {
-					if(a){
-						return a.tgl === this.tglx
-					}
-				})
-				if (bb.length) {
-					e.bb = bb[0].bb
-				} else {
-					e.bb = 0
-				}
-
-				return Object.assign({}, e, {
-					//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
-				}, this.umur(e) ) 
-			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
-/*			
-			balita.map(async e => {
-				let { data: { balitaBB }} = await this.$apollo.query({
-					query: getBalitaByBB,
-					variables: {
-						_key: `${e._key}-${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`						
-					}
-				})
-				if(balitaBB) {
-					e.bb = balitaBB.bb
-				}
-				this.balita.push(e)
-			})
-*/
-			this.loaded = false
-			this.$nuxt.$loading.finish()
-		})
 	},
 
 	watch: {
@@ -159,6 +112,39 @@ export default {
 			if(this.tgls.indexOf(this.tglSelected) < 0 ){
 				this.tglSelected = 1
 			}
+		},
+		async isLogin(val) {
+			await this.$nextTick(async () => {
+				this.$nuxt.$loading.start()
+				this.loaded = true
+				if(val) {
+					let { data: { balita }} = await this.$apollo.query({
+						query: getBalitaByPosy,
+						prefetch: true,
+						variables: {
+							posy: `${this.posyandu._key}`
+						}
+					})
+					this.balitaList = balita.map( e=> {
+						let bb = e.penimbangan.filter(a => {
+							if(a){
+								return a.tgl === this.tglx
+							}
+						})
+						if (bb.length) {
+							e.bb = bb[0].bb
+						} else {
+							e.bb = 0
+						}
+
+						return Object.assign({}, e, this.umur(e) ) 
+					}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
+
+				}
+				this.loaded = false
+				this.$nuxt.$loading.finish()
+			})
+
 		}
 	},
 
@@ -222,7 +208,7 @@ export default {
 			item.bb = e.target.value
 		},
 		editBB() {
-			if(this.isEdit){
+			if(this.isEdit && this.isLogin){
 				this.$nuxt.$loading.start()
 				this.loaded = true
 				this.balitaWithBB.map( ({ _key, bb, penimbangan }) => {
@@ -241,12 +227,6 @@ export default {
 									}
 									return balita
 								})
-								// Read the data from our cache for this query.
-								//const data = store.readQuery({ query: TAGS_QUERY })
-								// Add our tag from the mutation to the end
-								//data.tags.push(addTag)
-								// Write our data back to the cache.
-								//store.writeQuery({ query: TAGS_QUERY, data })
 							},
 						})
 
