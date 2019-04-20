@@ -6,6 +6,7 @@ module.exports = {
 	** Build configuration
 	*/
 	apollo: {
+		//tokenName: 'token',
 		//tokenName: 'yourApolloTokenName', // optional, default: apollo-token
 		//tokenExpires: 10, // optional, default: 7 (days)
 		//includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)

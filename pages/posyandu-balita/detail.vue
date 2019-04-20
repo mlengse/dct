@@ -189,7 +189,12 @@ export default {
 					prefetch: true,
 					variables: {
 						posy: `${this.posyandu._key}`
-					}
+					},
+					context: {
+						headers: {
+							token: this.$store.getters['users/idToken']
+						}
+					},
 				})
 				this.balitaList = balita.map( e=> {
 					let bb = e.penimbangan.filter(a => {
@@ -222,6 +227,11 @@ export default {
 								balita: _key,
 								bb,
 								tgl: this.tglx
+							},
+							context: {
+								headers: {
+									token: this.$store.getters['users/idToken']
+								}
 							},
 							update: (store, { data: {mutateBalita: {bb}} }) => {
 								this.balitaList = this.balitaList.map( balita => {
