@@ -79,7 +79,7 @@ export default {
 		query: '',
 		isEdit: false,
 		loaded: false,
-		balita: [],
+		balitaList: [],
 		inputPenimbangan: false,
 		tglSelected: null,
 		bulan: null,
@@ -119,7 +119,22 @@ export default {
 					posy: `${this.posyandu._key}`
 				}
 			})
-			this.balita = balita
+			this.balitaList = balita.map( e=> {
+				let bb = e.penimbangan.filter(a => {
+					if(a){
+						return a.tgl === this.tglx
+					}
+				})
+				if (bb.length) {
+					e.bb = bb[0].bb
+				} else {
+					e.bb = 0
+				}
+
+				return Object.assign({}, e, {
+					//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
+				}, this.umur(e) ) 
+			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 /*			
 			balita.map(async e => {
 				let { data: { balitaBB }} = await this.$apollo.query({
@@ -184,24 +199,6 @@ export default {
       }
 			return tgls
 		},
-		balitaList(){
-			return this.balita && this.balita.map(e=> {
-				let bb = e.penimbangan.filter(a => {
-					if(a){
-						return a.tgl === this.tglx
-					}
-				})
-				if (bb.length) {
-					e.bb = bb[0].bb
-				} else {
-					e.bb = 0
-				}
-
-				return Object.assign({}, e, {
-					//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
-				}, this.umur(e) ) 
-			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
-		},
 		balitaWithBB() {
 			return this.balitaList.filter(e => e.bb && e.bb > 0)
 		}
@@ -226,6 +223,8 @@ export default {
 		},
 		editBB() {
 			if(this.isEdit){
+				this.$nuxt.$loading.start()
+				this.loaded = true
 				this.balitaWithBB.map( ({ _key, bb, penimbangan }) => {
 					if(!penimbangan.filter(e => e && e.bb === bb).length) {
 						this.$apollo.mutate({
@@ -236,7 +235,7 @@ export default {
 								tgl: this.tglx
 							},
 							update: (store, { data: {mutateBalita: {bb}} }) => {
-								this.balita = this.balita.map( balita => {
+								this.balitaList = this.balitaList.map( balita => {
 									if(balita._key === _key) {
 										balita.bb = bb
 									}
@@ -253,6 +252,8 @@ export default {
 
 					}
 				})
+				this.loaded = false
+				this.$nuxt.$loading.finish()
 			}
 			this.isEdit = !this.isEdit
 		}
