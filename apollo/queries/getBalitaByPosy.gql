@@ -7,5 +7,10 @@ query getBalita($posy: String!) {
 		tl
 		ortu
 		rt
+		penimbangan {
+			_key
+			tgl
+			bb
+		}
 	}
 }

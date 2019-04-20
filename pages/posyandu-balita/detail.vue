@@ -119,8 +119,18 @@ export default {
 					posy: `${this.posyandu._key}`
 				}
 			})
-			this.balita = []
-			
+			this.balita = balita.map(e => {
+				let bb = e.penimbangan.filter(a => {
+					if(a){
+						return a.tgl === `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
+					}
+				})
+				if (bb.length) {
+					e.bb = bb[0].bb
+				}
+				return e
+			})
+/*			
 			balita.map(async e => {
 				let { data: { balitaBB }} = await this.$apollo.query({
 					query: getBalitaByBB,
@@ -133,6 +143,7 @@ export default {
 				}
 				this.balita.push(e)
 			})
+*/
 			this.loaded = false
 			this.$nuxt.$loading.finish()
 		})
@@ -209,29 +220,32 @@ export default {
 		},
 		editBB() {
 			if(this.isEdit){
-				this.balitaWithBB.map( ({ _key, bb }) => {
-					this.$apollo.mutate({
-						mutation: mutateBalita,
-						variables: {
-							balita: _key,
-							bb,
-							tgl: `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
-						},
-						update: (store, { data: {mutateBalita: {bb}} }) => {
-							this.balita = this.balita.map( balita => {
-								if(balita._key === _key) {
-									balita.bb = bb
-								}
-								return balita
-							})
-							// Read the data from our cache for this query.
-							//const data = store.readQuery({ query: TAGS_QUERY })
-							// Add our tag from the mutation to the end
-							//data.tags.push(addTag)
-							// Write our data back to the cache.
-							//store.writeQuery({ query: TAGS_QUERY, data })
-						},
-					})
+				this.balitaWithBB.map( ({ _key, bb, penimbangan }) => {
+					if(!penimbangan.filter(e => e && e.bb === bb).length) {
+						this.$apollo.mutate({
+							mutation: mutateBalita,
+							variables: {
+								balita: _key,
+								bb,
+								tgl: `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
+							},
+							update: (store, { data: {mutateBalita: {bb}} }) => {
+								this.balita = this.balita.map( balita => {
+									if(balita._key === _key) {
+										balita.bb = bb
+									}
+									return balita
+								})
+								// Read the data from our cache for this query.
+								//const data = store.readQuery({ query: TAGS_QUERY })
+								// Add our tag from the mutation to the end
+								//data.tags.push(addTag)
+								// Write our data back to the cache.
+								//store.writeQuery({ query: TAGS_QUERY, data })
+							},
+						})
+
+					}
 				})
 			}
 			this.isEdit = !this.isEdit
