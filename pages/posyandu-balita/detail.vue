@@ -25,6 +25,7 @@ section.container
 						.row
 							.col
 								button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBB' v-if='isLogin' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB
+						.row
 							.col
 								input.col.form-control.mt-2(v-model='query' type='text' placeholder='Search...')
 
@@ -37,6 +38,7 @@ section.container
 								selectable
 								select-mode='single'
 								stacked='sm' 
+								:filter= 'query'
 								:items="balitaList"
 								:busy.sync='loaded' 
 								:fields='fields'
@@ -60,7 +62,9 @@ section.container
 </template>
 <script>
 import posyById from '~/apollo/queries/getPosyanduById.gql'
+import mutateBalita from '~/apollo/mutate/mutateBalita.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
+import getBalitaByBB from '~/apollo/queries/getBalitaBB.gql'
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
@@ -70,11 +74,9 @@ export default {
 		BTab: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tab'),
 		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
 	},
+
 	data: () => ({
-		posyandu: {
-			name: '',
-			rw: ''
-		},
+		query: '',
 		isEdit: false,
 		loaded: false,
 		balita: [],
@@ -101,6 +103,7 @@ export default {
 			}
 		}
 	}),
+
 	async mounted() {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
@@ -109,30 +112,32 @@ export default {
 		await this.$nextTick(async () => {
 			this.$nuxt.$loading.start()
 			this.loaded = true
-			await this.$apollo.query({
-				query: posyById,
-				prefetch: true,
-				variables: {
-					id: `${this._key}`
-				}
-			}).then(({data: {posyandu}}) => {
-				this.posyandu = posyandu
-				return
-			})
-			await this.$apollo.query({
+			let { data: { balita }} = await this.$apollo.query({
 				query: getBalitaByPosy,
 				prefetch: true,
 				variables: {
-					posy: `${this._key}`
+					posy: `${this.posyandu._key}`
 				}
-			}).then(({data: { balita }}) => {
-				this.balita = balita
-				return
+			})
+			this.balita = []
+			
+			balita.map(async e => {
+				let { data: { balitaBB }} = await this.$apollo.query({
+					query: getBalitaByBB,
+					variables: {
+						_key: `${e._key}-${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`						
+					}
+				})
+				if(balitaBB) {
+					e.bb = balitaBB.bb
+				}
+				this.balita.push(e)
 			})
 			this.loaded = false
 			this.$nuxt.$loading.finish()
 		})
 	},
+
 	watch: {
 		blnSelected() {
 			if(this.tgls.indexOf(this.tglSelected) < 0 ){
@@ -140,7 +145,15 @@ export default {
 			}
 		}
 	},
+
 	computed: {
+		posyandu(){
+			return {
+				_key: this.$route.query._key,
+				name: this.$route.query.name,
+				rw: this.$route.query.rw
+			}
+		},
 		isEditText(){
 			if(this.isEdit){
 				return 'Simpan'
@@ -149,9 +162,6 @@ export default {
 		},
 		isLogin() {
 			return this.$store.getters['users/isAuthenticated']
-		},
-		_key() {
-			return `posy-${this.$route.query.id.toUpperCase()}`
 		},
 		thns() {
 			return [ this.$moment(this.tahun, 'YYYY').add(-1, 'y').format('YYYY'), this.tahun, this.$moment(this.tahun, 'YYYY').add(1, 'y').format('YYYY')]
@@ -179,6 +189,7 @@ export default {
 			return this.balitaList.filter(e => e.bb && e.bb > 0)
 		}
 	},
+
 	methods: {
 		lowerCase(string) {
 			return string.split(' ').map(e=> {
@@ -198,7 +209,30 @@ export default {
 		},
 		editBB() {
 			if(this.isEdit){
-				console.log(this.balitaWithBB.map(({bb})=> bb))
+				this.balitaWithBB.map( ({ _key, bb }) => {
+					this.$apollo.mutate({
+						mutation: mutateBalita,
+						variables: {
+							balita: _key,
+							bb,
+							tgl: `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
+						},
+						update: (store, { data: {mutateBalita: {bb}} }) => {
+							this.balita = this.balita.map( balita => {
+								if(balita._key === _key) {
+									balita.bb = bb
+								}
+								return balita
+							})
+							// Read the data from our cache for this query.
+							//const data = store.readQuery({ query: TAGS_QUERY })
+							// Add our tag from the mutation to the end
+							//data.tags.push(addTag)
+							// Write our data back to the cache.
+							//store.writeQuery({ query: TAGS_QUERY, data })
+						},
+					})
+				})
 			}
 			this.isEdit = !this.isEdit
 		}

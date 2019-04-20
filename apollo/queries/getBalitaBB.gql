@@ -1,0 +1,8 @@
+query($_key: String!) {
+	balitaBB(_key: $_key) {
+		_key
+    balita
+		tgl
+		bb
+	}
+}

@@ -46,7 +46,7 @@ export default {
 
 	methods: {
 		click(menu) {
-			this.$router.push(`/posyandu-balita/detail?id=${menu.rw.toLowerCase().split(' ').join('-')}`)
+			this.$router.push(`/posyandu-balita/detail?_key=${menu._key}&name=${menu.name}&rw=${menu.rw}`)
 		}
 	},
 	
