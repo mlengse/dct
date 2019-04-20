@@ -22,9 +22,16 @@ section.container
 							.col-sm.mt-2
 								b-input-group(prepend='Tahun' size='sm')
 									b-form-select(v-model='tahun' :options='thns' size='sm')
-						.row.mt-4
+						.row
+							.col
+								button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBB' v-if='isLogin' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB
+							.col
+								input.col.form-control.mt-2(v-model='query' type='text' placeholder='Search...')
+
+						.row.mt-2
 							b-table(
 								small
+								v-if='isLogin'
 								responsive 
 								hover 
 								selectable
@@ -34,11 +41,20 @@ section.container
 								:busy.sync='loaded' 
 								:fields='fields'
 							)
-								template(slot='name' slot-scope='data') {{ lowerCase(data.item.name) }}
+								template(slot='name' slot-scope='{ item: {name}}') {{ lowerCase(name) }}
 								//template(slot='tl' slot-scope='data') {{ $moment(data.item.tl, 'x').format('D MMMM YYYY') }}
-								template(slot='jk' slot-scope='data') {{ `${data.item.jk === 'L' ? 'Laki-laki' : 'Perempuan'} `}}
-								template(slot='umur' slot-scope='data') {{ `${data.item.thn ? `${data.item.thn} thn ` : ''}${data.item.bln ? `${data.item.bln} bln ` : ''}${data.item.hr ? `${data.item.hr} hr` : ''}` }}
-
+								template(slot='jk' slot-scope='{ item: { jk } }') {{ `${jk === 'L' ? 'Laki-laki' : 'Perempuan'} `}}
+								template(slot='umur' slot-scope='{ item: { thn, bln, hr }}') {{ `${thn ? `${thn} thn ` : ''}${bln ? `${bln} bln ` : ''}${hr ? `${hr} hr` : ''}` }}
+								template(slot='bb' slot-scope='{ item }')
+									input.form-control-sm(
+										v-if='isEdit'
+										type="number" 
+										style="width:5em"
+										v-model.number='item.bb'
+									)
+									span(v-else) {{ item.bb || 0 }}
+									span  kg
+							p.col(v-else) Anda belum login. Untuk melihat data balita, silahkan masuk terlebih dahulu.
 			b-tab.mt-2(title='Rekap')
 			b-tab.mt-2(title='Grafik')
 </template>
@@ -59,6 +75,7 @@ export default {
 			name: '',
 			rw: ''
 		},
+		isEdit: false,
 		loaded: false,
 		balita: [],
 		inputPenimbangan: false,
@@ -84,55 +101,6 @@ export default {
 			}
 		}
 	}),
-	watch: {
-		blnSelected() {
-			if(this.tgls.indexOf(this.tglSelected) < 0 ){
-				this.tglSelected = 1
-			}
-		}
-	},
-	methods: {
-		lowerCase(string) {
-			return string.split(' ').map(e=> {
-				return e.charAt(0) + e.slice(1).toLowerCase();
-			}).join(' ')
-		},
-		umur(val){
-			let duration = this.$moment.duration(this.$moment( `${this.tglSelected}-${this.blnSelected}-${this.tahun}`, 'D-MMMM-YYYY' ).diff(this.$moment(val.tl, 'x')));
-			return {
-				thn: duration.years(),
-				bln: duration.months(),
-				hr: duration.days()
-			}
-		}
-	},
-	computed: {
-		_key() {
-			return `posy-${this.$route.query.id.toUpperCase()}`
-		},
-		thns() {
-			return [ this.$moment(this.tahun, 'YYYY').add(-1, 'y').format('YYYY'), this.tahun, this.$moment(this.tahun, 'YYYY').add(1, 'y').format('YYYY')]
-		},
-		blns(){
-			return this.$moment.months()
-		},
-		tgls(){
-			let tgls = []
-      let start = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').startOf('month')
-      let end = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').endOf('month')
-      while( start <= end){
-        let dateNow = start.date()
-        tgls[tgls.length] = dateNow.toString()
-        start = start.add(1, 'd')
-      }
-			return tgls
-		},
-		balitaList(){
-			return this.balita && this.balita.map(e=> Object.assign({}, e, {
-				//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
-			},this.umur(e))).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
-		}
-	},
 	async mounted() {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
@@ -164,6 +132,76 @@ export default {
 			this.loaded = false
 			this.$nuxt.$loading.finish()
 		})
-	}
+	},
+	watch: {
+		blnSelected() {
+			if(this.tgls.indexOf(this.tglSelected) < 0 ){
+				this.tglSelected = 1
+			}
+		}
+	},
+	computed: {
+		isEditText(){
+			if(this.isEdit){
+				return 'Simpan'
+			} 
+			return 'Input'
+		},
+		isLogin() {
+			return this.$store.getters['users/isAuthenticated']
+		},
+		_key() {
+			return `posy-${this.$route.query.id.toUpperCase()}`
+		},
+		thns() {
+			return [ this.$moment(this.tahun, 'YYYY').add(-1, 'y').format('YYYY'), this.tahun, this.$moment(this.tahun, 'YYYY').add(1, 'y').format('YYYY')]
+		},
+		blns(){
+			return this.$moment.months()
+		},
+		tgls(){
+			let tgls = []
+      let start = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').startOf('month')
+      let end = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').endOf('month')
+      while( start <= end){
+        let dateNow = start.date()
+        tgls[tgls.length] = dateNow.toString()
+        start = start.add(1, 'd')
+      }
+			return tgls
+		},
+		balitaList(){
+			return this.balita && this.balita.map(e=> Object.assign({}, e, {
+				//rt: e.rt && e.rt.toLowerCase().includes('rt') ? e.rt.toLowerCase().split('rt').join('').trim() : e.rt
+			},this.umur(e))).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
+		},
+		balitaWithBB() {
+			return this.balitaList.filter(e => e.bb && e.bb > 0)
+		}
+	},
+	methods: {
+		lowerCase(string) {
+			return string.split(' ').map(e=> {
+				return e.charAt(0) + e.slice(1).toLowerCase();
+			}).join(' ')
+		},
+		umur(val){
+			let duration = this.$moment.duration(this.$moment( `${this.tglSelected}-${this.blnSelected}-${this.tahun}`, 'D-MMMM-YYYY' ).diff(this.$moment(val.tl, 'x')));
+			return {
+				thn: duration.years(),
+				bln: duration.months(),
+				hr: duration.days()
+			}
+		},
+		handleBBChange(e, item) {
+			item.bb = e.target.value
+		},
+		editBB() {
+			if(this.isEdit){
+				console.log(this.balitaWithBB.map(({bb})=> bb))
+			}
+			this.isEdit = !this.isEdit
+		}
+	},
 }
 </script>
