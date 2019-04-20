@@ -100,11 +100,14 @@ export default {
 		}
 	}),
 
-	mounted() {
+	async mounted() {
 		this.tahun = this.$moment().year()
 		this.bulan = this.$moment().month()
 		this.blnSelected = this.blns[this.bulan]
 		this.tglSelected = this.$moment().date().toString()
+		await this.$nextTick(async () => {
+			await this.fetchData()
+		})
 	},
 
 	watch: {
@@ -114,37 +117,7 @@ export default {
 			}
 		},
 		async isLogin(val) {
-			await this.$nextTick(async () => {
-				this.$nuxt.$loading.start()
-				this.loaded = true
-				if(val) {
-					let { data: { balita }} = await this.$apollo.query({
-						query: getBalitaByPosy,
-						prefetch: true,
-						variables: {
-							posy: `${this.posyandu._key}`
-						}
-					})
-					this.balitaList = balita.map( e=> {
-						let bb = e.penimbangan.filter(a => {
-							if(a){
-								return a.tgl === this.tglx
-							}
-						})
-						if (bb.length) {
-							e.bb = bb[0].bb
-						} else {
-							e.bb = 0
-						}
-
-						return Object.assign({}, e, this.umur(e) ) 
-					}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
-
-				}
-				this.loaded = false
-				this.$nuxt.$loading.finish()
-			})
-
+			if(val) await this.fetchData(val)
 		}
 	},
 
@@ -206,6 +179,36 @@ export default {
 		},
 		handleBBChange(e, item) {
 			item.bb = e.target.value
+		},
+		async fetchData() {
+			this.$nuxt.$loading.start()
+			this.loaded = true
+			if(this.isLogin) {
+				let { data: { balita }} = await this.$apollo.query({
+					query: getBalitaByPosy,
+					prefetch: true,
+					variables: {
+						posy: `${this.posyandu._key}`
+					}
+				})
+				this.balitaList = balita.map( e=> {
+					let bb = e.penimbangan.filter(a => {
+						if(a){
+							return a.tgl === this.tglx
+						}
+					})
+					if (bb.length) {
+						e.bb = bb[0].bb
+					} else {
+						e.bb = 0
+					}
+
+					return Object.assign({}, e, this.umur(e) ) 
+				}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
+
+			}
+			this.loaded = false
+			this.$nuxt.$loading.finish()
 		},
 		editBB() {
 			if(this.isEdit && this.isLogin){
