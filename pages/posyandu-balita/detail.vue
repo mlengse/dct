@@ -169,9 +169,7 @@ export default {
 					} else {
 						e.bb = 0
 					}
-
 				}
-
 				return Object.assign({}, e, this.umur(e) ) 
 			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		},
