@@ -171,35 +171,27 @@ export default {
 		},
 		balitaList() {
 			return this.balita.map( e=> {
-				if( !e.bb ){
-					let bb = e.penimbangan.filter(a => {
-						if(a){
-							return a.tgl === this.tglx
-						}
-					})
-					if (bb.length) {
-						e.bb = bb[0].bb
-					} else {
-						e.bb = e.penimbangan.map(e => Number(e.bb)).sort()[e.penimbangan.length -1] || 0
-					}
-				}
-				if( !e.tb ){
-					let tb = e.penimbangan.filter(a => {
-						if(a){
-							return a.tgl === this.tglx
-						}
-					})
-					if (tb.length) {
-						e.tb = tb[0].tb
-					} else {
-						e.tb = e.penimbangan.map(e => Number(e.tb)).sort()[e.penimbangan.length-1] || 0
-					}
-				}
+				let penimbangan = e.penimbangan.filter( e => this.$moment(e.tgl, 'x').format('M YYYY') === this.$moment(this.tglx, 'x').format('M YYYY'))
+				e.bb = penimbangan
+				.map(e => Number(e.bb))
+				.sort()[penimbangan.length -1] || 0
+
+				e.tb = penimbangan
+				.map(e => Number(e.tb))
+				.sort()[penimbangan.length-1] || 0
 				return Object.assign({}, e, this.umur(e) ) 
 			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		},
 		balitaWithBB() {
-			return this.balitaList.filter(e => (e.bb && e.bb > 0 && e.bb !== e.penimbangan.map(e => Number(e.bb)).sort()[e.penimbangan.length -1]) || (e.tb && e.tb > 0 && e.tb !== e.penimbangan.map(e => Number(e.tb)).sort()[e.penimbangan.length -1]))
+			return this.balitaList
+				.filter(e => (e.bb && e.bb > 0 && e.bb !== e.penimbangan
+					.filter( e => this.$moment(e.tgl, 'x').format('M YYYY') === this.$moment(this.tglx, 'x').format('M YYYY'))
+					.map(e => Number(e.bb))
+					.sort()[e.penimbangan.length -1]) 
+					|| (e.tb && e.tb > 0 && e.tb !== e.penimbangan
+					.filter( e => this.$moment(e.tgl, 'x').format('M YYYY') === this.$moment(this.tglx, 'x').format('M YYYY'))
+					.map(e => Number(e.tb))
+					.sort()[e.penimbangan.length -1]))
 		}
 	},
 
@@ -263,13 +255,15 @@ export default {
 							}
 						},
 						update: (store, { data: {mutateBalita: { bb, tb }} }) => {
-							this.balita = this.balita.map( balita => {
+							const data = store.readQuery({ query: getBalitaByPosy })
+							data.balita = data.balita.map( balita => {
 								if(balita._key === _key) {
 									balita.bb = bb
 									balita.tb = tb
 								}
 								return balita
 							})
+							store.writeQuery({ query: getBalitaByPosy, data })
 						},
 					})
 				})

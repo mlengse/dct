@@ -98,9 +98,6 @@ export default {
 						const data = store.readQuery({ query: getPosyanduGql })
 						let ex = data.getPosyanduList.filter(e => e._key === mutatePosy._key)
 						if(ex && ex.length) {
-							// Add our tag from the mutation to the end
-							//data..push(addTag)
-							// Write our data back to the cache.
 							data.getPosyanduList.map( e => {
 								if(e._key === mutatePosy._key) {
 									return Object.assign(e, mutatePosy)
