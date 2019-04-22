@@ -65,7 +65,7 @@ export default {
 			return this.filteredList.filter( (e, i) => (i+2)%2 !== 0)
 		},
 		filteredList() {
-			return this.items.filter( item => JSON.stringify(item).toLowerCase().includes(this.query.toLowerCase()))
+			return this.items && Array.isArray(this.items) && this.items.filter( item => JSON.stringify(item).toLowerCase().includes(this.query.toLowerCase()))
 		},
 	},
 
