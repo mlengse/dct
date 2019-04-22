@@ -1,7 +1,13 @@
-mutation mutateBalita($balita: String!, $bb: Float!, $tgl: String!) {
-	mutateBalita(balita: $balita, bb: $bb, tgl: $tgl) {
+mutation mutateBalita(
+	$balita: String!
+	$bb: Float!
+	$tb: Float!
+	$tgl: String!
+) {
+	mutateBalita(balita: $balita, bb: $bb, tb: $tb, tgl: $tgl) {
 		_key
 		tgl
 		bb
+		tb
 	}
 }

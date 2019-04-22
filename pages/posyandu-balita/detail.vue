@@ -1,8 +1,8 @@
 <template lang="pug">
 section.container
 	.row.mt-2
-		nuxt-link(to="/posyandu-balita")
-			h3.col Posyandu Balita 
+		nuxt-link.btn(to="/posyandu-balita" tag='button')
+			h3 Posyandu Balita 
 	.row
 		h5.col(v-if = "posyandu && posyandu.name !== ''" ) {{ posyandu.name }} RW {{ posyandu.rw }}
 	b-card.row.mt-2(no-body)
@@ -24,7 +24,7 @@ section.container
 									b-form-select(v-model='tahun' :options='thns' size='sm')
 						.row
 							.col
-								button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBB' v-if='isLogin' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB
+								button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBB' v-if='isLogin' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB dan TB
 						.row
 							.col
 								input.col.form-control.mt-2(v-model='query' type='text' placeholder='Search...')
@@ -55,6 +55,15 @@ section.container
 									)
 									span(v-else) {{ item.bb || 0 }}
 									span  kg
+								template(slot='tb' slot-scope='{ item }')
+									input.form-control-sm(
+										v-if='isEdit'
+										type="number" 
+										style="width:5em"
+										v-model.number='item.tb'
+									)
+									span(v-else) {{ item.tb || 0 }}
+									span  cm
 							p.col(v-else) Anda belum login. Untuk melihat data balita, silahkan masuk terlebih dahulu.
 			b-tab.mt-2(title='Rekap')
 			b-tab.mt-2(title='Grafik')
@@ -93,8 +102,12 @@ export default {
 				label: 'JK'
 			},
 			bb: {
-				label: 'Berat'
-			}
+				label: 'BB'
+			},
+			tb: {
+				label: 'TB'
+			},
+
 		}
 	}),
 
@@ -167,14 +180,26 @@ export default {
 					if (bb.length) {
 						e.bb = bb[0].bb
 					} else {
-						e.bb = 0
+						e.bb = e.penimbangan.map(e => Number(e.bb)).sort()[e.penimbangan.length -1] || 0
+					}
+				}
+				if( !e.tb ){
+					let tb = e.penimbangan.filter(a => {
+						if(a){
+							return a.tgl === this.tglx
+						}
+					})
+					if (tb.length) {
+						e.tb = tb[0].tb
+					} else {
+						e.tb = e.penimbangan.map(e => Number(e.tb)).sort()[e.penimbangan.length-1] || 0
 					}
 				}
 				return Object.assign({}, e, this.umur(e) ) 
 			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		},
 		balitaWithBB() {
-			return this.balitaList.filter(e => e.bb && e.bb > 0)
+			return this.balitaList.filter(e => (e.bb && e.bb > 0) || (e.tb && e.tb > 0))
 		}
 	},
 
@@ -194,6 +219,9 @@ export default {
 		},
 		handleBBChange(e, item) {
 			item.bb = e.target.value
+		},
+		handleTBChange(e, item) {
+			item.tb = e.target.value
 		},
 		async fetchData() {
 			this.$nuxt.$loading.start()
@@ -220,13 +248,14 @@ export default {
 			if(this.isEdit && this.isLogin){
 				this.$nuxt.$loading.start()
 				this.loaded = true
-				this.balitaWithBB.map( ({ _key, bb, penimbangan }) => {
-					if(!penimbangan.filter(e => e && e.bb === bb).length) {
+				this.balitaWithBB.map( ({ _key, bb, tb, penimbangan }) => {
+					if(!penimbangan.filter(e => e && e.bb === bb).length || !penimbangan.filter(e => e && e.tb === tb).length) {
 						this.$apollo.mutate({
 							mutation: mutateBalita,
 							variables: {
 								balita: _key,
 								bb,
+								tb,
 								tgl: this.tglx
 							},
 							context: {
@@ -234,10 +263,11 @@ export default {
 									token: this.$store.getters['users/idToken']
 								}
 							},
-							update: (store, { data: {mutateBalita: { bb }} }) => {
+							update: (store, { data: {mutateBalita: { bb, tb }} }) => {
 								this.balita = this.balita.map( balita => {
 									if(balita._key === _key) {
 										balita.bb = bb
+										balita.tb = tb
 									}
 									return balita
 								})
