@@ -11,6 +11,7 @@ query getBalita($posy: String!) {
 			_key
 			tgl
 			bb
+			tb
 		}
 	}
 }

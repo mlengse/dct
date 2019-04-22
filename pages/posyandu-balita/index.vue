@@ -13,13 +13,13 @@ section.container
 			b-list-group
 				b-list-group-item(v-for='menu in odd' :key='menu._key') 
 					button.btn.btn-primary.btn-sm.mr-2(@click='click(menu)') Lihat 
-					button.btn.btn-sm.btn-outline-warning.mr-2(@click='editPosyandu("Edit", menu)') Edit
+					button.btn.btn-sm.btn-outline-warning.mr-2(v-if='isLogin' @click='editPosyandu("Edit", menu)') Edit
 					button.btn(@click='click(menu)') {{ menu.name }} RW {{ menu.rw }}
 		.col.mt-2
 			b-list-group
 				b-list-group-item(v-for='menu in even' :key='menu._key' )
 					button.btn.btn-primary.btn-sm.mr-2(@click='click(menu)') Lihat
-					button.btn.btn-sm.btn-outline-warning.mr-2(@click='editPosyandu("Edit", menu)') Edit
+					button.btn.btn-sm.btn-outline-warning.mr-2(v-if='isLogin' @click='editPosyandu("Edit", menu)') Edit
 					button.btn(@click='click(menu)') {{ menu.name }} RW {{ menu.rw }}
 	b-modal(ref='modal-1' :title='`${modal.title} Posyandu`' ok-title='Simpan' @ok='simpan' cancel-title='Batal')
 		label Nama:
