@@ -1,4 +1,4 @@
-mutation($balita: String!, $bb: Float!, $tgl: String!) {
+mutation mutateBalita($balita: String!, $bb: Float!, $tgl: String!) {
 	mutateBalita(balita: $balita, bb: $bb, tgl: $tgl) {
 		_key
 		tgl

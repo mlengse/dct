@@ -18,6 +18,7 @@ section.container
 
 <script>
 import getPosyanduGql from '~/apollo/queries/getPosyandu.gql'
+
 export default {
 	components: {
 		BListGroup: () => import('~/node_modules/bootstrap-vue/es/components/list-group/list-group'),
@@ -26,22 +27,28 @@ export default {
 	
 	data: () => ({
 		query: '',
-		items: []
 	}),
+
+	apollo: {
+		items: {
+			query: getPosyanduGql,
+			prefetch: true,
+			update({ getPosyanduList }) {
+				return getPosyanduList
+			}
+		}
+	},
 
 	async mounted() {
 		await this.$nextTick(async ()=>{
 			this.$nuxt.$loading.start()
-			await this.$apollo.query({
-				query: getPosyanduGql,
-				prefetch: true,
-			}).then(({data: { getPosyanduList }}) => {
-				this.items = getPosyanduList
-				return
-			})
-			this.$nuxt.$loading.finish()
-
 		})
+	},
+
+	watch: {
+		items(val){
+			this.$nuxt.$loading.finish()
+		}
 	},
 
 	methods: {
@@ -58,10 +65,7 @@ export default {
 			return this.filteredList.filter( (e, i) => (i+2)%2 !== 0)
 		},
 		filteredList() {
-			if(this.items.length){
-				return this.items.filter( item => JSON.stringify(item).toLowerCase().includes(this.query.toLowerCase()))
-			}
-			return []
+			return this.items.filter( item => JSON.stringify(item).toLowerCase().includes(this.query.toLowerCase()))
 		},
 	},
 

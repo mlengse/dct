@@ -60,10 +60,8 @@ section.container
 			b-tab.mt-2(title='Grafik')
 </template>
 <script>
-import posyById from '~/apollo/queries/getPosyanduById.gql'
 import mutateBalita from '~/apollo/mutate/mutateBalita.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
-import getBalitaByBB from '~/apollo/queries/getBalitaBB.gql'
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
@@ -160,15 +158,18 @@ export default {
 		},
 		balitaList() {
 			return this.balita.map( e=> {
-				let bb = e.penimbangan.filter(a => {
-					if(a){
-						return a.tgl === this.tglx
+				if( !e.bb ){
+					let bb = e.penimbangan.filter(a => {
+						if(a){
+							return a.tgl === this.tglx
+						}
+					})
+					if (bb.length) {
+						e.bb = bb[0].bb
+					} else {
+						e.bb = 0
 					}
-				})
-				if (bb.length) {
-					e.bb = bb[0].bb
-				} else {
-					e.bb = 0
+
 				}
 
 				return Object.assign({}, e, this.umur(e) ) 
@@ -235,8 +236,8 @@ export default {
 									token: this.$store.getters['users/idToken']
 								}
 							},
-							update: (store, { data: {mutateBalita: {bb}} }) => {
-								this.balitaList = this.balitaList.map( balita => {
+							update: (store, { data: {mutateBalita: { bb }} }) => {
+								this.balita = this.balita.map( balita => {
 									if(balita._key === _key) {
 										balita.bb = bb
 									}

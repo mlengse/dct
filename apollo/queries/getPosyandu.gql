@@ -1,4 +1,4 @@
-query {
+query getPosyanduList {
   getPosyanduList {
     _key
     name
