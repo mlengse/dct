@@ -199,7 +199,7 @@ export default {
 			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
 		},
 		balitaWithBB() {
-			return this.balitaList.filter(e => (e.bb && e.bb > 0) || (e.tb && e.tb > 0))
+			return this.balitaList.filter(e => (e.bb && e.bb > 0 && e.bb !== e.penimbangan.map(e => Number(e.bb)).sort()[e.penimbangan.length -1]) || (e.tb && e.tb > 0 && e.tb !== e.penimbangan.map(e => Number(e.tb)).sort()[e.penimbangan.length -1]))
 		}
 	},
 
@@ -249,32 +249,29 @@ export default {
 				this.$nuxt.$loading.start()
 				this.loaded = true
 				this.balitaWithBB.map( ({ _key, bb, tb, penimbangan }) => {
-					if(!penimbangan.filter(e => e && e.bb === bb).length || !penimbangan.filter(e => e && e.tb === tb).length) {
-						this.$apollo.mutate({
-							mutation: mutateBalita,
-							variables: {
-								balita: _key,
-								bb,
-								tb,
-								tgl: this.tglx
-							},
-							context: {
-								headers: {
-									token: this.$store.getters['users/idToken']
+					this.$apollo.mutate({
+						mutation: mutateBalita,
+						variables: {
+							balita: _key,
+							bb,
+							tb,
+							tgl: this.tglx
+						},
+						context: {
+							headers: {
+								token: this.$store.getters['users/idToken']
+							}
+						},
+						update: (store, { data: {mutateBalita: { bb, tb }} }) => {
+							this.balita = this.balita.map( balita => {
+								if(balita._key === _key) {
+									balita.bb = bb
+									balita.tb = tb
 								}
-							},
-							update: (store, { data: {mutateBalita: { bb, tb }} }) => {
-								this.balita = this.balita.map( balita => {
-									if(balita._key === _key) {
-										balita.bb = bb
-										balita.tb = tb
-									}
-									return balita
-								})
-							},
-						})
-
-					}
+								return balita
+							})
+						},
+					})
 				})
 				this.loaded = false
 				this.$nuxt.$loading.finish()

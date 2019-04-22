@@ -1,0 +1,11 @@
+mutation mutatePosy(
+	$_key: String!
+	$name: String!
+	$rw: String!
+) {
+	mutatePosy(_key: $_key, name: $name, rw: $rw) {
+		_key
+    name
+    rw
+	}
+}
