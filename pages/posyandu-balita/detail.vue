@@ -78,7 +78,7 @@ export default {
 		query: '',
 		isEdit: false,
 		loaded: false,
-		balitaList: [],
+		balita: [],
 		inputPenimbangan: false,
 		tglSelected: null,
 		bulan: null,
@@ -158,6 +158,22 @@ export default {
       }
 			return tgls
 		},
+		balitaList() {
+			return this.balita.map( e=> {
+				let bb = e.penimbangan.filter(a => {
+					if(a){
+						return a.tgl === this.tglx
+					}
+				})
+				if (bb.length) {
+					e.bb = bb[0].bb
+				} else {
+					e.bb = 0
+				}
+
+				return Object.assign({}, e, this.umur(e) ) 
+			}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
+		},
 		balitaWithBB() {
 			return this.balitaList.filter(e => e.bb && e.bb > 0)
 		}
@@ -196,21 +212,7 @@ export default {
 						}
 					},
 				})
-				this.balitaList = balita.map( e=> {
-					let bb = e.penimbangan.filter(a => {
-						if(a){
-							return a.tgl === this.tglx
-						}
-					})
-					if (bb.length) {
-						e.bb = bb[0].bb
-					} else {
-						e.bb = 0
-					}
-
-					return Object.assign({}, e, this.umur(e) ) 
-				}).filter( e => -1 < e.thn && -1 < e.bln && -1 < e.hr && e.thn < 5)
-
+				this.balita = balita
 			}
 			this.loaded = false
 			this.$nuxt.$loading.finish()
