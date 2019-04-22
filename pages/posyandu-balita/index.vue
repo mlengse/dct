@@ -7,7 +7,7 @@ section.container
 			.form-group.mt-2
 				input.form-control(v-model='query' type='text' placeholder='Search...')
 	.btn-toolbar
-		button.btn.btn-primary.btn-sm.mt-2.mr-2 Tambah Posyandu
+		button.btn.btn-primary.btn-sm.mt-2.mr-2(v-b-modal.modal-1) Tambah Posyandu
 	.row
 		.col.mt-2
 			b-list-group
@@ -21,15 +21,22 @@ section.container
 					button.btn.btn-primary.btn-sm.mr-2(@click='click(menu)') Lihat
 					button.btn.btn-sm.btn-outline-warning.mr-2(@click='edit(menu)') Edit
 					button.btn(@click='click(menu)') {{ menu.name }} RW {{ menu.rw }}
+	b-modal#modal-1(title="Tambah Posyandu")
+		p.my-4 tambah posyandu
 </template>
 
 <script>
 import getPosyanduGql from '~/apollo/queries/getPosyandu.gql'
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 
 export default {
 	components: {
 		BListGroup: () => import('~/node_modules/bootstrap-vue/es/components/list-group/list-group'),
-		BListGroupItem: () => import('~/node_modules/bootstrap-vue/es/components/list-group/list-group-item')
+		BListGroupItem: () => import('~/node_modules/bootstrap-vue/es/components/list-group/list-group-item'),
+		'b-modal': () => import("~/node_modules/bootstrap-vue/es/components/modal/modal.js")
+	},
+	directives: {
+		'b-modal': vBModal
 	},
 	
 	data: () => ({
