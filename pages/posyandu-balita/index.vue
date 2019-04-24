@@ -76,7 +76,9 @@ export default {
 
 	watch: {
 		items(val){
-			this.$nuxt.$loading.finish()
+			if(val && Array.isArray(val) && val.length ) {
+				this.$nuxt.$loading.finish()
+			}
 		}
 	},
 

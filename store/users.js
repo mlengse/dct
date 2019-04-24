@@ -1,16 +1,9 @@
-import Strapi from 'strapi-sdk-javascript'
 
-const apiUrl = process.env.apiUrl 
-
-const strapi = new Strapi(apiUrl)
 
 export const state = () => ({
   user: null,
   account: null,
   login: false,
-  auth: null,
-  token: '',
-  jwt:''
 })
 
 export const getters = {
@@ -18,16 +11,12 @@ export const getters = {
   isAuthenticated: ({ user }) => !!user,
   user: ({user}) => user,
   account: ({ account }) => account,
-  token: ({token}) => token,
   idToken: ({ user }) => user.stsTokenManager.accessToken 
 }
 
 export const actions = {
-  async setUser({ commit }, user){
+  setUser({ commit }, user){
     commit('setUser', user)
-    let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
-    return commit('setAuth', auth)
-
   },
   async userLogout({ commit }) {
     let firebase = await import('firebase/app')
@@ -38,11 +27,6 @@ export const actions = {
 }
 
 export const mutations = {
-  setAuth(state, val){
-    state.auth = val.user
-    state.jwt = val.jwt
-    state.token = val.user._id
-  },
   closeLogin(state){
     state.login = false
   },
@@ -58,5 +42,4 @@ export const mutations = {
   resetUser(state) {
     state.user = null
   },
-
 }

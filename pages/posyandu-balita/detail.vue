@@ -1,5 +1,22 @@
 <template lang="pug">
 section.container
+	b-modal(ref='balita' :title='`${modal.title} Balita`' :ok-title='okTitle' @ok='simpan' cancel-title='Batal')
+		label Nama:
+		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.name')
+		p(v-else) {{ balita.name }}
+		label Jenis Kelamin:
+		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.jk')
+		p(v-else) {{ balita.jk }}
+		label Tanggal Lahir:
+		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.tl')
+		p(v-else) {{ balita.tl }}
+		label Orang Tua: 
+		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.ortu')
+		p(v-else) {{ balita.ortu }}
+		label RT:
+		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.rt')
+		p(v-else) {{ balita.rt }}
+
 	.row.mt-2
 		nuxt-link.btn(to="/posyandu-balita" tag='button')
 			h3 Posyandu Balita 
@@ -22,13 +39,12 @@ section.container
 							.col-sm.mt-2
 								b-input-group(prepend='Tahun' size='sm')
 									b-form-select(v-model='tahun' :options='thns' size='sm')
-						.row
-							.col
-								button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBB' v-if='isLogin' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB dan TB
+						.btn-toolbar(v-if='isLogin')
+							button.btn.btn-sm.btn-primary.mt-2.mr-2(type='button' @click='editBalita("Tambah")') Tambah Balita
+							button.btn.btn-sm.mt-2.mr-2(type='button' @click='editBB' :class='`${ isEdit ? `btn-success`: `btn-warning`}`') {{ isEditText }} BB dan TB
 						.row
 							.col
 								input.col.form-control.mt-2(v-model='query' type='text' placeholder='Search...')
-
 						.row.mt-2
 							b-table(
 								small
@@ -42,6 +58,7 @@ section.container
 								:items="balitaList"
 								:busy.sync='loaded' 
 								:fields='fields'
+								@row-clicked='(item) => editBalita("Lihat", item)'
 							)
 								template(slot='name' slot-scope='{ item: {name}}') {{ lowerCase(name) }}
 								template(slot='jk' slot-scope='{ item: { jk } }') {{ `${jk === 'L' ? 'Laki-laki' : 'Perempuan'} `}}
@@ -69,23 +86,41 @@ section.container
 			b-tab.mt-2(title='Grafik')
 </template>
 <script>
+import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
 import mutateBalita from '~/apollo/mutate/mutateBalita.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
 		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
+		BFormInput: () => import('~/node_modules/bootstrap-vue/es/components/form-input/form-input'),
 		BCard: () => import('~/node_modules/bootstrap-vue/es/components/card/card'),
 		BTabs: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tabs'),
 		BTab: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tab'),
 		BTable: () => import('~/node_modules/bootstrap-vue/es/components/table/table'),
+		'b-modal': () => import("~/node_modules/bootstrap-vue/es/components/modal/modal.js")
+	},
+
+	directives: {
+		'b-modal': vBModal
 	},
 
 	data: () => ({
 		query: '',
 		isEdit: false,
 		loaded: false,
-		balita: [],
+		balitas: [],
+		balita: {
+			name: '',
+			jk: '',
+			ortu: '',
+			tl: '',
+			rt: '',
+			posy: ''
+		},
+		modal: {
+			title: ''
+		},
 		inputPenimbangan: false,
 		tglSelected: null,
 		bulan: null,
@@ -127,12 +162,15 @@ export default {
 				this.tglSelected = 1
 			}
 		},
-		async isLogin(val) {
-			if(val) await this.fetchData(val)
+		isLogin(val) {
+			if(val) this.fetchData(val)
 		}
 	},
 
 	computed: {
+		okTitle(){
+			return `${this.modal.title === "Lihat" ? "Edit" : "Simpan"}`
+		},
 		tglx(){
 			return `${this.$moment(`${this.tglSelected} ${this.blnSelected} ${this.tahun}`, 'D MMMM YYYY').format('x')}`
 		},
@@ -160,17 +198,17 @@ export default {
 		},
 		tgls(){
 			let tgls = []
-      let start = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').startOf('month')
-      let end = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').endOf('month')
-      while( start <= end){
-        let dateNow = start.date()
-        tgls[tgls.length] = dateNow.toString()
-        start = start.add(1, 'd')
-      }
+			let start = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').startOf('month')
+			let end = this.$moment(`${this.blnSelected} ${this.tahun}`, 'MMMM YYYY').endOf('month')
+			while( start <= end){
+				let dateNow = start.date()
+				tgls[tgls.length] = dateNow.toString()
+				start = start.add(1, 'd')
+			}
 			return tgls
 		},
 		balitaList() {
-			return this.balita.map( e=> {
+			return this.balitas.map( e=> {
 				let penimbangan = e.penimbangan.filter( e => this.$moment(e.tgl, 'x').format('M YYYY') === this.$moment(this.tglx, 'x').format('M YYYY'))
 				e.bb = penimbangan
 				.map(e => Number(e.bb))
@@ -231,10 +269,30 @@ export default {
 						}
 					},
 				})
-				this.balita = balita
+				this.balitas = balita
 			}
 			this.loaded = false
 			this.$nuxt.$loading.finish()
+		},
+		editBalita(title, balita){
+			this.modal = {
+				title,
+			}
+			
+			this.balita = {
+				name: balita ? balita.name : '',
+				tl: balita ? this.$moment(balita.tl, 'x').format('D MMMM YYYY') : '',
+				ortu: balita ? balita.ortu : '',
+				jk: balita ? balita.jk : '',
+				rt: balita ? balita.rt : ''
+			}
+			this.$refs['balita'].show()
+		},
+		simpan(ev){
+			if(this.modal.title === 'Lihat') {
+				this.modal.title = 'Edit'
+				ev.preventDefault()
+			}
 		},
 		editBB() {
 			if(this.isEdit && this.isLogin){

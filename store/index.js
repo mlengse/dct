@@ -22,7 +22,10 @@ query {
 
 export const state = () => ({
 	menuList: [],
-	menu: {}
+	menu: {},
+	auth: null,
+	token: '',
+	jwt: ''
 })
 
 export const mutations = {
@@ -30,6 +33,11 @@ export const mutations = {
 		payload.cover = payload.cover.url
 		menuList.push(payload._id)
 		menu[payload._id] = payload
+	},
+	setAuth(state, val) {
+		state.auth = val.user
+		state.jwt = val.jwt
+		state.token = val.user._id
 	},
 	emptyList(state) {
 		state.menuList = []
@@ -42,6 +50,11 @@ export const getters = {
 
 export const actions = {
 	async nuxtServerInit ({ commit }) {
+
+		let auth = await strapi.login(process.env.strapiUser, process.env.strapiPwd);
+
+		commit('setAuth', auth)
+
 		commit('emptyList')
 		const { data: { menus } } = await strapi.request('post', '/graphql', {
 			data: {
