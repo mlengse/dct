@@ -1,13 +1,39 @@
 mutation mutateBalita(
-	$balita: String!
-	$bb: Float!
-	$tb: Float!
-	$tgl: String!
+	$_key: String!
+	$name: String!
+	$gakin: String
+	$jk: String!
+	$tl: String!
+	$ortu: String
+	$rt: String
+	$rw: String
+	$posy: String!
 ) {
-	mutateBalita(balita: $balita, bb: $bb, tb: $tb, tgl: $tgl) {
+	mutateBalita(
+		_key: $_key
+		name: $name
+		gakin: $gakin
+		jk: $jk
+		tl: $tl
+		ortu: $ortu
+		rt: $rt
+		rw: $rw
+		posy: $posy
+	) {
 		_key
-		tgl
-		bb
-		tb
+		name
+		jk
+		gakin
+		tl
+		ortu
+		rt
+		rw
+		posy
+		penimbangan {
+			_key
+			tgl
+			bb
+			tb
+		}
 	}
 }

@@ -5,7 +5,8 @@ section.container
 		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.name')
 		p(v-else) {{ balita.name }}
 		label Jenis Kelamin:
-		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.jk')
+		p(v-if='okTitle == "Simpan"' )
+			b-form-radio-group(v-model='balita.jk' :options='jkOptions' buttons button-variant="outline-primary")
 		p(v-else) {{ balita.jk }}
 		label Tanggal Lahir:
 		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.tl')
@@ -87,6 +88,7 @@ section.container
 </template>
 <script>
 import vBModal from '~/node_modules/bootstrap-vue/es/directives/modal/modal.js'
+import mutateBalitaBB from '~/apollo/mutate/mutateBalitaBB.gql'
 import mutateBalita from '~/apollo/mutate/mutateBalita.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
 export default {
@@ -94,6 +96,7 @@ export default {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
 		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
 		BFormInput: () => import('~/node_modules/bootstrap-vue/es/components/form-input/form-input'),
+		BFormRadioGroup: () => import('~/node_modules/bootstrap-vue/es/components/form-radio/form-radio-group'),
 		BCard: () => import('~/node_modules/bootstrap-vue/es/components/card/card'),
 		BTabs: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tabs'),
 		BTab: () => import('~/node_modules/bootstrap-vue/es/components/tabs/tab'),
@@ -110,12 +113,22 @@ export default {
 		isEdit: false,
 		loaded: false,
 		balitas: [],
+		jkOptions: [
+			{ 
+				text: 'Laki-laki',
+				value: 'L'
+			}, {
+				text: 'Perempuan',
+				value: 'P'
+			}
+		],
 		balita: {
 			name: '',
 			jk: '',
 			ortu: '',
 			tl: '',
 			rt: '',
+			gakin: false,
 			posy: ''
 		},
 		modal: {
@@ -284,7 +297,8 @@ export default {
 				tl: balita ? this.$moment(balita.tl, 'x').format('D MMMM YYYY') : '',
 				ortu: balita ? balita.ortu : '',
 				jk: balita ? balita.jk : '',
-				rt: balita ? balita.rt : ''
+				rt: balita ? balita.rt : '',
+				gakin: balita ? balita.gakin : ''
 			}
 			this.$refs['balita'].show()
 		},
@@ -292,6 +306,39 @@ export default {
 			if(this.modal.title === 'Lihat') {
 				this.modal.title = 'Edit'
 				ev.preventDefault()
+			} else {
+				this.modal.title = 'Lihat'
+				ev.preventDefault()
+				if(this.balita.name && this.balita.name !== ''){
+					this.$nuxt.$loading.start()
+					this.loaded = true
+					this.$apollo.mutate({
+						mutation: mutateBalita,
+						variables: {
+							_key: `balita-${this.balita.name.split(' ').join('-').toUpperCase()}-${this.$moment(this.balita.tl, 'D MMMM YYYY').format('x')}-${this.balita.jk}`, 
+							name: this.balita.name.toUpperCase(), 
+							gakin: `${!!this.balita.gakin}`, 
+							jk: this.balita.jk, 
+							tl: this.$moment(this.balita.tl, 'D MMMM YYYY').format('x'), 
+							ortu: this.balita.ortu.toUpperCase(), 
+							rt: this.balita.rt, 
+							rw: this.posyandu.rw, 
+							posy: this.posyandu._key
+						},
+						context: {
+							headers: {
+								token: this.$store.getters['users/idToken']
+							}
+						},
+						update: (store, { data: {mutateBalita} }) => {
+							const data = store.readQuery({ query: getBalitaByPosy })
+							data.balita.push(mutateBalita)
+							store.writeQuery({ query: getBalitaByPosy, data })
+						},
+					})
+				}
+				this.loaded = false
+				this.$nuxt.$loading.finish()
 			}
 		},
 		editBB() {
@@ -300,7 +347,7 @@ export default {
 				this.loaded = true
 				this.balitaWithBB.map( ({ _key, bb, tb, penimbangan }) => {
 					this.$apollo.mutate({
-						mutation: mutateBalita,
+						mutation: mutateBalitaBB,
 						variables: {
 							balita: _key,
 							bb,
@@ -312,7 +359,7 @@ export default {
 								token: this.$store.getters['users/idToken']
 							}
 						},
-						update: (store, { data: {mutateBalita: { bb, tb }} }) => {
+						update: (store, { data: {mutateBalitaBB: { bb, tb }} }) => {
 							const data = store.readQuery({ query: getBalitaByPosy })
 							data.balita = data.balita.map( balita => {
 								if(balita._key === _key) {
