@@ -1,22 +1,25 @@
 <template lang="pug">
 section.container
-	b-modal(ref='balita' :title='`${modal.title} Balita`' :ok-title='okTitle' @ok='simpan' cancel-title='Batal')
-		label Nama:
-		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.name')
-		p(v-else) {{ balita.name }}
-		label Jenis Kelamin:
-		p(v-if='okTitle == "Simpan"' )
-			b-form-radio-group(v-model='balita.jk' :options='jkOptions' buttons button-variant="outline-primary")
-		p(v-else) {{ balita.jk }}
-		label Tanggal Lahir:
-		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.tl')
-		p(v-else) {{ balita.tl }}
-		label Orang Tua: 
-		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.ortu')
-		p(v-else) {{ balita.ortu }}
-		label RT:
-		b-form-input(v-if='okTitle == "Simpan"' v-model='balita.rt')
-		p(v-else) {{ balita.rt }}
+	b-modal(ref='datepicker' :title='$moment(balita.tl, "D MMMM YYYY").format("MMMM YYYY")')
+		date-picker(:tgl='balita.tl' @update='updatetl')
+	no-ssr
+		b-modal(ref='balita' :title='`${modal.title} Balita`' :ok-title='okTitle' @ok='simpan' cancel-title='Batal')
+			label Nama:
+			b-form-input(v-if='okTitle == "Simpan"' v-model='balita.name')
+			p(v-else) {{ balita.name }}
+			label Jenis Kelamin:
+			p(v-if='okTitle == "Simpan"' )
+				b-form-radio-group(v-model='balita.jk' :options='jkOptions' buttons button-variant="outline-primary")
+			p(v-else) {{ balita.jk }}
+			label Tanggal Lahir:
+			p {{ balita.tl }}
+				button.ml-2.btn.btn-primary.btn-sm(v-if='okTitle == "Simpan"' type='button' @click='$refs["datepicker"].show()') Pilih Tanggal
+			label Orang Tua: 
+			b-form-input(v-if='okTitle == "Simpan"' v-model='balita.ortu')
+			p(v-else) {{ balita.ortu }}
+			label RT:
+			b-form-input(v-if='okTitle == "Simpan"' v-model='balita.rt')
+			p(v-else) {{ balita.rt }}
 
 	.row.mt-2
 		nuxt-link.btn(to="/posyandu-balita" tag='button')
@@ -93,6 +96,7 @@ import mutateBalita from '~/apollo/mutate/mutateBalita.gql'
 import getBalitaByPosy from '~/apollo/queries/getBalitaByPosy.gql'
 export default {
 	components: {
+		DatePicker: () => import('~/components/DatePicker.vue'),
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
 		bFormSelect: () => import('~/node_modules/bootstrap-vue/es/components/form-select/form-select'),
 		BFormInput: () => import('~/node_modules/bootstrap-vue/es/components/form-input/form-input'),
@@ -109,6 +113,7 @@ export default {
 	},
 
 	data: () => ({
+		showDatePicker: false,
 		query: '',
 		isEdit: false,
 		loaded: false,
@@ -122,6 +127,7 @@ export default {
 				value: 'P'
 			}
 		],
+		balitaOld: null,
 		balita: {
 			name: '',
 			jk: '',
@@ -247,6 +253,9 @@ export default {
 	},
 
 	methods: {
+		updatetl(val){
+			this.balita.tl = val
+		},
 		lowerCase(string) {
 			return string.split(' ').map(e=> {
 				return e.charAt(0) + e.slice(1).toLowerCase();
@@ -294,12 +303,13 @@ export default {
 			
 			this.balita = {
 				name: balita ? balita.name : '',
-				tl: balita ? this.$moment(balita.tl, 'x').format('D MMMM YYYY') : '',
+				tl: balita ? this.$moment(balita.tl, 'x').format('D MMMM YYYY') : this.$moment().format('D MMMM YYYY'),
 				ortu: balita ? balita.ortu : '',
 				jk: balita ? balita.jk : '',
 				rt: balita ? balita.rt : '',
 				gakin: balita ? balita.gakin : ''
 			}
+			this.balitaOld = Object.assign({}, this.balita)
 			this.$refs['balita'].show()
 		},
 		simpan(ev){
@@ -310,35 +320,52 @@ export default {
 				this.modal.title = 'Lihat'
 				ev.preventDefault()
 				if(this.balita.name && this.balita.name !== ''){
-					this.$nuxt.$loading.start()
-					this.loaded = true
-					this.$apollo.mutate({
-						mutation: mutateBalita,
-						variables: {
-							_key: `balita-${this.balita.name.split(' ').join('-').toUpperCase()}-${this.$moment(this.balita.tl, 'D MMMM YYYY').format('x')}-${this.balita.jk}`, 
-							name: this.balita.name.toUpperCase(), 
-							gakin: `${!!this.balita.gakin}`, 
-							jk: this.balita.jk, 
-							tl: this.$moment(this.balita.tl, 'D MMMM YYYY').format('x'), 
-							ortu: this.balita.ortu.toUpperCase(), 
-							rt: this.balita.rt, 
-							rw: this.posyandu.rw, 
-							posy: this.posyandu._key
-						},
-						context: {
-							headers: {
-								token: this.$store.getters['users/idToken']
-							}
-						},
-						update: (store, { data: {mutateBalita} }) => {
-							const data = store.readQuery({ query: getBalitaByPosy })
-							data.balita.push(mutateBalita)
-							store.writeQuery({ query: getBalitaByPosy, data })
-						},
-					})
+					let variables = {
+						_key: `balita-${this.balita.name.split(' ').join('-').toUpperCase()}-${this.$moment(this.balita.tl, 'D MMMM YYYY').format('x')}-${this.balita.jk}`, 
+						name: this.balita.name.toUpperCase(), 
+						gakin: `${!!this.balita.gakin}`, 
+						jk: this.balita.jk, 
+						tl: this.$moment(this.balita.tl, 'D MMMM YYYY').format('x'), 
+						ortu: this.balita.ortu.toUpperCase(), 
+						rt: this.balita.rt, 
+						rw: this.posyandu.rw, 
+						posy: this.posyandu._key
+					}
+					if (JSON.stringify(this.balitaOld) !== JSON.stringify(this.balita)) {
+						this.$nuxt.$loading.start()
+						this.loaded = true
+						this.$apollo.mutate({
+							mutation: mutateBalita,
+							variables,
+							context: {
+								headers: {
+									token: this.$store.getters['users/idToken']
+								}
+							},
+							update: (store, { data: {mutateBalita} }) => {
+								let data = store.readQuery({ 
+									query: getBalitaByPosy,
+									variables: {
+										posy: `${this.posyandu._key}`
+									},
+								})
+
+								if(data.balita.filter(e=> e._key === variables._key).length){
+									if(JSON.stringify((data.balita[data.balita.map(e=>e._key).indexOf(variables._key)])) !== JSON.stringify(mutateBalita)) {
+										data.balita[data.balita.map(e=>e._key).indexOf(variables._key)] = mutateBalita
+										store.writeQuery({ query: getBalitaByPosy, data })
+									}
+								} else {
+									data.balita.push(mutateBalita)
+									store.writeQuery({ query: getBalitaByPosy, data })
+								}
+								this.loaded = false
+								this.$nuxt.$loading.finish()
+							},
+						})
+
+					}
 				}
-				this.loaded = false
-				this.$nuxt.$loading.finish()
 			}
 		},
 		editBB() {
