@@ -8,6 +8,7 @@ mutation mutateBalita(
 	$rt: String
 	$rw: String
 	$posy: String!
+	$inactive: Boolean
 ) {
 	mutateBalita(
 		_key: $_key
@@ -19,6 +20,7 @@ mutation mutateBalita(
 		rt: $rt
 		rw: $rw
 		posy: $posy
+		inactive: $inactive
 	) {
 		_key
 		name
@@ -29,6 +31,7 @@ mutation mutateBalita(
 		rt
 		rw
 		posy
+		inactive
 		penimbangan {
 			_key
 			tgl
