@@ -4,7 +4,7 @@
 		.col(v-for='h in hari') 
 			p {{ h }}
 	.row(v-for='w in week')
-		button.col.btn.btn-sm(v-for='t in getdays(w)' type='button' @click='setTgl(t.tgl)') {{ t.date }}
+		button.col.btn.btn-sm(v-for='t in getdays(w)' type='button' @click='setTgl(t.tgl)' :class='t.class') {{ t.date }}
 </template>
 
 <script>
@@ -44,20 +44,26 @@ export default {
 			let end = this.$moment(this.tanggal, 'D MMMM YYYY').endOf('month').endOf('week').add(-1, 'd')
 			while( start <= end){
 				let dateNow = start.date()
-				tgl[tgl.length] = {
+				let date = {
 					date: dateNow,
 					tgl: start.format('D MMMM YYYY'),
 					isPrev: start.isBefore(this.$moment(this.tanggal, 'D MMMM YYYY'), 'month'),
+					isNow: start.format('D MMMM YYYY') === this.tanggal,
 					isAfter: start.isAfter(this.$moment(this.tanggal, 'D MMMM YYYY'), 'month'),
-					week: Math.floor(tgl.length / 7) 
+					week: Math.floor(tgl.length / 7),
+					isMinggu: start.day() == 0
 				}
+				date = Object.assign({}, date, {
+					class: `${date.isNow ? `btn-outline-primary` : ``}${date.isMinggu ? ` text-danger` : `${date.isAfter || date.isPrev ? ` text-secondary`: ``}`}`
+				})
+				tgl[tgl.length] = date
 				start = start.add(1, 'd')
 			}
 			return tgl
 		},
 		week(){
 			return [...new Set(this.tgls.map(e=>e.week))]
-		}
+		},
 	},
 }
 </script>

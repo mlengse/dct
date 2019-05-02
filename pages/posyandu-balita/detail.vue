@@ -1,7 +1,12 @@
 <template lang="pug">
 section.container
-	b-modal(ref='datepicker' :title='$moment(balita.tl, "D MMMM YYYY").format("MMMM YYYY")')
-		date-picker(:tgl='balita.tl' @update='updatetl')
+	b-modal(ref='datepicker')
+		template(slot='modal-header')
+			button.btn.btn-sm.btn-primary(type='button' @click='changeMonth(-1)') &lsaquo; &lsaquo;
+			h5 {{ $moment(balita.tl, "D MMMM YYYY").format("MMMM YYYY") }}
+			button.btn.btn-sm.btn-primary(type='button' @click='changeMonth(1)') &rsaquo; &rsaquo;
+		template(slot='default')
+			date-picker(:tgl='balita.tl' @update='updatetl')
 	no-ssr
 		b-modal(ref='balita' :title='`${modal.title} Balita`' :ok-title='okTitle' @ok='simpan' cancel-title='Batal')
 			label Nama:
@@ -10,7 +15,7 @@ section.container
 			label Jenis Kelamin:
 			p(v-if='okTitle == "Simpan"' )
 				b-form-radio-group(v-model='balita.jk' :options='jkOptions' buttons button-variant="outline-primary")
-			p(v-else) {{ balita.jk }}
+			p(v-else) {{ balita.jk === 'L' ? 'Laki-laki' : 'Perempuan' }}
 			label Tanggal Lahir:
 			p {{ balita.tl }}
 				button.ml-2.btn.btn-primary.btn-sm(v-if='okTitle == "Simpan"' type='button' @click='$refs["datepicker"].show()') Pilih Tanggal
@@ -253,6 +258,9 @@ export default {
 	},
 
 	methods: {
+		changeMonth(val){
+			this.balita.tl = this.$moment(this.balita.tl, 'D MMMM YYYY').add( val, 'month').format('D MMMM YYYY')
+		},
 		updatetl(val){
 			this.balita.tl = val
 		},
