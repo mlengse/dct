@@ -35,10 +35,14 @@ section.container
 			.row.justify-content-center(v-if='idValue.length && !feedback.length')
 				.col-sm-3.mt-2
 					button.col.btn.btn-primary(type='button' @click='cari') Cari
+			.card.mt-2(v-if='pasiens.length')
+				.card-body
+					p(v-for='d in desc') {{ d }}
 </template>
 
 
 <script>
+import getPasienGql from '~/apollo/queries/getPasien.gql'
 export default {
 	components: {
 		bInputGroup: () => import('~/node_modules/bootstrap-vue/es/components/input-group/input-group'),
@@ -49,6 +53,7 @@ export default {
 		bDropdownItem: () => import('~/node_modules/bootstrap-vue/es/components/dropdown/dropdown-item'),
 	},
 	data: () => ({
+		pasiens: [],
 		feedback:[],
 		nama:'',
 		idValue: '',
@@ -107,6 +112,66 @@ export default {
 		}
 	},
 	computed: {
+		desc(){
+			let resultArr = this.pasiens
+			let result = []
+			if(resultArr.length < 20) {
+				result.push(`Ditemukan ${resultArr.length} hasil${resultArr.length ? ':' : '.'}`)
+/*
+				for (let res of resultArr){
+				result.push(`--------------`)
+				result.push(`(${resultArr.indexOf(res) + 1}) `)
+					for (let prop in res){
+						if(res[prop] && res[prop] !== 'null' && prop !== '__typename') {
+							if(prop == 'sex_id'){
+								(res[prop] == '1') ? result[result.length-1] += `Laki-laki | ` : result[result.length-1] += `Perempuan | `
+							} else if(prop == 'village_id'){
+								switch(res[prop]){
+									case '01':
+										result[result.length-1] += 'Mojosongo | '
+										break
+									case '02':
+										result[result.length-1] += 'Luar wilayah | '
+										break
+									case '03':
+										result[result.length-1] += 'Luar kota |'
+								}
+							} else if(prop == 'orchard_id') {
+								result[result.length-1] += `RW: ${res[prop].slice(-2)} | `
+							} else if(prop == 'tgl_lahir') {
+								result[result.length-1] += `lahir: ${this.$moment(res[prop]).format('dddd, LL')} | `
+								let umur = this.$moment(res[prop]).fromNow().split(' ').slice(0, 2).join(' ')
+								if(umur == 'setahun yang'){
+									umur = '1 tahun'
+								}
+								result[result.length-1] += `${umur} | `
+							} else {
+								let a;
+								let b = res[prop]
+								switch(prop){
+									case 'id':
+										a = 'no rm';
+										b = b.toUpperCase()
+										break
+									case 'no_kartu':
+										a = 'no bpjs'
+										break
+									default:
+										a = prop
+										break
+								}
+								result[result.length-1] += `${a}: ${b} | `
+							}
+
+						}
+					}
+				}
+*/
+			}
+
+			return result
+
+		},
 		hari(){
 			let hari = ['Hari ini', 'Besok', 'Lusa']
 			if(this.$moment().hour() >= 8) {
@@ -142,13 +207,35 @@ export default {
 		}
 	},
 	methods:{
-		cari(){
-			console.log(this.hariSelected)
-			console.log(this.poliSelected)
-			console.log(this.idValue)
-			if(this.nameShow){
-				console.log(this.nama)
+		async cari(){
+			this.pasiens = []
+			let variables = {}
+			if(this.nameShow && this.nama.length){
+				variables.nama = this.nama
 			}
+
+			if(!this.feedback.length && this.idValue.length){
+				switch(this.idSelected) {
+					case 'No Rekam Medis':
+						variables.rm = this.idValue
+						break
+					case 'No JKN/KIS/BPJS':
+						variables.jkn = this.idValue
+						break
+					case 'NIK':
+						variables.nik = this.idValue
+						break
+				}
+
+			}
+
+			let { data: { getPasien }} = await this.$apollo.query({
+				query: getPasienGql,
+				variables,
+			})
+
+			this.pasiens = getPasien
+
 		},
 		getclass(item){
 			if(this.idSelected === item){
@@ -159,10 +246,18 @@ export default {
 		hide() {
 			this.alert=false
 		},
+
 		idSelect(item){
 			this.idSelected = item
 		}
 	}
 }
 </script>
+
+<style>
+.lb{
+	white-space: pre-line
+}
+</style>
+
 

@@ -1,0 +1,14 @@
+query getPasien($rm: String $jkn: String $nik: String $nama: String) {
+	getPasien(rm: $rm jkn: $jkn nik: $nik nama: $nama) {
+    id
+    nama
+    tgl_lahir
+    sex_id
+    alamat
+    orchard_id
+    village_id
+    nik
+    no_kartu
+    no_hp
+	}
+}
