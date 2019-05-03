@@ -62,7 +62,10 @@ export const actions = {
 			}
 		})
 
-		menus.filter( menu => ['Indikator Mutu', 'SPM', 'IKS', 'Posyandu Balita'].indexOf(menu.nama) >= 0).forEach(menu => {
+		menus
+		.sort()
+		.filter( menu => ['Indikator Mutu', 'SPM', 'IKS', 'Posyandu Balita', 'Pandawa'].indexOf(menu.nama) >= 0)
+		.forEach(menu => {
 			commit('add', menu)
 		})
 
