@@ -16,13 +16,6 @@ section.container
 		.card-body
 			.row
 				.col-md.mt-2
-					b-input-group(prepend='Hari')
-						b-form-select(v-model='hariSelected' :options='hari')
-				.col-md.mt-2
-					b-input-group(prepend='Poli tujuan')
-						b-form-select(v-model='poliSelected' :options='poli')
-			.row
-				.col-md.mt-2
 					b-input-group
 						b-dropdown(slot="prepend" :text='idSelected' variant='primary')
 							b-dropdown-item(v-for='(item, index) in ids' :key='index' @click='idSelect(item)' :class="getclass(item)") {{ item }}
@@ -32,6 +25,16 @@ section.container
 				.col-md.mt-2( v-if='nameShow && !feedback.length')
 					b-input-group(prepend='Nama')
 						input.form-control(v-model='nama' type='text' placeholder='')
+			.row
+				.col-md.mt-2
+					b-input-group(prepend='Hari')
+						b-form-select(v-model='hariSelected' :options='hari')
+				.col-md.mt-2
+					b-input-group(prepend='Poli tujuan')
+						b-form-select(v-model='poliSelected' :options='poli')
+			.row.justify-content-center(v-if='idValue.length && !feedback.length')
+				.col-sm-3.mt-2
+					button.col.btn.btn-primary(type='button' @click='cari') Cari
 </template>
 
 
@@ -54,7 +57,6 @@ export default {
 		alert: true,
 		hariSelected: 'Besok',
 		poliSelected: 'Umum',
-		poli: ['Umum', 'KIA', 'MTBS', 'Imunisasi', 'Gigi', 'Lansia', 'THT'].sort()
 	}),
 	watch: {
 		idValue(val){
@@ -121,8 +123,33 @@ export default {
 			}
 			return false
 		},
+		poli() {
+			let poli = ['Umum', 'KIA (Ibu)', 'MTBS (Balita)', 'Gigi', 'Lansia (> 60 th)']
+			let tglDaft = this.$moment()
+			if(this.hariSelected === 'Besok') {
+				tglDaft.add(1, 'd')
+			}
+			if(this.hariSelected === 'Lusa') {
+				tglDaft.add(1, 'd')
+			}
+			if(tglDaft.day() === 1 || tglDaft.day() === 4) {
+				poli.push('Imunisasi')
+			}
+			if(tglDaft.day() === 2){
+				poli.push('THT')
+			}
+			return poli.sort()
+		}
 	},
 	methods:{
+		cari(){
+			console.log(this.hariSelected)
+			console.log(this.poliSelected)
+			console.log(this.idValue)
+			if(this.nameShow){
+				console.log(this.nama)
+			}
+		},
 		getclass(item){
 			if(this.idSelected === item){
 				return 'active'
