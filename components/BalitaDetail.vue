@@ -21,7 +21,7 @@ div
         b-form-input(v-if='okTitle == "Simpan"' v-model='balita.rt')
         p(v-else) {{ balita.rt }}
       template(slot='modal-footer')
-        button.btn.btn-sm.btn-secondary(type='button' @click='batal') Tutup
+        button.btn.btn-sm.btn-secondary(type='button' @click='batal') {{ tutup }}
         button.btn.btn-sm.btn-danger(v-if='balita.name' type='button') Hapus
         button.btn.btn-sm(v-if='balita.name' type='button' @click='simpan' :class='okclass') {{ okTitle }}
 
@@ -138,6 +138,8 @@ export default {
                 })
                 this.balitaOld = Object.assign({}, this.balita)
                 this.$emit('change', {variables, mutateBalita})
+                this.$nuxt.$loading.finish()
+                this.loaded = false
 							},
 						})
 
@@ -150,6 +152,9 @@ export default {
 
   },
   computed: {
+    tutup(){
+			return `${this.modal.title === "Lihat" ? "Tutup" : "Kembali"}`
+		},
     okTitle(){
 			return `${this.modal.title === "Lihat" ? "Edit" : "Simpan"}`
 		},
