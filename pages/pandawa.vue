@@ -10,8 +10,25 @@ section.container
 				p
 					strong Perhatian! 
 				p Setelah mengisi form berikut, Anda akan diarahkan ke web Whatsapp (jika membuka via web browser) atau aplikasi Whatsapp di perangkat Anda.
+				p
+					button.btn.btn-outline-primary(type='button' @click='petunjuk = !petunjuk') {{ petunjuk ? 'Tutup' : 'Petunjuk'}}
 				button.close(type="button" data-dismiss="alert" aria-label="Close" @click="hide")
 					span(aria-hidden="true") &times;
+	.card.mt-2(v-if='petunjuk')
+		.card-body
+			p Ketik: #daftar#hari#poli#no rekam medis#nama
+			p Hari: sekarang, hariini, besok atau lusa
+			p Poli: umum, kia, gigi, mtbs, lansia
+			p Contoh: #daftar#besok#umum#909090#heru
+			p Alternatif parameter selain #no rkm medis#nama:
+			p #no rekam medis 8 digit
+			p #no bpjs/kis (bila pasien bpjs/kis)
+			p #no nik/ktp (bila sudah terdaftar di database kami)
+			p Kirim via pesan WA ke +62 271 854 252
+			p Tunggu balasan otomatis
+			p Datang hari H dan konfirmasi ke informasi utk mendapatkan no antrian poli
+			p Maturnuwun.
+			p (sistem ini hanya untuk pasien lama)
 	.card
 		.card-body
 			.row
@@ -34,10 +51,7 @@ section.container
 						b-form-select(v-model='poliSelected' :options='poli')
 			.row.justify-content-center(v-if='idValue.length && !feedback.length')
 				.col-sm-3.mt-2
-					button.col.btn.btn-primary(type='button' @click='cari') Cari
-			.card.mt-2(v-if='pasiens.length')
-				.card-body
-					p(v-for='d in desc') {{ d }}
+					button.col.btn.btn-primary(type='button' @click='kirim') Kirim
 </template>
 
 
@@ -53,6 +67,7 @@ export default {
 		bDropdownItem: () => import('~/node_modules/bootstrap-vue/es/components/dropdown/dropdown-item'),
 	},
 	data: () => ({
+		petunjuk: false,
 		pasiens: [],
 		feedback:[],
 		nama:'',
@@ -112,65 +127,8 @@ export default {
 		}
 	},
 	computed: {
-		desc(){
-			let resultArr = this.pasiens
-			let result = []
-			if(resultArr.length < 20) {
-				result.push(`Ditemukan ${resultArr.length} hasil${resultArr.length ? ':' : '.'}`)
-/*
-				for (let res of resultArr){
-				result.push(`--------------`)
-				result.push(`(${resultArr.indexOf(res) + 1}) `)
-					for (let prop in res){
-						if(res[prop] && res[prop] !== 'null' && prop !== '__typename') {
-							if(prop == 'sex_id'){
-								(res[prop] == '1') ? result[result.length-1] += `Laki-laki | ` : result[result.length-1] += `Perempuan | `
-							} else if(prop == 'village_id'){
-								switch(res[prop]){
-									case '01':
-										result[result.length-1] += 'Mojosongo | '
-										break
-									case '02':
-										result[result.length-1] += 'Luar wilayah | '
-										break
-									case '03':
-										result[result.length-1] += 'Luar kota |'
-								}
-							} else if(prop == 'orchard_id') {
-								result[result.length-1] += `RW: ${res[prop].slice(-2)} | `
-							} else if(prop == 'tgl_lahir') {
-								result[result.length-1] += `lahir: ${this.$moment(res[prop]).format('dddd, LL')} | `
-								let umur = this.$moment(res[prop]).fromNow().split(' ').slice(0, 2).join(' ')
-								if(umur == 'setahun yang'){
-									umur = '1 tahun'
-								}
-								result[result.length-1] += `${umur} | `
-							} else {
-								let a;
-								let b = res[prop]
-								switch(prop){
-									case 'id':
-										a = 'no rm';
-										b = b.toUpperCase()
-										break
-									case 'no_kartu':
-										a = 'no bpjs'
-										break
-									default:
-										a = prop
-										break
-								}
-								result[result.length-1] += `${a}: ${b} | `
-							}
-
-						}
-					}
-				}
-*/
-			}
-
-			return result
-
+		text(){
+			return `#daftar#${this.hariSelected}#${this.poliSelected}#${this.idValue}${this.nama.length ? `#${this.nama}` : ''}`
 		},
 		hari(){
 			let hari = ['Hari ini', 'Besok', 'Lusa']
@@ -207,35 +165,8 @@ export default {
 		}
 	},
 	methods:{
-		async cari(){
-			this.pasiens = []
-			let variables = {}
-			if(this.nameShow && this.nama.length){
-				variables.nama = this.nama
-			}
-
-			if(!this.feedback.length && this.idValue.length){
-				switch(this.idSelected) {
-					case 'No Rekam Medis':
-						variables.rm = this.idValue
-						break
-					case 'No JKN/KIS/BPJS':
-						variables.jkn = this.idValue
-						break
-					case 'NIK':
-						variables.nik = this.idValue
-						break
-				}
-
-			}
-
-			let { data: { getPasien }} = await this.$apollo.query({
-				query: getPasienGql,
-				variables,
-			})
-
-			this.pasiens = getPasien
-
+		async kirim(){
+			window.location.replace(`https://web.whatsapp.com/send?phone=62271854252&text=${this.text}`)
 		},
 		getclass(item){
 			if(this.idSelected === item){
@@ -254,10 +185,5 @@ export default {
 }
 </script>
 
-<style>
-.lb{
-	white-space: pre-line
-}
-</style>
 
 
