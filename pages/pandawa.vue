@@ -166,7 +166,7 @@ export default {
 	},
 	methods:{
 		async kirim(){
-			window.location.replace(`https://web.whatsapp.com/send?phone=62271854252&text=${this.text}`)
+			window.location.replace(`https://wa.me/62271854252?text=${this.text}`)
 		},
 		getclass(item){
 			if(this.idSelected === item){
