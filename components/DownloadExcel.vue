@@ -8,7 +8,7 @@ export default {
   methods: {
     async exportXLSX() {
       if (process.browser) {
-        const exceljs = () => await import('exceljs/dist/es5/exceljs.browser')
+        const exceljs = await import('exceljs/dist/es5/exceljs.browser')
         const { Workbook } = exceljs;
         //console.log(JSON.stringify(this.fields, null, 2))
         var workbook = new Workbook(); //creating workbook
@@ -27,7 +27,7 @@ export default {
         let data = await workbook.xlsx.writeBuffer()
         //console.log(data)
         let blob = new Blob([data], { type: "application/octet-stream" });
-        const fileSaver = () => await import('file-saver');
+        const fileSaver = await import('file-saver');
         const { saveAs } = fileSaver
         saveAs(blob, this.name);
       }
