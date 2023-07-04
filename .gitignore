@@ -3,6 +3,6 @@ dist
 node_modules
 .env
 .else
-package-lock.json
+# package-lock.json
 static/sw.js
 .vscode
